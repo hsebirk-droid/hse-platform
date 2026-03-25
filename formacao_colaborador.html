@@ -1,456 +1,3 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Birkenstock S&CC — Formação HSE</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root {
-  --birkenstock-blue: #00338D;
-  --birkenstock-blue-dark: #00277A;
-  --birkenstock-gold: #C5A059;
-  --birkenstock-gray: #616365;
-  --birkenstock-beige: #F7F5F0;
-  --birkenstock-white: #FFFFFF;
-  --birkenstock-black: #1A1A1A;
-  --birkenstock-border: #E2DDD6;
-  --success: #16a34a;
-  --success-bg: #dcfce7;
-  --warning: #e76f51;
-  --warning-light: #fde8e1;
-  --info: #2196f3;
-  --info-light: #e3f2fd;
-  --font-head: 'Fraunces', serif;
-  --font-body: 'DM Sans', sans-serif;
-  --radius: 14px;
-  --shadow: 0 2px 20px rgba(0,0,0,0.07);
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--birkenstock-beige); font-family: var(--font-body); color: var(--birkenstock-black); min-height: 100vh; }
-
-.top-bar {
-  background: var(--birkenstock-blue);
-  padding: 14px 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  border-bottom: 2px solid var(--birkenstock-gold);
-}
-.top-bar .logo {
-  font-family: var(--font-head);
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: white;
-}
-.top-bar .logo span {
-  font-size: 0.7rem;
-  font-weight: 400;
-  display: block;
-  color: rgba(255,255,255,0.8);
-  letter-spacing: 1px;
-}
-.deadline-badge {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 20px;
-  padding: 5px 14px;
-  font-size: 0.78rem;
-  color: rgba(255,255,255,0.8);
-}
-.deadline-badge strong { color: var(--birkenstock-gold); }
-.user-name {
-  background: rgba(255,255,255,0.1);
-  border-radius: 20px;
-  padding: 5px 14px;
-  font-size: 0.78rem;
-  color: white;
-}
-
-.hero {
-  background: linear-gradient(135deg, var(--birkenstock-blue) 0%, var(--birkenstock-blue-dark) 100%);
-  padding: 48px 32px 56px;
-  color: white;
-  position: relative;
-  overflow: hidden;
-}
-.hero::after {
-  content: 'BIRKENSTOCK';
-  position: absolute;
-  right: -20px;
-  top: -30px;
-  font-family: var(--font-head);
-  font-size: 8rem;
-  font-weight: 900;
-  color: rgba(255,255,255,0.03);
-  pointer-events: none;
-}
-.hero-inner { max-width: 760px; margin: 0 auto; }
-.hero-tag {
-  display: inline-block;
-  background: rgba(197,160,89,0.2);
-  border: 1px solid rgba(197,160,89,0.4);
-  border-radius: 20px;
-  padding: 4px 14px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  margin-bottom: 16px;
-  color: var(--birkenstock-gold);
-}
-.hero h1 { font-family: var(--font-head); font-size: 2.2rem; font-weight: 900; line-height: 1.15; margin-bottom: 12px; }
-.hero p { font-size: 0.95rem; opacity: .8; line-height: 1.6; max-width: 520px; }
-.hero-meta { display: flex; gap: 24px; margin-top: 24px; flex-wrap: wrap; }
-.hero-meta-item { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; opacity: .85; }
-
-.progress-strip {
-  background: var(--birkenstock-white);
-  border-bottom: 1px solid var(--birkenstock-border);
-  padding: 16px 32px;
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-}
-.progress-strip-inner { max-width: 760px; margin: 0 auto; }
-.progress-label { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--birkenstock-gray); margin-bottom: 8px; }
-.progress-label strong { color: var(--birkenstock-black); }
-.prog-track { height: 8px; background: #ede9e2; border-radius: 4px; overflow: hidden; }
-.prog-fill { height: 100%; background: linear-gradient(90deg, var(--birkenstock-blue), var(--birkenstock-gold)); border-radius: 4px; transition: width .5s ease; }
-.steps-dots { display: flex; gap: 8px; margin-top: 10px; }
-.step-dot { flex: 1; height: 3px; border-radius: 2px; background: #ede9e2; transition: background .3s; }
-.step-dot.done { background: var(--birkenstock-blue); }
-.step-dot.active { background: var(--birkenstock-gold); }
-
-.main { max-width: 760px; margin: 0 auto; padding: 32px 32px 80px; }
-
-.section-block {
-  background: var(--birkenstock-white);
-  border-radius: var(--radius);
-  border: 1px solid var(--birkenstock-border);
-  margin-bottom: 20px;
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
-.section-block.locked { opacity: .5; pointer-events: none; }
-.section-block.completed { border-color: var(--birkenstock-gold); }
-
-.section-header {
-  padding: 20px 24px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  cursor: pointer;
-}
-.section-header:hover { background: #fafaf8; }
-.s-num {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: #f0ece5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-head);
-  font-size: 0.85rem;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-.section-block.completed .s-num { background: var(--birkenstock-blue); color: white; }
-.s-info { flex: 1; }
-.s-title { font-family: var(--font-head); font-size: 1rem; font-weight: 700; color: var(--birkenstock-blue); }
-.s-meta { font-size: 0.78rem; color: var(--birkenstock-gray); margin-top: 2px; }
-.s-status { font-size: 1.1rem; }
-.section-body { padding: 0 24px 24px; border-top: 1px solid var(--birkenstock-border); display: none; }
-.section-body.open { display: block; }
-
-.video-wrap {
-  background: #111;
-  border-radius: 10px;
-  overflow: hidden;
-  aspect-ratio: 16/9;
-  margin: 20px 0;
-}
-.video-wrap iframe { width: 100%; height: 100%; border: none; }
-
-.pdf-viewer {
-  background: #fafaf8;
-  border: 1px solid var(--birkenstock-border);
-  border-radius: 10px;
-  margin: 20px 0;
-  overflow: hidden;
-}
-.pdf-toolbar {
-  background: #f5f5f5;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--birkenstock-border);
-}
-.pdf-content { padding: 0; min-height: 500px; max-height: 650px; overflow: auto; }
-.pdf-iframe { width: 100%; height: 600px; border: none; }
-.file-viewer { width: 100%; height: 600px; border: none; }
-.file-download {
-  display: inline-block;
-  background: var(--birkenstock-blue);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 500;
-}
-.file-download:hover { background: var(--birkenstock-blue-dark); }
-
-.presentation-wrap {
-  background: #fafaf8;
-  border: 1px solid var(--birkenstock-border);
-  border-radius: 10px;
-  margin: 20px 0;
-}
-.presentation-toolbar {
-  background: #f5f5f5;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--birkenstock-border);
-}
-.presentation-slides { padding: 24px; min-height: 300px; max-height: 500px; overflow-y: auto; }
-.slide {
-  background: white;
-  border: 1px solid var(--birkenstock-border);
-  border-radius: 12px;
-  padding: 32px;
-  margin-bottom: 20px;
-}
-.slide h3 { font-family: var(--font-head); font-size: 1.2rem; margin-bottom: 16px; color: var(--birkenstock-blue); }
-
-.text-content { font-size: 0.9rem; line-height: 1.8; color: var(--birkenstock-gray); margin: 20px 0; }
-.text-content h3 { font-family: var(--font-head); font-size: 1rem; color: var(--birkenstock-black); margin: 20px 0 8px; }
-.highlight-box {
-  background: rgba(197,160,89,0.1);
-  border-left: 3px solid var(--birkenstock-gold);
-  border-radius: 0 8px 8px 0;
-  padding: 12px 16px;
-  margin: 16px 0;
-  font-size: 0.85rem;
-  color: var(--birkenstock-blue);
-}
-
-.content-tracker {
-  background: var(--info-light);
-  border: 1px solid #bbdefb;
-  border-radius: 10px;
-  padding: 12px 16px;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.82rem;
-  color: #1565c0;
-}
-.track-prog { flex: 1; height: 4px; background: #bbdefb; border-radius: 2px; overflow: hidden; }
-.track-fill { height: 100%; background: var(--birkenstock-blue); border-radius: 2px; transition: width .3s; }
-
-.confirm-viewed {
-  background: var(--birkenstock-beige);
-  border: 1px solid var(--birkenstock-border);
-  border-radius: 10px;
-  padding: 16px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 16px;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-.confirm-viewed p { font-size: 0.83rem; color: var(--birkenstock-gray); }
-.confirm-viewed p strong { color: var(--birkenstock-black); display: block; }
-.btn-confirm {
-  background: var(--birkenstock-blue);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 22px;
-  font-family: var(--font-head);
-  font-size: 0.82rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-.btn-confirm:hover { background: var(--birkenstock-blue-dark); }
-.btn-confirm:disabled { background: var(--birkenstock-gray); cursor: default; }
-.confirmed-label { display: flex; align-items: center; gap: 6px; color: var(--birkenstock-blue); font-size: 0.82rem; font-weight: 600; }
-
-.quiz-wrap { padding: 8px 0; }
-.quiz-intro { background: var(--warning-light); border: 1px solid #f4a291; border-radius: 10px; padding: 16px 20px; margin: 20px 0; }
-.question { margin-bottom: 28px; }
-.question-text { font-family: var(--font-head); font-size: 0.98rem; font-weight: 700; margin-bottom: 14px; color: var(--birkenstock-blue); }
-.options { display: flex; flex-direction: column; gap: 8px; }
-.option-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border: 1.5px solid var(--birkenstock-border);
-  border-radius: 10px;
-  padding: 12px 16px;
-  cursor: pointer;
-  font-size: 0.88rem;
-}
-.option-item:hover { border-color: var(--birkenstock-gold); background: rgba(197,160,89,0.1); }
-.option-item.selected { border-color: var(--birkenstock-blue); background: rgba(0,51,141,0.05); }
-.option-item.correct { border-color: var(--success); background: var(--success-bg); }
-.option-item.wrong { border-color: var(--warning); background: var(--warning-light); }
-.option-letter {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: #f0ece5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-.option-item.selected .option-letter { background: var(--birkenstock-blue); color: white; }
-.quiz-footer { margin-top: 24px; border-top: 1px solid var(--birkenstock-border); padding-top: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
-.btn-submit {
-  background: var(--birkenstock-blue);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 13px 32px;
-  font-family: var(--font-head);
-  font-size: 0.9rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-.btn-submit:disabled { background: #ccc; cursor: default; }
-
-.result-screen { text-align: center; padding: 40px 24px; display: none; }
-.result-score-ring {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  border: 6px solid var(--birkenstock-blue);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 24px;
-  background: rgba(0,51,141,0.05);
-}
-.result-score-ring.fail { border-color: var(--warning); background: var(--warning-light); }
-.score-num { font-family: var(--font-head); font-size: 2rem; font-weight: 900; color: var(--birkenstock-blue); }
-
-.cert-screen { display: none; }
-.cert-card {
-  background: linear-gradient(135deg, #fff8e7 0%, #fff 100%);
-  border: 2px solid var(--birkenstock-gold);
-  border-radius: 20px;
-  padding: 48px 40px;
-  text-align: center;
-  position: relative;
-  margin-top: 24px;
-}
-.cert-card::before {
-  content: '';
-  position: absolute;
-  inset: 10px;
-  border: 1px dashed rgba(197,160,89,0.5);
-  border-radius: 14px;
-  pointer-events: none;
-}
-.cert-emblem { font-size: 3rem; margin-bottom: 16px; color: var(--birkenstock-gold); }
-.cert-name { font-family: var(--font-head); font-size: 2rem; font-weight: 900; color: var(--birkenstock-blue); margin-bottom: 8px; }
-.cert-row {
-  display: flex;
-  justify-content: center;
-  gap: 48px;
-  border-top: 1px solid #e2ddd6;
-  padding-top: 20px;
-  margin-top: 20px;
-  flex-wrap: wrap;
-}
-.cert-actions { display: flex; gap: 12px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
-.btn-dl {
-  background: var(--birkenstock-blue);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 13px 28px;
-  font-family: var(--font-head);
-  font-size: 0.88rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-.btn-secondary {
-  background: white;
-  color: var(--birkenstock-blue);
-  border: 1.5px solid var(--birkenstock-blue);
-  border-radius: 10px;
-  padding: 13px 28px;
-  cursor: pointer;
-}
-.toast {
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: var(--birkenstock-black);
-  color: white;
-  padding: 12px 24px;
-  border-radius: 10px;
-  font-size: 0.85rem;
-  opacity: 0;
-  transition: all .4s;
-  z-index: 1000;
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-</style>
-</head>
-<body>
-
-<div class="top-bar">
-  <div class="logo">BIRKENSTOCK<span>S&CC PORTUGAL</span></div>
-  <div class="user-name" id="user-name-display">Carregando...</div>
-  <div class="deadline-badge">Prazo: <strong>31 Mar 2026</strong></div>
-</div>
-
-<div class="hero">
-  <div class="hero-inner">
-    <div class="hero-tag" id="hero-tag">🛡️ Segurança, Saúde & Ambiente</div>
-    <h1 id="hero-title">Prevenção de Acidentes no Trabalho</h1>
-    <p id="hero-desc">Formação obrigatória atribuída pela tua empresa. Completa todos os módulos e a avaliação para receberes o teu certificado.</p>
-    <div class="hero-meta">
-      <div class="hero-meta-item"><span>⏱️</span> <span id="meta-duration">45 minutos</span></div>
-      <div class="hero-meta-item"><span>📚</span> <span id="meta-modules">3 módulos</span></div>
-      <div class="hero-meta-item"><span>📝</span> Avaliação final</div>
-      <div class="hero-meta-item"><span>🏅</span> Certificado automático</div>
-    </div>
-  </div>
-</div>
-
-<div class="progress-strip">
-  <div class="progress-strip-inner">
-    <div class="progress-label"><span>Progresso da formação</span><strong id="progress-text">0%</strong></div>
-    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
-    <div class="steps-dots" id="steps-dots"></div>
-  </div>
-</div>
-
-<div class="main" id="main-content">
-  <div id="modules-container"></div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
   let cursoData = {
     nome: localStorage.getItem('cursoAtualNome') || 'Prevenção de Acidentes no Trabalho',
     duracao: localStorage.getItem('cursoAtualDuracao') || '45 minutos',
@@ -469,311 +16,80 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     if(savedModules) modules = JSON.parse(savedModules);
   } catch(e) {}
   
-  if(modules.length === 0) {
-    modules = [
-      { id: 1, titulo: "Identificação de Riscos", tipo: "video", conteudo: { url: "https://www.youtube.com/embed/dQw4w9WgXcQ" }, duracao: "15 min" },
-      { id: 2, titulo: "Medidas de Prevenção", tipo: "text", conteudo: { texto: "<h3>Hierarquia de Controlo</h3><p>A prevenção de acidentes segue uma hierarquia bem definida.</p>" }, duracao: "15 min" },
-      { id: 3, titulo: "Procedimentos de Emergência", tipo: "text", conteudo: { texto: "<h3>Protocolo PASS</h3><p>Proteger, Alertar, Socorrer, Sinalizar</p>" }, duracao: "10 min" }
-    ];
-  }
-
-  let completedModules = {}, answers = {}, videoIntervals = {};
-  let quizPassed = false;
-  const startTime = new Date();
-
-  function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
-  function fmtDate(d) { return d.toLocaleDateString('pt-PT', {day:'2-digit', month:'short', year:'numeric'}); }
-
-  function updateProgress() {
-    const total = modules.length + 1;
-    let done = modules.filter(m => completedModules[m.id]).length;
-    if(quizPassed) done++;
-    const pct = Math.round((done / total) * 100);
-    document.getElementById('prog-fill').style.width = pct + '%';
-    document.getElementById('progress-text').textContent = pct + '%';
+  // ==================== LER TOKEN DA URL ====================
+  function carregarDoToken() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
     
-    const dotsContainer = document.getElementById('steps-dots');
-    dotsContainer.innerHTML = '';
-    modules.forEach((m, idx) => {
-      const dot = document.createElement('div');
-      dot.className = 'step-dot';
-      if(completedModules[m.id]) dot.classList.add('done');
-      dotsContainer.appendChild(dot);
-    });
-    const quizDot = document.createElement('div');
-    quizDot.className = 'step-dot';
-    if(quizPassed) quizDot.classList.add('done');
-    dotsContainer.appendChild(quizDot);
-  }
-
-  function unlockSection(moduleId) {
-    const block = document.getElementById('block-' + moduleId);
-    if(block) { block.classList.remove('locked'); }
-    setTimeout(() => { document.getElementById('block-' + moduleId)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 200);
-  }
-
-  function confirmModule(moduleId) {
-    completedModules[moduleId] = true;
-    const block = document.getElementById('block-' + moduleId);
-    block.classList.add('completed');
-    document.getElementById('num-' + moduleId).textContent = '✓';
-    document.getElementById('num-' + moduleId).style.background = 'var(--birkenstock-blue)';
-    document.getElementById('status-' + moduleId).textContent = '✅';
-    document.getElementById('confirm-' + moduleId).style.display = 'none';
-    document.getElementById('confirmed-' + moduleId).style.display = 'flex';
-    updateProgress();
-    toast('✅ Módulo ' + moduleId + ' concluído!');
-    
-    const currentIndex = modules.findIndex(m => m.id === moduleId);
-    if(currentIndex < modules.length - 1) {
-      unlockSection(modules[currentIndex + 1].id);
-    } else {
-      const quizBlock = document.getElementById('block-quiz');
-      if(quizBlock) { quizBlock.classList.remove('locked'); toast('📝 Avaliação desbloqueada!'); }
-    }
-  }
-
-  function renderModules() {
-    const container = document.getElementById('modules-container');
-    container.innerHTML = '';
-    
-    modules.forEach((module, idx) => {
-      const isLocked = idx > 0 && !completedModules[modules[idx-1]?.id];
-      const block = document.createElement('div');
-      block.className = 'section-block' + (isLocked ? ' locked' : '') + (completedModules[module.id] ? ' completed' : '');
-      block.id = 'block-' + module.id;
-      
-      block.innerHTML = `
-        <div class="section-header" onclick="toggleSection(${module.id})">
-          <div class="s-num" id="num-${module.id}">${module.id}</div>
-          <div class="s-info">
-            <div class="s-title">Módulo ${module.id} — ${module.titulo}</div>
-            <div class="s-meta">${module.tipo === 'video' ? '🎬 Vídeo' : module.tipo === 'file' ? '📁 Ficheiro' : '📄 Texto'} · ${module.duracao}</div>
-          </div>
-          <div class="s-status" id="status-${module.id}">${isLocked ? '🔒' : '▶'}</div>
-        </div>
-        <div class="section-body" id="body-${module.id}" style="${isLocked ? '' : 'display:block'}">
-          <div class="content-tracker" id="tracker-${module.id}">
-            <span>${module.tipo === 'video' ? '📹' : '📖'}</span>
-            <div style="flex:1"><div class="track-prog"><div class="track-fill" id="fill-${module.id}" style="width:0%"></div></div></div>
-            <span id="pct-${module.id}" style="font-size:0.78rem;font-weight:600">0%</span>
-          </div>
-          <div id="content-${module.id}"></div>
-          <div class="confirm-viewed" id="confirm-${module.id}">
-            <p><strong>Confirmar conclusão</strong>${module.tipo === 'video' ? 'Vê o vídeo na totalidade para poder avançar.' : 'Leia todo o conteúdo para poder avançar.'}</p>
-            <button class="btn-confirm" id="btn-confirm-${module.id}" disabled onclick="confirmModule(${module.id})">✓ Confirmar e avançar</button>
-          </div>
-          <div id="confirmed-${module.id}" style="display:none" class="confirmed-label">✅ Módulo concluído</div>
-        </div>
-      `;
-      container.appendChild(block);
-      
-      const contentDiv = document.getElementById('content-' + module.id);
-      
-      if(module.tipo === 'video') {
-        contentDiv.innerHTML = `<div class="video-wrap"><iframe src="${module.conteudo.url}" allowfullscreen></iframe></div>`;
-        let progress = 0;
-        videoIntervals[module.id] = setInterval(() => {
-          progress += 1.5;
-          if(progress > 100) progress = 100;
-          document.getElementById('fill-' + module.id).style.width = progress + '%';
-          document.getElementById('pct-' + module.id).textContent = Math.round(progress) + '%';
-          if(progress >= 80) document.getElementById('btn-confirm-' + module.id).disabled = false;
-          if(progress >= 100) clearInterval(videoIntervals[module.id]);
-        }, 200);
-      }
-      else if(module.tipo === 'text') {
-        contentDiv.innerHTML = `<div class="text-content">${module.conteudo.texto}</div>`;
-        const textDiv = contentDiv.querySelector('.text-content');
-        if(textDiv) {
-          textDiv.style.maxHeight = '400px';
-          textDiv.style.overflowY = 'auto';
-          let maxScroll = textDiv.scrollHeight - textDiv.clientHeight;
-          textDiv.addEventListener('scroll', () => {
-            const scrolled = textDiv.scrollTop / maxScroll;
-            const pct = Math.min(100, Math.round(scrolled * 100));
-            document.getElementById('fill-' + module.id).style.width = pct + '%';
-            document.getElementById('pct-' + module.id).textContent = pct + '%';
-            if(pct >= 90) document.getElementById('btn-confirm-' + module.id).disabled = false;
-          });
-        } else { document.getElementById('btn-confirm-' + module.id).disabled = false; }
-      }
-      else if(module.tipo === 'file') {
-        const fileData = module.conteudo.fileData;
-        const fileName = module.conteudo.fileName || 'documento';
-        const fileType = module.conteudo.fileType || '';
+    if(token) {
+      console.log("🔑 Token encontrado na URL:", token);
+      try {
+        const tokenData = JSON.parse(atob(token));
+        console.log("📦 Dados do token:", tokenData);
         
-        let fileHtml = '';
-        if(fileType.includes('pdf') || (fileName && fileName.toLowerCase().endsWith('.pdf'))) {
-          fileHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>📄 ${fileName}</span><a href="${fileData}" download="${fileName}" class="file-download">⬇️ Descarregar</a></div><div class="pdf-content"><iframe class="pdf-iframe" src="${fileData}"></iframe></div></div>`;
-          setTimeout(() => {
-            let progress = 0;
-            const interval = setInterval(() => { progress += 2; if(progress>=100){clearInterval(interval); document.getElementById('btn-confirm-'+module.id).disabled=false;} document.getElementById('fill-'+module.id).style.width=Math.min(progress,100)+'%'; document.getElementById('pct-'+module.id).textContent=Math.min(progress,100)+'%'; }, 150);
-          }, 2000);
-        } else if(fileType.includes('image')) {
-          fileHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>🖼️ ${fileName}</span><a href="${fileData}" download="${fileName}" class="file-download">⬇️ Descarregar</a></div><div class="pdf-content" style="text-align:center; padding:20px;"><img src="${fileData}" style="max-width:100%; max-height:500px;"></div></div>`;
-          setTimeout(() => {
-            let progress = 0; const interval = setInterval(() => { progress+=3; if(progress>=100){clearInterval(interval); document.getElementById('btn-confirm-'+module.id).disabled=false;} document.getElementById('fill-'+module.id).style.width=Math.min(progress,100)+'%'; document.getElementById('pct-'+module.id).textContent=Math.min(progress,100)+'%'; }, 200);
-          }, 1500);
-        } else if(fileName && (fileName.toLowerCase().endsWith('.ppt') || fileName.toLowerCase().endsWith('.pptx') || fileName.toLowerCase().endsWith('.doc') || fileName.toLowerCase().endsWith('.docx') || fileName.toLowerCase().endsWith('.xls') || fileName.toLowerCase().endsWith('.xlsx'))) {
-          const officeUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileData)}`;
-          fileHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>📊 ${fileName}</span><a href="${fileData}" download="${fileName}" class="file-download">⬇️ Descarregar</a></div><div class="pdf-content"><iframe class="file-viewer" src="${officeUrl}"></iframe></div></div><div class="highlight-box">💡 Dica: Se o documento não carregar, clique em "Descarregar" para visualizar localmente.</div>`;
-          setTimeout(() => {
-            let progress = 0; const interval = setInterval(() => { progress+=2; if(progress>=100){clearInterval(interval); document.getElementById('btn-confirm-'+module.id).disabled=false;} document.getElementById('fill-'+module.id).style.width=Math.min(progress,100)+'%'; document.getElementById('pct-'+module.id).textContent=Math.min(progress,100)+'%'; }, 200);
-          }, 2500);
-        } else {
-          fileHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>📎 ${fileName}</span><a href="${fileData}" download="${fileName}" class="file-download">⬇️ Descarregar</a></div><div class="pdf-content" style="text-align:center; padding:60px;"><div style="font-size:64px;">📄</div><h3>${fileName}</h3><p>Clique no botão para descarregar.</p></div></div>`;
-          document.getElementById('btn-confirm-' + module.id).disabled = false;
-          document.getElementById('fill-' + module.id).style.width = '100%';
-          document.getElementById('pct-' + module.id).textContent = '100%';
+        // Verificar expiração (30 dias)
+        const tokenExpiracao = tokenData.timestamp || 0;
+        const agora = Date.now();
+        const diasPassados = (agora - tokenExpiracao) / (1000 * 60 * 60 * 24);
+        
+        if(diasPassados > 30) {
+          toast('⚠️ Este link expirou. Por favor, solicite um novo convite.');
+          return;
         }
-        contentDiv.innerHTML = fileHtml;
+        
+        // 1. Identificar o colaborador
+        if(tokenData.user) {
+          localStorage.setItem('usuarioAtivo', tokenData.user);
+          nomeUser = tokenData.user;
+          document.getElementById('user-name-display').textContent = 'Olá, ' + nomeUser;
+          console.log("👤 Colaborador identificado:", nomeUser);
+        }
+        
+        // 2. Carregar a formação pelo ID
+        if(tokenData.cursoId) {
+          const cursos = JSON.parse(localStorage.getItem('listaCursos') || '[]');
+          const curso = cursos.find(c => c.id == tokenData.cursoId);
+          
+          if(curso) {
+            console.log("📚 Formação encontrada:", curso.nome);
+            
+            cursoData.nome = curso.nome;
+            cursoData.duracao = curso.duracao || '45 minutos';
+            cursoData.descricao = curso.descricao || '';
+            modules = curso.modulos || [];
+            
+            localStorage.setItem('cursoAtualNome', curso.nome);
+            localStorage.setItem('cursoAtualDuracao', curso.duracao || '45 minutos');
+            localStorage.setItem('cursoAtualDesc', curso.descricao || '');
+            localStorage.setItem('cursoAtualModulos', JSON.stringify(modules));
+            localStorage.setItem('cursoAtualPerguntas', JSON.stringify(curso.perguntas || []));
+            
+            document.getElementById('hero-title').textContent = cursoData.nome;
+            document.getElementById('hero-desc').textContent = cursoData.descricao;
+            document.getElementById('meta-duration').textContent = cursoData.duracao;
+            
+            toast(`✅ Formação "${curso.nome}" carregada!`);
+          } else {
+            console.error("❌ Formação não encontrada");
+            toast('⚠️ Formação não encontrada. Contacte o administrador.');
+          }
+        }
+        
+        // Guardar token para validação
+        const savedToken = localStorage.getItem(`token_${token}`);
+        if(!savedToken) {
+          localStorage.setItem(`token_${token}`, JSON.stringify(tokenData));
+          setTimeout(() => localStorage.removeItem(`token_${token}`), 30 * 24 * 60 * 60 * 1000);
+        }
+        
+      } catch(e) {
+        console.error("❌ Erro ao ler token:", e);
+        toast('⚠️ Link inválido. Contacte o administrador.');
       }
-    });
-    renderQuiz();
-  }
-  
-  function renderQuiz() {
-    const container = document.getElementById('modules-container');
-    const quizBlock = document.createElement('div');
-    quizBlock.className = 'section-block locked';
-    quizBlock.id = 'block-quiz';
-    quizBlock.innerHTML = `
-      <div class="section-header" onclick="toggleSection('quiz')">
-        <div class="s-num" id="num-quiz">📝</div>
-        <div class="s-info"><div class="s-title">Avaliação Final</div><div class="s-meta">Perguntas · Nota mínima: 70%</div></div>
-        <div class="s-status" id="status-quiz">🔒</div>
-      </div>
-      <div class="section-body" id="body-quiz">
-        <div class="quiz-wrap" id="quiz-form"><div class="quiz-intro"><strong>📝 Avaliação de conhecimentos</strong><p>Responde a todas as perguntas. Precisas de pelo menos 70% para ser aprovado.</p></div>
-        <div id="quiz-questions"></div>
-        <div class="quiz-footer"><span id="quiz-answered">0 respondidas</span><button class="btn-submit" id="btn-submit" disabled onclick="submitQuiz()">Submeter avaliação</button></div></div>
-        <div class="result-screen" id="result-screen"><div class="result-score-ring" id="result-ring"><div class="score-num" id="score-num">0%</div></div><h2 id="result-title"></h2><p id="result-msg"></p><div class="result-actions"><button class="btn-dl" id="btn-see-cert" onclick="showCertificate()" style="display:none">🏅 Ver Certificado</button><button class="btn-secondary" id="btn-retry" onclick="retryQuiz()" style="display:none">🔄 Tentar novamente</button></div></div>
-      </div>
-    `;
-    container.appendChild(quizBlock);
-    
-    let perguntas = [];
-    try {
-      const savedPerguntas = localStorage.getItem('cursoAtualPerguntas');
-      if(savedPerguntas) perguntas = JSON.parse(savedPerguntas);
-    } catch(e) {}
-    
-    if(perguntas.length === 0) {
-      perguntas = [
-        { texto: "Qual é o EPI obrigatório em zonas com ruído acima de 85 dB?", opcoes: ["Luvas", "Proteção auricular", "Óculos", "Nenhum"], correta: "B" },
-        { texto: "Em caso de acidente, qual a primeira ação?", opcoes: ["Continuar", "Evacuar e alertar", "Limpar", "Aguardar"], correta: "B" },
-        { texto: "Sinal de fundo amarelo com triângulo negro significa?", opcoes: ["Obrigação", "Saída", "Aviso/Perigo", "Proibido"], correta: "C" }
-      ];
-    }
-    
-    const questionsDiv = document.getElementById('quiz-questions');
-    questionsDiv.innerHTML = perguntas.map((q, idx) => `
-      <div class="question" id="q-${idx}"><div class="question-text">${q.texto}</div><div class="options" id="opts-${idx}">${q.opcoes.map((opt, optIdx) => `<div class="option-item" onclick="selectOpt(${idx}, ${optIdx})"><div class="option-letter">${String.fromCharCode(65+optIdx)}</div> ${opt}</div>`).join('')}</div></div>
-    `).join('');
-    
-    window.perguntas = perguntas;
-    window.respostas = {};
-    window.totalPerguntas = perguntas.length;
-  }
-  
-  function selectOpt(qIdx, optIdx) {
-    document.querySelectorAll(`#opts-${qIdx} .option-item`).forEach(el => el.classList.remove('selected'));
-    document.querySelectorAll(`#opts-${qIdx} .option-item`)[optIdx].classList.add('selected');
-    window.respostas[qIdx] = String.fromCharCode(65+optIdx);
-    const answered = Object.keys(window.respostas).length;
-    document.getElementById('quiz-answered').textContent = `${answered} de ${window.totalPerguntas} respondidas`;
-    document.getElementById('btn-submit').disabled = answered < window.totalPerguntas;
-  }
-  
-  function submitQuiz() {
-    let score = 0;
-    for(let i = 0; i < window.totalPerguntas; i++) {
-      const isCorrect = window.respostas[i] === window.perguntas[i].correta;
-      if(isCorrect) score++;
-      document.querySelectorAll(`#opts-${i} .option-item`).forEach((el, idx) => {
-        if(String.fromCharCode(65+idx) === window.perguntas[i].correta) el.classList.add('correct');
-        else if(idx === window.respostas[i]?.charCodeAt(0)-65 && !isCorrect) el.classList.add('wrong');
-        el.onclick = null;
-      });
-    }
-    const pct = Math.round((score / window.totalPerguntas) * 100);
-    const passed = pct >= 70;
-    quizPassed = passed;
-    document.getElementById('quiz-form').style.display = 'none';
-    const rs = document.getElementById('result-screen');
-    rs.style.display = 'block';
-    document.getElementById('score-num').textContent = pct + '%';
-    if(passed) {
-      document.getElementById('result-title').textContent = '🎉 Parabéns, aprovado!';
-      document.getElementById('result-msg').textContent = `Acertaste ${score} de ${window.totalPerguntas} perguntas (${pct}%). O teu certificado foi gerado.`;
-      document.getElementById('btn-see-cert').style.display = 'inline-flex';
-      updateProgress();
-      const notaObj = { nome: nomeUser, curso: cursoData.nome, nota: pct + '%', data: fmtDate(new Date()) };
-      let historico = []; try { historico = JSON.parse(localStorage.getItem('historicoNotas') || '[]'); } catch(e) {}
-      historico.push(notaObj);
-      localStorage.setItem('historicoNotas', JSON.stringify(historico));
     } else {
-      document.getElementById('result-ring').classList.add('fail');
-      document.getElementById('score-num').classList.add('fail');
-      document.getElementById('result-title').textContent = 'Não aprovado';
-      document.getElementById('result-msg').textContent = `Obtiveste ${pct}% (${score}/${window.totalPerguntas} corretas). Precisas de pelo menos 70%. Podes tentar novamente.`;
-      document.getElementById('btn-retry').style.display = 'inline-flex';
+      console.log("ℹ️ Nenhum token encontrado. Usando dados do localStorage.");
     }
   }
   
-  function retryQuiz() {
-    window.respostas = {};
-    for(let i = 0; i < window.totalPerguntas; i++) {
-      document.querySelectorAll(`#opts-${i} .option-item`).forEach(el => {
-        el.classList.remove('selected','correct','wrong');
-        el.onclick = () => selectOpt(i, Array.from(el.parentNode.children).indexOf(el));
-      });
-    }
-    document.getElementById('quiz-answered').textContent = `0 de ${window.totalPerguntas} respondidas`;
-    document.getElementById('btn-submit').disabled = true;
-    document.getElementById('result-screen').style.display = 'none';
-    document.getElementById('quiz-form').style.display = 'block';
-    document.getElementById('result-ring').classList.remove('fail');
-    document.getElementById('score-num').classList.remove('fail');
-  }
-  
-  function showCertificate() {
-    const now = new Date();
-    const expiry = new Date(now); expiry.setFullYear(expiry.getFullYear() + 1);
-    const certId = 'CERT-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random()*9000);
-    const certHtml = `
-      <div class="cert-screen" id="cert-screen" style="display:block">
-        <div class="cert-card"><div class="cert-emblem">🛡️</div><div class="cert-issued">Certificado Oficial · Birkenstock S&CC Portugal</div><div class="cert-certify">Certifica-se que</div><div class="cert-name">${nomeUser}</div><div class="cert-course-title">concluiu com sucesso a formação obrigatória em<br><strong>${cursoData.nome}</strong></div><div class="cert-row"><div class="cert-col"><div class="cert-col-label">Nota final</div><div class="cert-col-val">${document.getElementById('score-num').textContent}</div></div><div class="cert-col"><div class="cert-col-label">Data de emissão</div><div class="cert-col-val">${fmtDate(now)}</div></div><div class="cert-col"><div class="cert-col-label">Validade</div><div class="cert-col-val">${fmtDate(expiry)}</div></div></div><div class="cert-id">ID: ${certId}</div></div>
-        <div class="cert-actions"><button class="btn-dl" onclick="toast('⬇️ Certificado descarregado!')">⬇️ Descarregar certificado PDF</button><button class="btn-secondary" onclick="toast('📧 Certificado enviado para o teu e-mail!')">📧 Enviar para e-mail</button></div>
-      </div>
-    `;
-    document.getElementById('modules-container').insertAdjacentHTML('beforeend', certHtml);
-    setTimeout(() => document.getElementById('cert-screen').scrollIntoView({ behavior: 'smooth' }), 200);
-    toast('🏅 Certificado gerado!');
-  }
-  
-  function toggleSection(id) {
-    if(id === 'quiz') {
-      const block = document.getElementById('block-quiz');
-      if(block.classList.contains('locked')) return;
-      document.getElementById('body-quiz').classList.toggle('open');
-    } else {
-      const block = document.getElementById('block-' + id);
-      if(block.classList.contains('locked')) return;
-      document.getElementById('body-' + id).classList.toggle('open');
-    }
-  }
-  
-  window.toggleSection = toggleSection;
-  window.selectOpt = selectOpt;
-  window.submitQuiz = submitQuiz;
-  window.retryQuiz = retryQuiz;
-  window.showCertificate = showCertificate;
-  window.confirmModule = confirmModule;
-  
-  renderModules();
-  updateProgress();
-</script>
-</body>
-</html>
+  // Chamar a função
+  carregarDoToken();
