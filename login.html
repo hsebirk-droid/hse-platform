@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birkenstock S&CC Portugal — Plataforma HSE</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --birkenstock-blue: #00338D;
+  --birkenstock-blue-dark: #00277A;
+  --birkenstock-gold: #C5A059;
+  --birkenstock-gray: #616365;
+  --birkenstock-beige: #F7F5F0;
+  --bg: #F4F7F9;
+  --border: #D7DEED;
+  --white: #fff;
+  --danger: #dc2626;
+  --danger-bg: #fee2e2;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--birkenstock-beige);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  background: var(--birkenstock-blue);
+  padding: 12px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--birkenstock-gold);
+}
+.topbar .logo-text {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  color: white;
+}
+.topbar .logo-text small {
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 2px;
+  display: block;
+  color: rgba(255,255,255,0.7);
+}
+.topbar span {
+  color: rgba(255,255,255,.5);
+  font-size: 12px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.card {
+  background: var(--white);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 420px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,51,141,.1);
+}
+.card-top {
+  background: var(--birkenstock-blue);
+  padding: 36px 40px;
+  text-align: center;
+}
+.card-top .logo-large {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 800;
+  font-size: 1.8rem;
+  letter-spacing: 2px;
+  color: white;
+}
+.card-top .logo-large small {
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 2px;
+  display: block;
+  margin-top: 4px;
+  color: rgba(255,255,255,0.8);
+}
+.card-body {
+  padding: 36px 40px;
+}
+.card-body h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--birkenstock-blue);
+  margin-bottom: 24px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 4px;
+  margin-bottom: 24px;
+}
+.tab {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--birkenstock-gray);
+  transition: all .15s;
+}
+.tab.active {
+  background: var(--white);
+  color: var(--birkenstock-blue);
+  box-shadow: 0 1px 4px rgba(0,0,0,.1);
+}
+
+.fg { margin-bottom: 16px; }
+.fg label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--birkenstock-blue);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.fg input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 11px 14px;
+  color: #1a1a1a;
+  font-size: 14px;
+  outline: none;
+  transition: border-color .15s;
+}
+.fg input:focus { 
+  border-color: var(--birkenstock-blue);
+  box-shadow: 0 0 0 3px rgba(0,51,141,0.1);
+}
+
+.errmsg {
+  background: var(--danger-bg);
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--danger);
+  margin-bottom: 14px;
+  display: none;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.btnlogin {
+  width: 100%;
+  background: var(--birkenstock-blue);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 13px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  transition: all .2s;
+  margin-top: 4px;
+}
+.btnlogin:hover:not(:disabled) { 
+  background: var(--birkenstock-blue-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,51,141,0.2);
+}
+.btnlogin:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.footer {
+  padding: 20px 40px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--birkenstock-gray);
+  border-top: 1px solid var(--border);
+}
+
+.password-hint {
+  font-size: 10px;
+  color: var(--birkenstock-gray);
+  margin-top: 4px;
+  display: flex;
+  justify-content: space-between;
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo-text">
+    BIRKENSTOCK
+    <small>S&CC PORTUGAL</small>
+  </div>
+  <span>Plataforma HSE · Formação Profissional</span>
+</div>
+
+<div class="wrap">
+  <div class="card">
+    <div class="card-top">
+      <div class="logo-large">
+        BIRKENSTOCK
+        <small>S&CC PORTUGAL</small>
+      </div>
+    </div>
+    <div class="card-body">
+      <h2>Portal de Formação HSE</h2>
+      
+      <div class="tabs">
+        <button class="tab active" id="tab-colab">👥 Colaborador</button>
+        <button class="tab" id="tab-admin">👑 Administrador</button>
+      </div>
+      
+      <div id="errmsg" class="errmsg"></div>
+      
+      <div id="form-colab">
+        <div class="fg">
+          <label>Utilizador</label>
+          <input type="text" id="c-user" placeholder="nome.apelido" autocomplete="username">
+        </div>
+        <div class="fg">
+          <label>Palavra-passe</label>
+          <input type="password" id="c-pass" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="btnlogin" id="btn-colab">Entrar</button>
+      </div>
+      
+      <div id="form-admin" style="display:none">
+        <div class="fg">
+          <label>Utilizador</label>
+          <input type="text" id="a-user" placeholder="admin" value="admin" readonly style="background:#f0f0f0">
+        </div>
+        <div class="fg">
+          <label>Palavra-passe</label>
+          <input type="password" id="a-pass" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="btnlogin" id="btn-admin">Entrar como Gestor</button>
+      </div>
+      
+      <div class="password-hint">
+        <span>🔐 Admin: contacte o gestor</span>
+        <span>❓ Dúvidas? Fale com RH</span>
+      </div>
+    </div>
+    <div class="footer">
+      &copy; 2026 Birkenstock S&CC Portugal · HSE
+    </div>
+  </div>
+</div>
+
+<script>
+  let ADMIN_PASS = 'SSA2024admin';
+  let isLoggingIn = false;
+  
+  try {
+    const adminConfig = JSON.parse(localStorage.getItem('admin_config') || '{}');
+    if(adminConfig.adminPassword) ADMIN_PASS = adminConfig.adminPassword;
+  } catch(e) {}
+  
+  const colaboradoresBase = {
+    "joao.silva": "pass123",
+    "maria.santos": "ssa456",
+    "carlos.ferreira": "7890"
+  };
+  
+  function showErr(msg) {
+    const err = document.getElementById('errmsg');
+    err.textContent = msg;
+    err.style.display = 'block';
+    setTimeout(() => { err.style.display = 'none'; }, 4000);
+  }
+  
+  function hideErr() { 
+    document.getElementById('errmsg').style.display = 'none'; 
+  }
+  
+  function setLoggingIn(state) {
+    isLoggingIn = state;
+    document.getElementById('btn-colab').disabled = state;
+    document.getElementById('btn-admin').disabled = state;
+    if(state) {
+      document.getElementById('btn-colab').textContent = 'A carregar...';
+      document.getElementById('btn-admin').textContent = 'A carregar...';
+    } else {
+      document.getElementById('btn-colab').textContent = 'Entrar';
+      document.getElementById('btn-admin').textContent = 'Entrar como Gestor';
+    }
+  }
+  
+  function getTodosColaboradores() {
+    let colaboradores = { ...colaboradoresBase };
+    try {
+      const extra = JSON.parse(localStorage.getItem('listaColaboradores') || '[]');
+      if(Array.isArray(extra)) {
+        extra.forEach(c => { 
+          if(c && c.user && c.pass) {
+            colaboradores[c.user] = c.pass; 
+          }
+        });
+      } else if(typeof extra === 'object') {
+        Object.assign(colaboradores, extra);
+      }
+    } catch(e) {
+      console.error('Erro ao carregar colaboradores:', e);
+    }
+    return colaboradores;
+  }
+  
+  function validarLoginColaborador() {
+    if(isLoggingIn) return;
+    
+    const user = document.getElementById('c-user').value.toLowerCase().trim();
+    const pass = document.getElementById('c-pass').value;
+    
+    if(!user || !pass) { 
+      showErr('Preencha utilizador e palavra-passe.'); 
+      return; 
+    }
+    
+    if(user.length < 3) {
+      showErr('Utilizador deve ter pelo menos 3 caracteres.');
+      return;
+    }
+    
+    const colaboradores = getTodosColaboradores();
+    
+    if(colaboradores[user] && colaboradores[user] === pass) {
+      setLoggingIn(true);
+      hideErr();
+      setTimeout(() => {
+        localStorage.setItem('usuarioAtivo', user);
+        window.location.href = 'dashboard.html';
+      }, 300);
+    } else {
+      showErr('Utilizador ou palavra-passe incorretos.');
+      document.getElementById('c-pass').value = '';
+      document.getElementById('c-pass').focus();
+    }
+  }
+  
+  function validarLoginAdmin() {
+    if(isLoggingIn) return;
+    
+    const pass = document.getElementById('a-pass').value;
+    
+    if(!pass) { 
+      showErr('Preencha a palavra-passe.'); 
+      return; 
+    }
+    
+    if(pass === ADMIN_PASS) {
+      setLoggingIn(true);
+      hideErr();
+      setTimeout(() => {
+        window.location.href = 'admin.html';
+      }, 300);
+    } else {
+      showErr('Palavra-passe incorreta.');
+      document.getElementById('a-pass').value = '';
+      document.getElementById('a-pass').focus();
+    }
+  }
+  
+  function switchToColab() {
+    document.getElementById('tab-colab').classList.add('active');
+    document.getElementById('tab-admin').classList.remove('active');
+    document.getElementById('form-colab').style.display = 'block';
+    document.getElementById('form-admin').style.display = 'none';
+    hideErr();
+    document.getElementById('c-user').focus();
+  }
+  
+  function switchToAdmin() {
+    document.getElementById('tab-admin').classList.add('active');
+    document.getElementById('tab-colab').classList.remove('active');
+    document.getElementById('form-admin').style.display = 'block';
+    document.getElementById('form-colab').style.display = 'none';
+    hideErr();
+    document.getElementById('a-pass').focus();
+  }
+  
+  document.getElementById('btn-colab').addEventListener('click', validarLoginColaborador);
+  document.getElementById('btn-admin').addEventListener('click', validarLoginAdmin);
+  document.getElementById('tab-colab').addEventListener('click', switchToColab);
+  document.getElementById('tab-admin').addEventListener('click', switchToAdmin);
+  
+  document.getElementById('c-user').addEventListener('keypress', function(e) {
+    if(e.key === 'Enter') {
+      e.preventDefault();
+      document.getElementById('c-pass').focus();
+    }
+  });
+  
+  document.getElementById('c-pass').addEventListener('keypress', function(e) {
+    if(e.key === 'Enter') {
+      e.preventDefault();
+      validarLoginColaborador();
+    }
+  });
+  
+  document.getElementById('a-pass').addEventListener('keypress', function(e) {
+    if(e.key === 'Enter') {
+      e.preventDefault();
+      validarLoginAdmin();
+    }
+  });
+
+  // Auto-focus ao carregar
+  window.addEventListener('load', () => {
+    document.getElementById('c-user').focus();
+  });
+</script>
+</body>
+</html>

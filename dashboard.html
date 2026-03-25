@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birkenstock S&CC Portugal — As Minhas Formações</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --birkenstock-blue: #00338D;
+  --birkenstock-blue-dark: #00277A;
+  --birkenstock-gold: #C5A059;
+  --birkenstock-gray: #616365;
+  --birkenstock-beige: #F7F5F0;
+  --border: #D7DEED;
+  --white: #fff;
+  --bg: #F4F7F9;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--birkenstock-beige); color: #1a1a1a; min-height: 100vh; }
+
+header {
+  background: var(--birkenstock-blue);
+  padding: 13px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 10px rgba(0,0,0,.12);
+  border-bottom: 2px solid var(--birkenstock-gold);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+header .logo-text {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: white;
+}
+header .logo-text small {
+  font-size: 0.7rem;
+  font-weight: 400;
+  display: block;
+  color: rgba(255,255,255,0.7);
+}
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: rgba(255,255,255,.85);
+  font-size: 13px;
+  font-weight: 600;
+}
+.user-info-box {
+  background: rgba(255,255,255,0.1);
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+.btn-logout {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.btn-logout:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+.hero {
+  background: linear-gradient(135deg, var(--birkenstock-blue), var(--birkenstock-blue-dark));
+  color: #fff;
+  padding: 48px 40px;
+}
+.hero-inner { max-width: 1100px; margin: 0 auto; }
+.hero h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+.hero p { font-size: 14px; opacity: .75; }
+
+.main { max-width: 1100px; margin: 0 auto; padding: 32px 40px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background: var(--white);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,51,141,.07);
+  transition: all .2s;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 4px solid var(--birkenstock-gold);
+  cursor: pointer;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,51,141,.12);
+}
+.card-img {
+  height: 140px;
+  background: linear-gradient(135deg, var(--birkenstock-blue), var(--birkenstock-blue-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+}
+.card-body { padding: 20px; flex: 1; }
+.cat {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--birkenstock-gold);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 8px;
+}
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--birkenstock-blue);
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+.card-desc {
+  font-size: 13px;
+  color: var(--birkenstock-gray);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.card-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--birkenstock-gray);
+  background: var(--bg);
+}
+.btn-enter {
+  display: inline-block;
+  background: var(--birkenstock-blue);
+  color: #fff;
+  text-align: center;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all .2s;
+  margin: 8px 20px 0;
+  width: calc(100% - 40px);
+  border: none;
+  cursor: pointer;
+}
+.btn-enter:hover { 
+  background: var(--birkenstock-blue-dark);
+  transform: translateY(-2px);
+}
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,51,141,.07);
+}
+.empty-state-icon { font-size: 64px; margin-bottom: 16px; }
+.empty-state h3 { color: var(--birkenstock-blue); margin-bottom: 8px; }
+.empty-state p { color: var(--birkenstock-gray); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-text">
+    BIRKENSTOCK
+    <small>S&CC PORTUGAL</small>
+  </div>
+  <div class="user-info">
+    <div class="user-info-box" id="user-info">Carregando...</div>
+    <button class="btn-logout" onclick="fazerLogout()">🚪 Sair</button>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <h1>As Minhas Formações HSE</h1>
+    <p>Bem-vindo ao centro de formação Birkenstock S&CC Portugal. Escolha um módulo para continuar.</p>
+  </div>
+</div>
+
+<div class="main">
+  <div class="grid" id="cursos-grid"></div>
+</div>
+
+<script>
+  function carregarFormacoes() {
+    const grid = document.getElementById('cursos-grid');
+    const nomeUser = localStorage.getItem('usuarioAtivo') || 'Colaborador';
+    document.getElementById('user-info').textContent = 'Olá, ' + nomeUser;
+    
+    let cursos = [];
+    try {
+      cursos = JSON.parse(localStorage.getItem('listaCursos') || '[]');
+      // Validar integridade dos cursos
+      if(!Array.isArray(cursos)) cursos = [];
+    } catch(e) {
+      console.error('Erro ao carregar cursos:', e);
+      cursos = [];
+    }
+    
+    if(cursos.length === 0) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+        <div class="empty-state-icon">📚</div>
+        <h3>Nenhuma formação disponível</h3>
+        <p>No momento não há formações atribuídas. Aguarde novas instruções do administrador.</p>
+      </div>`;
+      return;
+    }
+    
+    grid.innerHTML = cursos.map((curso, idx) => {
+      // Validar dados do curso
+      if(!curso || !curso.nome) return '';
+      
+      const nomeCurso = curso.nome || 'Sem título';
+      const descricao = curso.descricao || 'Formação obrigatória de segurança, saúde e ambiente.';
+      const duracao = curso.duracao || '30 minutos';
+      const categoria = curso.cat || 'HSE';
+      
+      return `
+        <div class="card" onclick="entrarFormacao(${idx})">
+          <div class="card-img">📋</div>
+          <div class="card-body">
+            <div class="cat">${categoria}</div>
+            <div class="card-title">${nomeCurso}</div>
+            <div class="card-desc">${descricao}</div>
+          </div>
+          <div class="card-footer">
+            <span>⏱️ ${duracao}</span>
+            <span>✅ Disponível</span>
+          </div>
+          <button class="btn-enter">Entrar no Módulo</button>
+        </div>
+      `;
+    }).join('');
+  }
+  
+  function entrarFormacao(idx) {
+    let cursos = [];
+    try {
+      cursos = JSON.parse(localStorage.getItem('listaCursos') || '[]');
+    } catch(e) {}
+    
+    if(idx < 0 || idx >= cursos.length) {
+      alert('Erro ao aceder à formação. Por favor, tente novamente.');
+      return;
+    }
+    
+    const curso = cursos[idx];
+    
+    if(!curso || !curso.nome) {
+      alert('Formação inválida.');
+      return;
+    }
+    
+    localStorage.setItem('cursoAtualNome', curso.nome);
+    localStorage.setItem('cursoAtualDuracao', curso.duracao || '30 minutos');
+    localStorage.setItem('cursoAtualDesc', curso.descricao || '');
+    localStorage.setItem('cursoAtualModulos', JSON.stringify(curso.modulos || []));
+    localStorage.setItem('cursoAtualPerguntas', JSON.stringify(curso.perguntas || []));
+    
+    window.location.href = 'formacao_colaborador.html';
+  }
+  
+  function fazerLogout() {
+    if(confirm('Tem a certeza que deseja sair?')) {
+      localStorage.removeItem('usuarioAtivo');
+      localStorage.removeItem('cursoAtualNome');
+      localStorage.removeItem('cursoAtualDuracao');
+      localStorage.removeItem('cursoAtualDesc');
+      localStorage.removeItem('cursoAtualModulos');
+      localStorage.removeItem('cursoAtualPerguntas');
+      window.location.href = 'login.html';
+    }
+  }
+  
+  window.addEventListener('load', carregarFormacoes);
+</script>
+</body>
+</html>
