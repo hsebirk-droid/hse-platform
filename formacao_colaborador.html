@@ -624,8 +624,8 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
         <div class="section-header" onclick="toggleSection(${module.id})">
           <div class="s-num" id="num-${module.id}">${module.id}</div>
           <div class="s-info">
-            <div class="s-title">Módulo ${module.id} — ${module.titulo}</div>
-            <div class="s-meta">${module.tipo === 'video' ? '🎬 Vídeo' : module.tipo === 'file' ? '📁 Ficheiro' : '📄 Texto'} · ${module.duracao}</div>
+<div class="s-title">Módulo ${module.id} — ${module.titulo}</div>
+<div class="s-meta">${module.tipo === 'video' ? '🎬 Vídeo' : module.tipo === 'file' ? '📁 Ficheiro' : '📄 Texto'} · ${module.duracao}</div>
           </div>
           <div class="s-status" id="status-${module.id}">${isLocked ? '🔒' : '▶'}</div>
         </div>
