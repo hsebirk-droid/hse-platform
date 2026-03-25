@@ -599,29 +599,82 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
 
   // ==================== ATRIBUIÇÃO ====================
   function atualizarSelectores(){
-    const cursos=JSON.parse(localStorage.getItem('listaCursos')||'[]');
-    document.getElementById('atribuir-curso').innerHTML='<option value="">Selecione</option>'+cursos.map(c=>`<option value="${c.id}">${c.nome}</option>`).join('');
+    const cursos = JSON.parse(localStorage.getItem('listaCursos')||'[]');
+    document.getElementById('atribuir-curso').innerHTML='<option value="">Selecione uma formação</option>'+cursos.map(c=>`<option value="${c.id}">${c.nome}</option>`).join('');
     const colabGrid=document.getElementById('colab-selector-grid');
-    colabGrid.innerHTML=colaboradores.map(c=>`<label class="colab-check"><input type="checkbox" value="${c.user}" data-email="${c.email||''}"> ${c.user}</label>`).join('');
+    colabGrid.innerHTML=colaboradores.map(c=>`<label class="colab-check"><input type="checkbox" value="${c.user}" data-email="${c.email||''}" data-nome="${c.user}"> ${c.user} ${c.email?`(${c.email})`:''}</label>`).join('');
   }
+  
   function selecionarTodos(){ document.querySelectorAll('#colab-selector-grid input').forEach(cb=>cb.checked=true); }
   function deselecionarTodos(){ document.querySelectorAll('#colab-selector-grid input').forEach(cb=>cb.checked=false); }
+  
   function gerarLinks(){
-    const cursoId=document.getElementById('atribuir-curso').value; if(!cursoId){alert('Selecione uma formação');return;}
-    const selected=Array.from(document.querySelectorAll('#colab-selector-grid input:checked')).map(cb=>({user:cb.value,email:cb.dataset.email}));
-    if(!selected.length){alert('Selecione colaboradores');return;}
-    const baseUrl=window.location.origin+window.location.pathname.replace('admin.html','')+'formacao_colaborador.html';
-    const links=selected.map(c=>{const token=btoa(`${c.user}|${Date.now()}`).replace(/=/g,''); const link=`${baseUrl}?token=${token}&curso=${cursoId}`; localStorage.setItem(`token_${token}`,JSON.stringify({user:c.user,cursoId})); return{user:c.user,email:c.email,link};});
-    document.getElementById('links-list').innerHTML=links.map(l=>`<div class="item-card"><div class="item-card-info"><strong>${l.user}</strong><div style="font-size:11px;word-break:break-all;">${l.link}</div></div><button onclick="copiarLink('${l.link}')">📋 Copiar</button></div>`).join('');
-    document.getElementById('links-gerados').style.display='block';
+    const cursoId = document.getElementById('atribuir-curso').value;
+    if(!cursoId){ alert('Selecione uma formação.'); return; }
+    
+    // Buscar o curso completo
+    const cursos = JSON.parse(localStorage.getItem('listaCursos')||'[]');
+    const curso = cursos.find(c => c.id == cursoId);
+    if(!curso){ alert('Formação não encontrada.'); return; }
+    
+    const selected = Array.from(document.querySelectorAll('#colab-selector-grid input:checked')).map(cb => ({ 
+      user: cb.value, 
+      email: cb.dataset.email,
+      nome: cb.dataset.nome || cb.value
+    }));
+    
+    if(!selected.length){ alert('Selecione pelo menos um colaborador.'); return; }
+    
+    const baseUrl = window.location.origin + window.location.pathname.replace('admin.html', '') + 'formacao_colaborador.html';
+    const links = selected.map(c => {
+      // Criar token único com ID da formação e nome do colaborador
+      const tokenData = { user: c.user, cursoId: cursoId, cursoNome: curso.nome, timestamp: Date.now() };
+      const token = btoa(JSON.stringify(tokenData)).replace(/=/g, '');
+      const link = `${baseUrl}?token=${token}`;
+      
+      // Guardar token no localStorage para validação
+      localStorage.setItem(`token_${token}`, JSON.stringify(tokenData));
+      
+      return { user: c.user, email: c.email, link, cursoNome: curso.nome };
+    });
+    
+    document.getElementById('links-list').innerHTML = links.map(l => `
+      <div class="item-card">
+        <div class="item-card-info">
+          <strong>${l.user}</strong><br>
+          <span style="font-size:11px;color:var(--birkenstock-gray)">Formação: ${l.cursoNome}</span>
+          <div style="font-size:11px;word-break:break-all;margin-top:4px;">${l.link}</div>
+        </div>
+        <div class="item-card-actions">
+          <button onclick="copiarLink('${l.link}')" style="color:var(--info)">📋 Copiar</button>
+        </div>
+      </div>
+    `).join('');
+    
+    document.getElementById('links-gerados').style.display = 'block';
+    alert(`✅ ${links.length} link(s) gerados com sucesso! Copie e envie para os colaboradores.`);
     return links;
   }
-  function copiarLink(link){ navigator.clipboard.writeText(link); alert('Link copiado!'); }
+  
+  function copiarLink(link){ 
+    navigator.clipboard.writeText(link); 
+    alert('Link copiado para a área de transferência!'); 
+  }
+  
   function enviarEmails(){
-    const links=gerarLinks(); if(!links) return;
-    const prazo=document.getElementById('atribuir-prazo').value;
-    const cursoNome=document.getElementById('atribuir-curso').selectedOptions[0]?.text||'Formação';
-    links.forEach(l=>{ if(l.email){ const assunto=encodeURIComponent(`[SSA] Formação atribuída - ${cursoNome}`); const corpo=encodeURIComponent(`Olá ${l.user},\n\nFoi-lhe atribuída a formação "${cursoNome}".\n\nLink: ${l.link}\nPrazo: ${prazo||'30 dias'}\n\nAtenciosamente,\nEquipa SSA`); window.open(`mailto:${l.email}?subject=${assunto}&body=${corpo}`); } else alert(`Colaborador ${l.user} sem email. Link: ${l.link}`); });
+    const links = gerarLinks();
+    if(!links) return;
+    const prazo = document.getElementById('atribuir-prazo').value;
+    
+    links.forEach(l => {
+      if(l.email){
+        const assunto = encodeURIComponent(`[SSA] Nova formação atribuída - ${l.cursoNome}`);
+        const corpo = encodeURIComponent(`Olá ${l.user},\n\nFoi-lhe atribuída a formação "${l.cursoNome}" na plataforma SSA.\n\nLink de acesso: ${l.link}\nPrazo para conclusão: ${prazo || '30 dias'}\n\nAtenciosamente,\nEquipa SSA - Birkenstock Portugal`);
+        window.open(`mailto:${l.email}?subject=${assunto}&body=${corpo}`);
+      } else {
+        alert(`Colaborador ${l.user} não tem email cadastrado. Link: ${l.link}`);
+      }
+    });
   }
 
   // ==================== PUBLICAÇÃO ====================
