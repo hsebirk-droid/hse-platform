@@ -151,12 +151,8 @@ body {
   color: #1a1a1a;
   font-size: 14px;
   outline: none;
-  transition: border-color .15s;
 }
-.fg input:focus { 
-  border-color: var(--birkenstock-blue);
-  box-shadow: 0 0 0 3px rgba(0,51,141,0.1);
-}
+.fg input:focus { border-color: var(--birkenstock-blue); }
 
 .errmsg {
   background: var(--danger-bg);
@@ -167,12 +163,6 @@ body {
   color: var(--danger);
   margin-bottom: 14px;
   display: none;
-  animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 .btnlogin {
@@ -190,15 +180,7 @@ body {
   transition: all .2s;
   margin-top: 4px;
 }
-.btnlogin:hover:not(:disabled) { 
-  background: var(--birkenstock-blue-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,51,141,0.2);
-}
-.btnlogin:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
+.btnlogin:hover { background: var(--birkenstock-blue-dark); }
 
 .footer {
   padding: 20px 40px;
@@ -248,11 +230,11 @@ body {
       <div id="form-colab">
         <div class="fg">
           <label>Utilizador</label>
-          <input type="text" id="c-user" placeholder="nome.apelido" autocomplete="username">
+          <input type="text" id="c-user" placeholder="nome.apelido">
         </div>
         <div class="fg">
           <label>Palavra-passe</label>
-          <input type="password" id="c-pass" placeholder="••••••••" autocomplete="current-password">
+          <input type="password" id="c-pass" placeholder="••••••••">
         </div>
         <button class="btnlogin" id="btn-colab">Entrar</button>
       </div>
@@ -264,7 +246,7 @@ body {
         </div>
         <div class="fg">
           <label>Palavra-passe</label>
-          <input type="password" id="a-pass" placeholder="••••••••" autocomplete="current-password">
+          <input type="password" id="a-pass" placeholder="••••••••">
         </div>
         <button class="btnlogin" id="btn-admin">Entrar como Gestor</button>
       </div>
@@ -280,20 +262,36 @@ body {
   </div>
 </div>
 
-<script>
-  let ADMIN_PASS = 'SSA2024admin';
-  let isLoggingIn = false;
-  
-  try {
-    const adminConfig = JSON.parse(localStorage.getItem('admin_config') || '{}');
-    if(adminConfig.adminPassword) ADMIN_PASS = adminConfig.adminPassword;
-  } catch(e) {}
-  
-  const colaboradoresBase = {
-    "joao.silva": "pass123",
-    "maria.santos": "ssa456",
-    "carlos.ferreira": "7890"
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAwywvboQgWqkrZlbwrUPdaUq-gLnWM64E",
+    authDomain: "plataforma-ssa-3130e.firebaseapp.com",
+    projectId: "plataforma-ssa-3130e",
+    storageBucket: "plataforma-ssa-3130e.firebasestorage.app",
+    messagingSenderId: "850671249674",
+    appId: "1:850671249674:web:53a115408f8006745c32f3"
   };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  window.db = db;
+  window.auth = auth;
+  window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+  window.collection = collection;
+  window.getDocs = getDocs;
+  window.query = query;
+  window.where = where;
+</script>
+
+<script>
+  let isLoggingIn = false;
   
   function showErr(msg) {
     const err = document.getElementById('errmsg');
@@ -306,39 +304,7 @@ body {
     document.getElementById('errmsg').style.display = 'none'; 
   }
   
-  function setLoggingIn(state) {
-    isLoggingIn = state;
-    document.getElementById('btn-colab').disabled = state;
-    document.getElementById('btn-admin').disabled = state;
-    if(state) {
-      document.getElementById('btn-colab').textContent = 'A carregar...';
-      document.getElementById('btn-admin').textContent = 'A carregar...';
-    } else {
-      document.getElementById('btn-colab').textContent = 'Entrar';
-      document.getElementById('btn-admin').textContent = 'Entrar como Gestor';
-    }
-  }
-  
-  function getTodosColaboradores() {
-    let colaboradores = { ...colaboradoresBase };
-    try {
-      const extra = JSON.parse(localStorage.getItem('listaColaboradores') || '[]');
-      if(Array.isArray(extra)) {
-        extra.forEach(c => { 
-          if(c && c.user && c.pass) {
-            colaboradores[c.user] = c.pass; 
-          }
-        });
-      } else if(typeof extra === 'object') {
-        Object.assign(colaboradores, extra);
-      }
-    } catch(e) {
-      console.error('Erro ao carregar colaboradores:', e);
-    }
-    return colaboradores;
-  }
-  
-  function validarLoginColaborador() {
+  async function validarLoginColaborador() {
     if(isLoggingIn) return;
     
     const user = document.getElementById('c-user').value.toLowerCase().trim();
@@ -349,24 +315,38 @@ body {
       return; 
     }
     
-    if(user.length < 3) {
-      showErr('Utilizador deve ter pelo menos 3 caracteres.');
-      return;
-    }
+    isLoggingIn = true;
+    document.getElementById('btn-colab').disabled = true;
+    document.getElementById('btn-colab').textContent = 'A carregar...';
     
-    const colaboradores = getTodosColaboradores();
-    
-    if(colaboradores[user] && colaboradores[user] === pass) {
-      setLoggingIn(true);
-      hideErr();
-      setTimeout(() => {
-        localStorage.setItem('usuarioAtivo', user);
-        window.location.href = 'dashboard.html';
-      }, 300);
-    } else {
-      showErr('Utilizador ou palavra-passe incorretos.');
-      document.getElementById('c-pass').value = '';
-      document.getElementById('c-pass').focus();
+    try {
+      // Buscar colaborador no Firebase
+      const q = query(window.collection(window.db, 'colaboradores'), window.where('user', '==', user));
+      const querySnapshot = await window.getDocs(q);
+      
+      let found = false;
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if(data.pass === pass) {
+          found = true;
+          localStorage.setItem('usuarioAtivo', user);
+          window.location.href = 'dashboard.html';
+        }
+      });
+      
+      if(!found) {
+        showErr('Utilizador ou palavra-passe incorretos.');
+        document.getElementById('c-pass').value = '';
+        isLoggingIn = false;
+        document.getElementById('btn-colab').disabled = false;
+        document.getElementById('btn-colab').textContent = 'Entrar';
+      }
+    } catch(error) {
+      console.error('Erro no login:', error);
+      showErr('Erro ao conectar à base de dados.');
+      isLoggingIn = false;
+      document.getElementById('btn-colab').disabled = false;
+      document.getElementById('btn-colab').textContent = 'Entrar';
     }
   }
   
@@ -380,16 +360,15 @@ body {
       return; 
     }
     
+    // Admin password fixa por enquanto (pode ser movida para Firebase depois)
+    const ADMIN_PASS = 'SSA2024admin';
+    
     if(pass === ADMIN_PASS) {
-      setLoggingIn(true);
-      hideErr();
-      setTimeout(() => {
-        window.location.href = 'admin.html';
-      }, 300);
+      localStorage.setItem('usuarioAdmin', 'admin');
+      window.location.href = 'admin.html';
     } else {
       showErr('Palavra-passe incorreta.');
       document.getElementById('a-pass').value = '';
-      document.getElementById('a-pass').focus();
     }
   }
   
@@ -399,7 +378,6 @@ body {
     document.getElementById('form-colab').style.display = 'block';
     document.getElementById('form-admin').style.display = 'none';
     hideErr();
-    document.getElementById('c-user').focus();
   }
   
   function switchToAdmin() {
@@ -408,7 +386,6 @@ body {
     document.getElementById('form-admin').style.display = 'block';
     document.getElementById('form-colab').style.display = 'none';
     hideErr();
-    document.getElementById('a-pass').focus();
   }
   
   document.getElementById('btn-colab').addEventListener('click', validarLoginColaborador);
@@ -416,30 +393,11 @@ body {
   document.getElementById('tab-colab').addEventListener('click', switchToColab);
   document.getElementById('tab-admin').addEventListener('click', switchToAdmin);
   
-  document.getElementById('c-user').addEventListener('keypress', function(e) {
-    if(e.key === 'Enter') {
-      e.preventDefault();
-      document.getElementById('c-pass').focus();
-    }
-  });
-  
   document.getElementById('c-pass').addEventListener('keypress', function(e) {
-    if(e.key === 'Enter') {
-      e.preventDefault();
-      validarLoginColaborador();
-    }
+    if(e.key === 'Enter') validarLoginColaborador();
   });
-  
   document.getElementById('a-pass').addEventListener('keypress', function(e) {
-    if(e.key === 'Enter') {
-      e.preventDefault();
-      validarLoginAdmin();
-    }
-  });
-
-  // Auto-focus ao carregar
-  window.addEventListener('load', () => {
-    document.getElementById('c-user').focus();
+    if(e.key === 'Enter') validarLoginAdmin();
   });
 </script>
 </body>
