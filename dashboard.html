@@ -168,6 +168,7 @@ header .logo-text small {
   background: var(--white);
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0,51,141,.07);
+  grid-column: 1 / -1;
 }
 .empty-state-icon { font-size: 64px; margin-bottom: 16px; }
 .empty-state h3 { color: var(--birkenstock-blue); margin-bottom: 8px; }
@@ -176,6 +177,14 @@ header .logo-text small {
   text-align: center;
   padding: 60px;
   color: var(--birkenstock-gray);
+}
+
+@media (max-width: 768px) {
+  header { padding: 13px 20px; }
+  .hero { padding: 32px 20px; }
+  .hero h1 { font-size: 22px; }
+  .main { padding: 24px 20px; }
+  .grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -232,12 +241,22 @@ header .logo-text small {
   const loadingDiv = document.getElementById('loading');
   const gridDiv = document.getElementById('cursos-grid');
 
+  // Verificar autenticação
+  window.addEventListener('load', function() {
+    const usuarioAtivo = localStorage.getItem('usuarioAtivo');
+    if(!usuarioAtivo) {
+      window.location.href = 'login.html';
+      return;
+    }
+    carregarFormacoes();
+  });
+
   async function carregarFormacoes() {
     loadingDiv.style.display = 'block';
     gridDiv.style.display = 'none';
     
     const nomeUser = localStorage.getItem('usuarioAtivo') || 'Colaborador';
-    document.getElementById('user-info').textContent = 'Olá, ' + nomeUser;
+    document.getElementById('user-info').textContent = 'Olá, ' + nomeUser.charAt(0).toUpperCase() + nomeUser.slice(1);
     
     try {
       const q = window.query(window.collection(window.db, 'formacoes'), window.orderBy('dataTimestamp', 'desc'));
@@ -251,7 +270,7 @@ header .logo-text small {
       loadingDiv.style.display = 'none';
       
       if(cursos.length === 0) {
-        gridDiv.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+        gridDiv.innerHTML = `<div class="empty-state">
           <div class="empty-state-icon">📚</div>
           <h3>Nenhuma formação disponível</h3>
           <p>No momento não há formações atribuídas. Aguarde novas instruções do administrador.</p>
@@ -265,6 +284,7 @@ header .logo-text small {
         const descricao = curso.descricao || 'Formação obrigatória de segurança, saúde e ambiente.';
         const duracao = curso.duracao || '30 minutos';
         const categoria = curso.cat || 'HSE';
+        const modulos = curso.modulos ? curso.modulos.length : 0;
         
         return `
           <div class="card" onclick="entrarFormacao('${curso.id}')">
@@ -276,7 +296,7 @@ header .logo-text small {
             </div>
             <div class="card-footer">
               <span>⏱️ ${duracao}</span>
-              <span>✅ Disponível</span>
+              <span>📖 ${modulos} módulo(s)</span>
             </div>
             <button class="btn-enter">Entrar no Módulo</button>
           </div>
@@ -286,8 +306,8 @@ header .logo-text small {
       
     } catch(error) {
       console.error('Erro ao carregar formações:', error);
-      loadingDiv.innerHTML = '❌ Erro ao carregar formações. Tente novamente mais tarde.';
-      loadingDiv.style.color = 'var(--danger)';
+      loadingDiv.innerHTML = '❌ Erro ao carregar formações. Tente novamente mais tarde. Erro: ' + error.message;
+      loadingDiv.style.color = '#dc2626';
     }
   }
   
@@ -299,12 +319,14 @@ header .logo-text small {
   function fazerLogout() {
     if(confirm('Tem a certeza que deseja sair?')) {
       localStorage.removeItem('usuarioAtivo');
+      localStorage.removeItem('usuarioColaboradorId');
       localStorage.removeItem('cursoAtualId');
       window.location.href = 'login.html';
     }
   }
   
-  window.addEventListener('load', carregarFormacoes);
+  window.entrarFormacao = entrarFormacao;
+  window.fazerLogout = fazerLogout;
 </script>
 </body>
 </html>
