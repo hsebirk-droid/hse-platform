@@ -439,12 +439,12 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     <div class="sec-head"><h2>📊 Histórico de Formações</h2><div><button class="btn-sm" onclick="exportarHistoricoCSV()">📥 CSV</button><button class="btn-sm" onclick="exportarHistoricoExcel()">📊 Excel</button></div></div>
     <div class="sec-body">
       <div style="overflow-x:auto;">
-        <table>
+         <table>
           <thead>
-            <tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr>
+             <tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr>
           </thead>
           <tbody id="lista-notas"></tbody>
-        </table>
+         </table>
       </div>
       <button id="btn-limpar" class="btn-sm btn-danger" style="margin-top:16px;">🗑️ Limpar Histórico</button>
     </div>
@@ -521,7 +521,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
 
 <script>
   // ==================== CONFIGURAÇÃO GOOGLE DRIVE ====================
-  // IMPORTANTE: Substitua pelas suas credenciais do Google Cloud Console
   const GOOGLE_API_KEY = "AIzaSyBtmUuPZNAvT6_9axKHvI4UbbV-JSINNYA";
   const GOOGLE_CLIENT_ID = "850671249674-gacp4320iurln55u9cn8g248utk14kp0.apps.googleusercontent.com";
   
@@ -537,10 +536,9 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
 
   // ==================== FUNÇÕES GOOGLE DRIVE ====================
   
-  // Inicializar a API do Google
   function initGoogleAPI() {
     if (typeof gapi === 'undefined') {
-      console.error('API do Google não carregada');
+      console.log('Aguardando API do Google carregar...');
       setTimeout(initGoogleAPI, 1000);
       return;
     }
@@ -554,25 +552,20 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       }).then(() => {
         console.log('✅ Google Drive API inicializada');
         googleAuthInstance = gapi.auth2.getAuthInstance();
-        
-        // Verificar estado da autenticação
         googleIsSignedIn = googleAuthInstance.isSignedIn.get();
         atualizarStatusGoogle();
-        
-        // Ouvir mudanças no estado de autenticação
         googleAuthInstance.isSignedIn.listen(estado => {
           googleIsSignedIn = estado;
           atualizarStatusGoogle();
         });
-        
       }).catch(error => {
         console.error('Erro ao inicializar Google API:', error);
-        document.getElementById('google-status-text').textContent = '❌ Erro ao conectar ao Google Drive';
+        const statusDiv = document.getElementById('google-status-text');
+        if (statusDiv) statusDiv.textContent = '❌ Erro ao conectar ao Google Drive';
       });
     });
   }
   
-  // Atualizar a interface com o estado do Google Drive
   function atualizarStatusGoogle() {
     const statusDiv = document.getElementById('google-auth-status');
     const statusText = document.getElementById('google-status-text');
@@ -589,17 +582,16 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       const email = profile.getEmail();
       statusText.innerHTML = `✅ Autenticado como: <strong>${email}</strong> (ficheiros guardados no Google Drive)`;
       statusText.className = 'status-text success';
-      loginBtn.style.display = 'none';
-      logoutBtn.style.display = 'inline-block';
+      if (loginBtn) loginBtn.style.display = 'none';
+      if (logoutBtn) logoutBtn.style.display = 'inline-block';
     } else {
       statusText.innerHTML = '⚠️ Não autenticado. Autentique-se para guardar ficheiros no Google Drive.';
       statusText.className = 'status-text';
-      loginBtn.style.display = 'inline-block';
-      logoutBtn.style.display = 'none';
+      if (loginBtn) loginBtn.style.display = 'inline-block';
+      if (logoutBtn) logoutBtn.style.display = 'none';
     }
   }
   
-  // Autenticar com Google Drive
   function autenticarGoogleDrive() {
     if (!googleAuthInstance) {
       alert('A carregar API do Google... Aguarde um momento');
@@ -615,7 +607,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     });
   }
   
-  // Desautenticar do Google Drive
   function desautenticarGoogleDrive() {
     if (googleAuthInstance) {
       googleAuthInstance.signOut().then(() => {
@@ -625,7 +616,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     }
   }
   
-  // Upload de ficheiro para o Google Drive
   async function uploadParaGoogleDrive(file) {
     return new Promise((resolve, reject) => {
       if (!googleIsSignedIn || !googleAuthInstance) {
@@ -637,11 +627,10 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       const authResponse = user.getAuthResponse();
       const accessToken = authResponse.access_token;
       
-      // Metadados do ficheiro
       const metadata = {
         name: file.name,
         mimeType: file.type,
-        parents: ['root'] // Pasta raiz do Drive
+        parents: ['root']
       };
       
       const form = new FormData();
@@ -656,7 +645,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       .then(response => response.json())
       .then(data => {
         if (data.id) {
-          // Criar URL pública do ficheiro
           const fileUrl = `https://drive.google.com/uc?export=view&id=${data.id}`;
           resolve({
             id: data.id,
@@ -677,11 +665,10 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     });
   }
   
-  // Função melhorada para upload de ficheiros
   async function uploadFicheiroModulo(files) {
     if(!files || !files[0]) return;
     const file = files[0];
-    const maxSize = 10 * 1024 * 1024; // 10MB
+    const maxSize = 10 * 1024 * 1024;
     
     if (file.size > maxSize) {
       alert(`⚠️ O ficheiro "${file.name}" tem ${Math.round(file.size/1024/1024)}MB. O limite é 10MB.`);
@@ -693,21 +680,16 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     preview.style.color = 'var(--birkenstock-blue)';
     
     try {
-      // Verificar autenticação
       if (!googleIsSignedIn) {
         throw new Error('Necessário autenticar no Google Drive primeiro. Clique em "Autenticar com Google"');
       }
       
-      // Fazer upload para o Google Drive
       const driveFile = await uploadParaGoogleDrive(file);
-      
-      // Guardar informação do ficheiro
       ficheiroTemp = driveFile;
       
       preview.innerHTML = `✅ "${file.name}" guardado no Google Drive! (${Math.round(file.size/1024)} KB)`;
       preview.style.color = 'var(--success)';
       
-      // Mostrar links do ficheiro
       const linkDiv = document.createElement('div');
       linkDiv.style.marginTop = '8px';
       linkDiv.style.fontSize = '11px';
@@ -860,7 +842,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     document.getElementById('modulo-url-externa').value = '';
     document.getElementById('file-preview-modulo').innerHTML = '';
     
-    // Verificar autenticação Google Drive
     if (tipo === 'file' && !googleIsSignedIn) {
       const preview = document.getElementById('file-preview-modulo');
       preview.innerHTML = '⚠️ Para guardar ficheiros, autentique-se no Google Drive primeiro.';
@@ -919,14 +900,12 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       const urlExterna = document.getElementById('modulo-url-externa').value.trim();
       
       if(urlExterna) {
-        // URL externa (pode ser do Google Drive também)
         conteudo = { 
           url: urlExterna,
           tipo: 'external_url',
           isGoogleDrive: urlExterna.includes('drive.google.com')
         };
       } else if(ficheiroTemp && ficheiroTemp.url) {
-        // Ficheiro guardado no Google Drive
         conteudo = { 
           fileId: ficheiroTemp.id,
           fileName: ficheiroTemp.name,
@@ -1239,7 +1218,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   async function renderHistorico() {
     const historico = await carregarHistorico();
     const tbody = document.getElementById('lista-notas');
-    if(!historico.length){ tbody.innerHTML = '<tr><td colspan="6" class="empty">Nenhum resultado registado</td> </tr>'; return; }
+    if(!historico.length){ tbody.innerHTML = '<tr><td colspan="6" class="empty">Nenhum resultado registado</td></tr>'; return; }
     tbody.innerHTML = historico.map(h => `
       <tr>
         <td><strong>${h.nome}</strong></td>
@@ -1344,6 +1323,11 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   setTimeout(() => {
     if (typeof gapi !== 'undefined') {
       initGoogleAPI();
+    } else {
+      console.log('Aguardando API do Google...');
+      setTimeout(() => {
+        if (typeof gapi !== 'undefined') initGoogleAPI();
+      }, 2000);
     }
   }, 500);
 
