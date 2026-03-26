@@ -2,37 +2,269 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Dashboard</title>
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birkenstock S&CC Portugal — As Minhas Formações</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --birkenstock-blue: #00338D;
+  --birkenstock-blue-dark: #00277A;
+  --birkenstock-gold: #C5A059;
+  --birkenstock-gray: #616365;
+  --birkenstock-beige: #F7F5F0;
+  --border: #D7DEED;
+  --white: #fff;
+  --bg: #F4F7F9;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--birkenstock-beige); color: #1a1a1a; min-height: 100vh; }
+
+header {
+  background: var(--birkenstock-blue);
+  padding: 13px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 10px rgba(0,0,0,.12);
+  border-bottom: 2px solid var(--birkenstock-gold);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+header .logo-text {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: white;
+}
+header .logo-text small {
+  font-size: 0.7rem;
+  font-weight: 400;
+  display: block;
+  color: rgba(255,255,255,0.7);
+}
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: rgba(255,255,255,.85);
+  font-size: 13px;
+  font-weight: 600;
+}
+.user-info-box {
+  background: rgba(255,255,255,0.1);
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+.btn-logout {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.hero {
+  background: linear-gradient(135deg, var(--birkenstock-blue), var(--birkenstock-blue-dark));
+  color: #fff;
+  padding: 48px 40px;
+}
+.hero-inner { max-width: 1100px; margin: 0 auto; }
+.hero h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+.hero p { font-size: 14px; opacity: .75; }
+
+.main { max-width: 1100px; margin: 0 auto; padding: 32px 40px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background: var(--white);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,51,141,.07);
+  transition: all .2s;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 4px solid var(--birkenstock-gold);
+  cursor: pointer;
+}
+.card:hover { transform: translateY(-4px); }
+.card-img {
+  height: 140px;
+  background: linear-gradient(135deg, var(--birkenstock-blue), var(--birkenstock-blue-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+}
+.card-body { padding: 20px; flex: 1; }
+.cat {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--birkenstock-gold);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--birkenstock-blue);
+  margin-bottom: 12px;
+}
+.card-desc {
+  font-size: 13px;
+  color: var(--birkenstock-gray);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.card-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--birkenstock-gray);
+  background: var(--bg);
+}
+.btn-enter {
+  display: block;
+  background: var(--birkenstock-blue);
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 8px 20px 0;
+  width: calc(100% - 40px);
+  border: none;
+  cursor: pointer;
+}
+.btn-enter:hover { background: var(--birkenstock-blue-dark); }
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--white);
+  border-radius: 12px;
+}
+.empty-state-icon { font-size: 64px; margin-bottom: 16px; }
+.loading { text-align: center; padding: 60px; color: var(--birkenstock-gray); }
+</style>
 </head>
 <body>
 
 <header>
-  <h1>Dashboard</h1>
-  <button onclick="window.location.href='admin.html'">Admin</button>
+  <div class="logo-text">BIRKENSTOCK<small>S&CC PORTUGAL</small></div>
+  <div class="user-info">
+    <div class="user-info-box" id="user-info">Carregando...</div>
+    <button class="btn-logout" onclick="fazerLogout()">🚪 Sair</button>
+  </div>
 </header>
 
-<div class="container">
-
-  <div class="card">
-    <h2>Formação carregada</h2>
-    <button onclick="abrirFormacao()">Abrir formação</button>
+<div class="hero">
+  <div class="hero-inner">
+    <h1>As Minhas Formações HSE</h1>
+    <p>Bem-vindo ao centro de formação Birkenstock S&CC Portugal.</p>
   </div>
-
-  <iframe id="viewer"></iframe>
-
 </div>
 
-<script>
-function abrirFormacao(){
-  const url = localStorage.getItem("formacaoURL");
-  if(url){
-    document.getElementById("viewer").src = url;
-  }else{
-    alert("Ainda não existe formação carregada.");
-  }
-}
+<div class="main">
+  <div id="loading" class="loading">📚 A carregar formações...</div>
+  <div class="grid" id="cursos-grid" style="display:none;"></div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAwywvboQgWqkrZlbwrUPdaUq-gLnWM64E",
+    authDomain: "plataforma-ssa-3130e.firebaseapp.com",
+    projectId: "plataforma-ssa-3130e",
+    storageBucket: "plataforma-ssa-3130e.firebasestorage.app",
+    messagingSenderId: "850671249674",
+    appId: "1:850671249674:web:53a115408f8006745c32f3"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  window.db = db;
+  window.collection = collection;
+  window.getDocs = getDocs;
+  window.query = query;
+  window.orderBy = orderBy;
 </script>
 
+<script>
+  const loadingDiv = document.getElementById('loading');
+  const gridDiv = document.getElementById('cursos-grid');
+
+  async function carregarFormacoes() {
+    loadingDiv.style.display = 'block';
+    gridDiv.style.display = 'none';
+    
+    const nomeUser = localStorage.getItem('usuarioAtivo') || 'Colaborador';
+    document.getElementById('user-info').textContent = 'Olá, ' + nomeUser;
+    
+    try {
+      const q = window.query(window.collection(window.db, 'formacoes'), window.orderBy('dataTimestamp', 'desc'));
+      const querySnapshot = await window.getDocs(q);
+      
+      const cursos = [];
+      querySnapshot.forEach((doc) => {
+        cursos.push({ id: doc.id, ...doc.data() });
+      });
+      
+      loadingDiv.style.display = 'none';
+      
+      if(cursos.length === 0) {
+        gridDiv.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📚</div><h3>Nenhuma formação disponível</h3><p>Aguarde novas instruções do administrador.</p></div>`;
+        gridDiv.style.display = 'grid';
+        return;
+      }
+      
+      gridDiv.innerHTML = cursos.map(curso => `
+        <div class="card" onclick="entrarFormacao('${curso.id}')">
+          <div class="card-img">📋</div>
+          <div class="card-body">
+            <div class="cat">${curso.cat || 'HSE'}</div>
+            <div class="card-title">${curso.nome || 'Formação'}</div>
+            <div class="card-desc">${curso.descricao || 'Formação obrigatória de segurança.'}</div>
+          </div>
+          <div class="card-footer">
+            <span>⏱️ ${curso.duracao || '30 minutos'}</span>
+            <span>✅ Disponível</span>
+          </div>
+          <button class="btn-enter">Entrar no Módulo</button>
+        </div>
+      `).join('');
+      gridDiv.style.display = 'grid';
+    } catch(error) {
+      console.error('Erro:', error);
+      loadingDiv.innerHTML = '❌ Erro ao carregar formações.';
+    }
+  }
+  
+  function entrarFormacao(cursoId) {
+    localStorage.setItem('cursoAtualId', cursoId);
+    window.location.href = 'formacao_colaborador.html';
+  }
+  
+  function fazerLogout() {
+    if(confirm('Deseja sair?')) {
+      localStorage.removeItem('usuarioAtivo');
+      localStorage.removeItem('cursoAtualId');
+      window.location.href = 'login.html';
+    }
+  }
+  
+  window.addEventListener('load', carregarFormacoes);
+</script>
 </body>
 </html>
