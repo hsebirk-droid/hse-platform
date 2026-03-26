@@ -52,7 +52,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   font-weight: 400;
   display: block;
   color: rgba(255,255,255,0.8);
-  letter-spacing: 1px;
 }
 .deadline-badge {
   background: rgba(255,255,255,0.1);
@@ -169,6 +168,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
 .section-body { padding: 0 24px 24px; border-top: 1px solid var(--birkenstock-border); display: none; }
 .section-body.open { display: block; }
 
+/* Embed de vídeo */
 .video-wrap {
   background: #111;
   border-radius: 10px;
@@ -178,6 +178,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
 }
 .video-wrap iframe { width: 100%; height: 100%; border: none; }
 
+/* Visualizador de PDF */
 .pdf-viewer {
   background: #fafaf8;
   border: 1px solid var(--birkenstock-border);
@@ -196,6 +197,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   gap: 10px;
 }
 .pdf-content { padding: 0; min-height: 500px; max-height: 650px; overflow: auto; background: #f5f5f5; }
+.pdf-iframe { width: 100%; height: 600px; border: none; }
 .pdf-page-container { text-align: center; background: white; margin: 10px; padding: 10px; }
 .pdf-page-container canvas { max-width: 100%; height: auto; }
 .file-download {
@@ -214,16 +216,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
 .file-download:hover { background: var(--birkenstock-blue-dark); }
 
 .text-content { font-size: 0.9rem; line-height: 1.8; color: var(--birkenstock-gray); margin: 20px 0; }
-.text-content h3 { font-family: var(--font-head); font-size: 1rem; color: var(--birkenstock-black); margin: 20px 0 8px; }
-.highlight-box {
-  background: rgba(197,160,89,0.1);
-  border-left: 3px solid var(--birkenstock-gold);
-  border-radius: 0 8px 8px 0;
-  padding: 12px 16px;
-  margin: 16px 0;
-  font-size: 0.85rem;
-  color: var(--birkenstock-blue);
-}
 
 .content-tracker {
   background: var(--info-light);
@@ -266,10 +258,33 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   cursor: pointer;
   transition: all 0.2s;
 }
-.btn-confirm:hover { background: var(--birkenstock-blue-dark); }
-.btn-confirm:disabled { background: var(--birkenstock-gray); cursor: default; }
+.btn-confirm:hover:not(:disabled) { background: var(--birkenstock-blue-dark); }
+.btn-confirm:disabled { background: var(--birkenstock-gray); cursor: not-allowed; }
 .confirmed-label { display: flex; align-items: center; gap: 6px; color: var(--birkenstock-blue); font-size: 0.82rem; font-weight: 600; }
 
+/* Loading spinner */
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.btn-loading {
+  opacity: 0.7;
+  cursor: wait !important;
+}
+.btn-loading .btn-confirm {
+  cursor: wait;
+}
+
+/* Quiz */
 .quiz-wrap { padding: 8px 0; }
 .quiz-intro { background: var(--warning-light); border: 1px solid #f4a291; border-radius: 10px; padding: 16px 20px; margin: 20px 0; }
 .question { margin-bottom: 28px; }
@@ -316,7 +331,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   cursor: pointer;
   transition: all 0.2s;
 }
-.btn-submit:disabled { background: #ccc; cursor: default; }
+.btn-submit:disabled { background: #ccc; cursor: not-allowed; }
 
 .result-screen { text-align: center; padding: 40px 24px; display: none; }
 .result-score-ring {
@@ -395,6 +410,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   transition: all 0.2s;
 }
 .btn-secondary:hover { background: var(--birkenstock-blue); color: white; }
+
 .toast {
   position: fixed;
   bottom: 24px;
@@ -410,11 +426,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   z-index: 1000;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-.loading {
-  text-align: center;
-  padding: 60px;
-  color: var(--birkenstock-gray);
-}
+.loading { text-align: center; padding: 60px; color: var(--birkenstock-gray); }
 
 @media (max-width: 768px) {
   .hero { padding: 32px 20px 40px; }
@@ -429,7 +441,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
 <div class="top-bar">
   <div class="logo">BIRKENSTOCK<span>S&CC PORTUGAL</span></div>
   <div class="user-name" id="user-name-display">Carregando...</div>
-  <div class="deadline-badge">Prazo: <strong id="prazo-data">31 Mar 2026</strong></div>
+  <div class="deadline-badge" id="deadline-badge">Prazo: <strong id="prazo-data">---</strong></div>
 </div>
 
 <div class="hero">
@@ -461,7 +473,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
 
 <div class="toast" id="toast"></div>
 
-<!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
   import { getFirestore, doc, getDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
@@ -494,22 +505,124 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   let cursoId = null;
   let nomeUser = localStorage.getItem('usuarioAtivo') || 'Colaborador';
   let cursoData = { nome: '', duracao: '', descricao: '' };
-  const startTime = new Date();
-
+  let prazoFormacao = '31/12/2026';
+  
   // Configurar PDF.js worker
   if (typeof pdfjsLib !== 'undefined') {
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
   }
 
-  function toast(msg) { 
+  function toast(msg, isError = false) { 
     const t = document.getElementById('toast'); 
     t.textContent = msg; 
+    t.style.background = isError ? 'var(--danger)' : 'var(--birkenstock-black)';
     t.classList.add('show'); 
     setTimeout(() => t.classList.remove('show'), 3500); 
   }
   
+  function showLoading(btnId, isLoading) {
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    if (isLoading) {
+      btn.classList.add('btn-loading');
+      btn.disabled = true;
+      const originalText = btn.innerHTML;
+      btn.setAttribute('data-original-text', originalText);
+      btn.innerHTML = '<span class="loading-spinner"></span> A processar...';
+    } else {
+      btn.classList.remove('btn-loading');
+      btn.disabled = false;
+      const originalText = btn.getAttribute('data-original-text');
+      if (originalText) btn.innerHTML = originalText;
+    }
+  }
+  
   function fmtDate(d) { 
     return d.toLocaleDateString('pt-PT', {day:'2-digit', month:'short', year:'numeric'}); 
+  }
+
+  // Extrair ID do Google Drive a partir da URL
+  function extractGoogleDriveId(url) {
+    const patterns = [
+      /\/file\/d\/([^\/]+)/,
+      /id=([^&]+)/,
+      /\/d\/([^\/]+)/,
+      /uc\?export=view&id=([^&]+)/
+    ];
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) return match[1];
+    }
+    return null;
+  }
+
+  // Gerar embed URL para Google Drive
+  function getGoogleDriveEmbedUrl(url) {
+    const fileId = extractGoogleDriveId(url);
+    if (fileId) {
+      return `https://drive.google.com/file/d/${fileId}/preview`;
+    }
+    return null;
+  }
+
+  // Gerar embed URL para YouTube
+  function getYoutubeEmbedUrl(url) {
+    const patterns = [
+      /youtube\.com\/watch\?v=([^&]+)/,
+      /youtu\.be\/([^?]+)/,
+      /youtube\.com\/embed\/([^?]+)/
+    ];
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) return `https://www.youtube.com/embed/${match[1]}`;
+    }
+    return null;
+  }
+
+  // Verificar se URL é do YouTube
+  function isYoutubeUrl(url) {
+    return url.includes('youtube.com') || url.includes('youtu.be');
+  }
+
+  // Verificar se URL é do Google Drive
+  function isGoogleDriveUrl(url) {
+    return url.includes('drive.google.com');
+  }
+
+  // Verificar se URL é PDF
+  function isPdfUrl(url) {
+    return url.toLowerCase().endsWith('.pdf') || url.includes('.pdf?') || url.includes('/pdf/');
+  }
+
+  // Carregar PDF com embed
+  function renderPdfEmbed(url, containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    // Tentar usar embed do Google Drive se for Drive
+    if (isGoogleDriveUrl(url)) {
+      const embedUrl = getGoogleDriveEmbedUrl(url);
+      if (embedUrl) {
+        container.innerHTML = `<iframe src="${embedUrl}" style="width:100%; height:600px; border:none;" allow="autoplay"></iframe>`;
+        return;
+      }
+    }
+    
+    // Fallback: usar iframe normal
+    container.innerHTML = `<iframe src="${url}" style="width:100%; height:600px; border:none;"></iframe>`;
+  }
+
+  // Renderizar vídeo do YouTube
+  function renderVideoEmbed(url, containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    const embedUrl = getYoutubeEmbedUrl(url);
+    if (embedUrl) {
+      container.innerHTML = `<iframe src="${embedUrl}" frameborder="0" allowfullscreen style="width:100%; height:100%;"></iframe>`;
+    } else {
+      container.innerHTML = `<iframe src="${url}" frameborder="0" allowfullscreen style="width:100%; height:100%;"></iframe>`;
+    }
   }
 
   // ==================== LER TOKEN DA URL ====================
@@ -529,7 +642,8 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
         }
         
         if(tokenData.prazo) {
-          document.getElementById('prazo-data').textContent = tokenData.prazo;
+          prazoFormacao = tokenData.prazo;
+          document.getElementById('prazo-data').textContent = prazoFormacao;
         }
         
         if(tokenData.cursoId) {
@@ -540,57 +654,12 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
       }
     }
     
+    // Prazo padrão se não vier do token
+    document.getElementById('prazo-data').textContent = prazoFormacao;
     return localStorage.getItem('cursoAtualId');
   }
 
-  // ==================== RENDERIZAR PDF ====================
-  async function renderPDF(pdfUrl, containerId) {
-    try {
-      const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
-      const container = document.getElementById(containerId);
-      container.innerHTML = '';
-      
-      const pageCount = pdf.numPages;
-      let currentPage = 1;
-      
-      const renderPage = async (pageNum) => {
-        const page = await pdf.getPage(pageNum);
-        const viewport = page.getViewport({ scale: 1.5 });
-        const pageContainer = document.createElement('div');
-        pageContainer.className = 'pdf-page-container';
-        
-        const canvas = document.createElement('canvas');
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-        
-        const context = canvas.getContext('2d');
-        await page.render({
-          canvasContext: context,
-          viewport: viewport
-        }).promise;
-        
-        pageContainer.appendChild(canvas);
-        container.appendChild(pageContainer);
-      };
-      
-      for(let i = 1; i <= Math.min(pageCount, 5); i++) {
-        await renderPage(i);
-      }
-      
-      if(pageCount > 5) {
-        const moreInfo = document.createElement('div');
-        moreInfo.style.padding = '20px';
-        moreInfo.style.textAlign = 'center';
-        moreInfo.innerHTML = `<p style="color: var(--birkenstock-gray);">+${pageCount - 5} páginas. <a href="${pdfUrl}" target="_blank" style="color: var(--birkenstock-blue); text-decoration: underline;">Ver documento completo</a></p>`;
-        container.appendChild(moreInfo);
-      }
-    } catch(error) {
-      console.error('Erro ao carregar PDF:', error);
-      document.getElementById(containerId).innerHTML = '<div style="padding:20px; text-align:center;"><p style="color: red;">⚠️ Erro ao carregar PDF</p><a href="' + pdfUrl + '" download class="file-download">⬇️ Descarregar PDF</a></div>';
-    }
-  }
-
-  // ==================== CARREGAR FORMAÇÃO DO FIREBASE ====================
+  // ==================== CARREGAR FORMAÇÃO ====================
   async function carregarFormacao(id) {
     const loadingDiv = document.getElementById('loading');
     const modulesContainer = document.getElementById('modules-container');
@@ -660,6 +729,17 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     }
   }
 
+  function markModuleAsViewed(moduleId) {
+    const confirmBtn = document.getElementById(`btn-confirm-${moduleId}`);
+    if (confirmBtn) {
+      confirmBtn.disabled = false;
+    }
+    const fillEl = document.getElementById(`fill-${moduleId}`);
+    const pctEl = document.getElementById(`pct-${moduleId}`);
+    if (fillEl) fillEl.style.width = '100%';
+    if (pctEl) pctEl.textContent = '100%';
+  }
+
   function renderModules() {
     const container = document.getElementById('modules-container');
     container.innerHTML = '';
@@ -676,7 +756,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
         <div class="s-num">${idx + 1}</div>
         <div class="s-info">
           <div class="s-title">${module.titulo || 'Módulo ' + (idx + 1)}</div>
-          <div class="s-meta">${module.tipo === 'video' ? '🎬 Vídeo' : module.tipo === 'text' ? '📄 Texto' : '📁 Conteúdo'} · ${module.duracao || '10 min'}</div>
+          <div class="s-meta">${module.tipo === 'video' ? '🎬 Vídeo' : module.tipo === 'text' ? '📄 Texto' : '📁 Conteúdo'}</div>
         </div>
         <div class="s-status">${completedModules[module.id] ? '✅' : '▶'}</div>
       `;
@@ -687,82 +767,58 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
       body.id = 'body-' + module.id;
       
       let contentDiv = document.createElement('div');
-      let fileHtml = '';
+      let contentHtml = '';
       
-      // CORREÇÃO PRINCIPAL: Verificar todos os tipos corretamente
-      if(module.tipo === 'video' && module.conteudo && module.conteudo.url) {
-        fileHtml = `<div class="video-wrap"><iframe src="${module.conteudo.url}" title="${module.titulo}" allowfullscreen></iframe></div>`;
-        // Simular progresso do vídeo
+      // Processar conteúdo do módulo
+      const conteudo = module.conteudo || {};
+      const url = conteudo.url || '';
+      
+      if (module.tipo === 'video' && url) {
+        contentHtml = `<div class="video-wrap" id="video-${module.id}"></div>`;
+        contentDiv.innerHTML = contentHtml;
         setTimeout(() => {
-          let progress = 0;
-          const interval = setInterval(() => {
-            progress += 2;
-            if(progress >= 100) {
-              clearInterval(interval);
-              const confirmBtn = document.getElementById('btn-confirm-' + module.id);
-              if(confirmBtn) confirmBtn.disabled = false;
-            }
-            const fillEl = document.getElementById('fill-' + module.id);
-            const pctEl = document.getElementById('pct-' + module.id);
-            if(fillEl) fillEl.style.width = Math.min(progress, 100) + '%';
-            if(pctEl) pctEl.textContent = Math.min(progress, 100) + '%';
+          renderVideoEmbed(url, `video-${module.id}`);
+          markModuleAsViewed(module.id);
+        }, 100);
+      }
+      else if (module.tipo === 'file' && url) {
+        if (isYoutubeUrl(url)) {
+          contentHtml = `<div class="video-wrap" id="video-${module.id}"></div>`;
+          contentDiv.innerHTML = contentHtml;
+          setTimeout(() => {
+            renderVideoEmbed(url, `video-${module.id}`);
+            markModuleAsViewed(module.id);
           }, 100);
-        }, 500);
-      } 
-      else if(module.tipo === 'file' && module.conteudo) {
-        // Verificar se é URL externa
-        if(module.conteudo.url) {
-          const url = module.conteudo.url;
-          if(url.toLowerCase().endsWith('.pdf')) {
-            const pdfContainerId = 'pdf-' + module.id;
-            fileHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>📄 ${module.titulo}</span><a href="${url}" download class="file-download">⬇️ Descarregar PDF</a></div><div class="pdf-content" id="${pdfContainerId}"><div style="padding:20px; text-align:center;">A carregar PDF...</div></div></div>`;
-            setTimeout(() => {
-              renderPDF(url, pdfContainerId);
-              const confirmBtn = document.getElementById('btn-confirm-' + module.id);
-              if(confirmBtn) confirmBtn.disabled = false;
-            }, 500);
-          } else {
-            fileHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>📎 ${module.titulo}</span><a href="${url}" target="_blank" class="file-download">🔗 Abrir link</a></div><div class="pdf-content" style="text-align:center; padding:60px;"><div style="font-size:64px;">📄</div><p>Clique no botão para acessar o conteúdo.</p></div></div>`;
-            const confirmBtn = document.getElementById('btn-confirm-' + module.id);
-            if(confirmBtn) confirmBtn.disabled = false;
-          }
-        } 
-        else if(module.conteudo.fileData) {
-          const fileData = module.conteudo.fileData;
-          const fileName = module.conteudo.fileName || 'documento';
-          if(fileName.toLowerCase().endsWith('.pdf')) {
-            fileHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>📄 ${fileName}</span><a href="${fileData}" download class="file-download">⬇️ Descarregar PDF</a></div><div class="pdf-content" id="pdf-${module.id}"><div style="padding:20px;">A carregar...</div></div></div>`;
-            setTimeout(() => {
-              renderPDF(fileData, 'pdf-' + module.id);
-              const confirmBtn = document.getElementById('btn-confirm-' + module.id);
-              if(confirmBtn) confirmBtn.disabled = false;
-            }, 500);
-          } else {
-            fileHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>📎 ${fileName}</span><a href="${fileData}" download class="file-download">⬇️ Descarregar ficheiro</a></div><div class="pdf-content" style="text-align:center; padding:60px;"><div style="font-size:64px;">📄</div><p>Clique no botão para descarregar.</p></div></div>`;
-            const confirmBtn = document.getElementById('btn-confirm-' + module.id);
-            if(confirmBtn) confirmBtn.disabled = false;
-          }
         }
-      } 
-      else if(module.tipo === 'text' && module.conteudo && module.conteudo.texto) {
-        fileHtml = `<div class="text-content">${module.conteudo.texto}</div>`;
-        const confirmBtn = document.getElementById('btn-confirm-' + module.id);
-        if(confirmBtn) confirmBtn.disabled = false;
-        const fillEl = document.getElementById('fill-' + module.id);
-        const pctEl = document.getElementById('pct-' + module.id);
-        if(fillEl) fillEl.style.width = '100%';
-        if(pctEl) pctEl.textContent = '100%';
+        else if (isPdfUrl(url) || isGoogleDriveUrl(url)) {
+          const viewerId = `pdf-viewer-${module.id}`;
+          contentHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>📄 Documento</span><a href="${url}" target="_blank" class="file-download">⬇️ Abrir em nova aba</a></div><div class="pdf-content" id="${viewerId}"><div style="padding:40px; text-align:center;">📄 A carregar documento...</div></div></div>`;
+          contentDiv.innerHTML = contentHtml;
+          setTimeout(() => {
+            renderPdfEmbed(url, viewerId);
+            markModuleAsViewed(module.id);
+          }, 100);
+        }
+        else {
+          contentHtml = `<div class="text-content"><a href="${url}" target="_blank" class="file-download" style="display:inline-block;">🔗 Abrir conteúdo</a><p style="margin-top:16px;">Clique no botão acima para aceder ao conteúdo.</p></div>`;
+          contentDiv.innerHTML = contentHtml;
+          setTimeout(() => markModuleAsViewed(module.id), 500);
+        }
+      }
+      else if (module.tipo === 'text' && conteudo.texto) {
+        contentHtml = `<div class="text-content">${conteudo.texto}</div>`;
+        contentDiv.innerHTML = contentHtml;
+        setTimeout(() => markModuleAsViewed(module.id), 500);
       }
       else {
-        fileHtml = `<div class="text-content"><p>Conteúdo não disponível ou formato não suportado.</p></div>`;
-        const confirmBtn = document.getElementById('btn-confirm-' + module.id);
-        if(confirmBtn) confirmBtn.disabled = false;
+        contentHtml = `<div class="text-content"><p>Conteúdo não disponível.</p></div>`;
+        contentDiv.innerHTML = contentHtml;
+        setTimeout(() => markModuleAsViewed(module.id), 500);
       }
       
-      contentDiv.innerHTML = fileHtml;
       body.appendChild(contentDiv);
       
-      // Adicionar tracker
+      // Tracker de progresso
       const trackerDiv = document.createElement('div');
       trackerDiv.className = 'content-tracker';
       trackerDiv.innerHTML = `
@@ -770,7 +826,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
         <div style="flex:1"><div class="track-prog"><div class="track-fill" id="fill-${module.id}" style="width:0%"></div></div></div>
         <span id="pct-${module.id}" style="font-size:0.78rem;font-weight:600">0%</span>
       `;
-      body.insertBefore(trackerDiv, contentDiv);
+      body.appendChild(trackerDiv);
       
       const confirmDiv = document.createElement('div');
       confirmDiv.className = 'confirm-viewed';
@@ -794,31 +850,38 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     renderQuiz();
   }
   
-  function confirmModule(moduleId) {
+  async function confirmModule(moduleId) {
+    showLoading(`btn-confirm-${moduleId}`, true);
+    
+    // Simular pequeno delay para feedback visual
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     completedModules[moduleId] = true;
     const block = document.getElementById('block-' + moduleId);
     block.classList.add('completed');
     const confirmBtn = document.getElementById('btn-confirm-' + moduleId);
-    if(confirmBtn) confirmBtn.style.display = 'none';
+    if (confirmBtn) confirmBtn.style.display = 'none';
     const confirmedDiv = document.getElementById('confirmed-' + moduleId);
-    if(confirmedDiv) confirmedDiv.style.display = 'flex';
+    if (confirmedDiv) confirmedDiv.style.display = 'flex';
     toast('✅ Módulo concluído!');
     updateProgress();
     
     const idx = modules.findIndex(m => m.id === moduleId);
-    if(idx < modules.length - 1) {
+    if (idx < modules.length - 1) {
       const nextBlock = document.getElementById('block-' + modules[idx + 1].id);
-      if(nextBlock) nextBlock.classList.remove('locked');
+      if (nextBlock) nextBlock.classList.remove('locked');
       toast('📚 Próximo módulo desbloqueado!');
     } else {
       const quizBlock = document.getElementById('block-quiz');
-      if(quizBlock) {
+      if (quizBlock) {
         quizBlock.classList.remove('locked');
         const statusQuiz = document.getElementById('status-quiz');
-        if(statusQuiz) statusQuiz.textContent = '📝';
+        if (statusQuiz) statusQuiz.textContent = '📝';
         toast('📝 Avaliação desbloqueada!');
       }
     }
+    
+    showLoading(`btn-confirm-${moduleId}`, false);
   }
   
   function renderQuiz() {
@@ -862,7 +925,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     `;
     container.appendChild(quizBlock);
     
-    if(perguntas.length === 0) {
+    if(!perguntas.length) {
       perguntas = [
         { texto: "Qual é a melhor forma de aprender um novo conceito?", opcoes: ["Praticar diariamente", "Apenas ler", "Decorar", "Ignorar"], correta: "A" },
         { texto: "O que é importante para o desenvolvimento profissional?", opcoes: ["Formação contínua", "Estagnação", "Falta de interesse", "Desmotivação"], correta: "A" },
@@ -897,11 +960,16 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     const answered = Object.keys(window.respostas).length;
     const answeredSpan = document.getElementById('quiz-answered');
     const submitBtn = document.getElementById('btn-submit');
-    if(answeredSpan) answeredSpan.textContent = `${answered} de ${window.totalPerguntas} respondidas`;
-    if(submitBtn) submitBtn.disabled = answered < window.totalPerguntas;
+    if (answeredSpan) answeredSpan.textContent = `${answered} de ${window.totalPerguntas} respondidas`;
+    if (submitBtn) submitBtn.disabled = answered < window.totalPerguntas;
   }
   
   async function submitQuiz() {
+    const submitBtn = document.getElementById('btn-submit');
+    showLoading('btn-submit', true);
+    
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     let score = 0;
     for(let i = 0; i < window.totalPerguntas; i++) {
       const isCorrect = window.respostas[i] === window.perguntas[i].correta;
@@ -942,6 +1010,8 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
       document.getElementById('result-msg').textContent = `Obtiveste ${pct}% (${score}/${window.totalPerguntas} corretas). Precisas de pelo menos 70%. Podes tentar novamente.`;
       document.getElementById('btn-retry').style.display = 'inline-block';
     }
+    
+    showLoading('btn-submit', false);
   }
   
   function retryQuiz() {
