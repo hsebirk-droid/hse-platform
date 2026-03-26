@@ -206,30 +206,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
 }
 .file-download:hover { background: var(--birkenstock-blue-dark); }
 
-.presentation-wrap {
-  background: #fafaf8;
-  border: 1px solid var(--birkenstock-border);
-  border-radius: 10px;
-  margin: 20px 0;
-}
-.presentation-toolbar {
-  background: #f5f5f5;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--birkenstock-border);
-}
-.presentation-slides { padding: 24px; min-height: 300px; max-height: 500px; overflow-y: auto; }
-.slide {
-  background: white;
-  border: 1px solid var(--birkenstock-border);
-  border-radius: 12px;
-  padding: 32px;
-  margin-bottom: 20px;
-}
-.slide h3 { font-family: var(--font-head); font-size: 1.2rem; margin-bottom: 16px; color: var(--birkenstock-blue); }
-
 .text-content { font-size: 0.9rem; line-height: 1.8; color: var(--birkenstock-gray); margin: 20px 0; }
 .text-content h3 { font-family: var(--font-head); font-size: 1rem; color: var(--birkenstock-black); margin: 20px 0 8px; }
 .highlight-box {
@@ -412,6 +388,11 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   z-index: 1000;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.loading {
+  text-align: center;
+  padding: 60px;
+  color: var(--birkenstock-gray);
+}
 </style>
 </head>
 <body>
@@ -419,17 +400,17 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
 <div class="top-bar">
   <div class="logo">BIRKENSTOCK<span>S&CC PORTUGAL</span></div>
   <div class="user-name" id="user-name-display">Carregando...</div>
-  <div class="deadline-badge">Prazo: <strong>31 Mar 2026</strong></div>
+  <div class="deadline-badge">Prazo: <strong id="prazo-data">31 Mar 2026</strong></div>
 </div>
 
 <div class="hero">
   <div class="hero-inner">
     <div class="hero-tag" id="hero-tag">🛡️ Segurança, Saúde & Ambiente</div>
-    <h1 id="hero-title">Prevenção de Acidentes no Trabalho</h1>
-    <p id="hero-desc">Formação obrigatória atribuída pela tua empresa. Completa todos os módulos e a avaliação para receberes o teu certificado.</p>
+    <h1 id="hero-title">Carregando formação...</h1>
+    <p id="hero-desc">A carregar conteúdo...</p>
     <div class="hero-meta">
-      <div class="hero-meta-item"><span>⏱️</span> <span id="meta-duration">45 minutos</span></div>
-      <div class="hero-meta-item"><span>📚</span> <span id="meta-modules">3 módulos</span></div>
+      <div class="hero-meta-item"><span>⏱️</span> <span id="meta-duration">--</span></div>
+      <div class="hero-meta-item"><span>📚</span> <span id="meta-modules">-- módulos</span></div>
       <div class="hero-meta-item"><span>📝</span> Avaliação final</div>
       <div class="hero-meta-item"><span>🏅</span> Certificado automático</div>
     </div>
@@ -445,121 +426,127 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
 </div>
 
 <div class="main" id="main-content">
-  <div id="modules-container"></div>
+  <div id="loading" class="loading">📚 A carregar formação...</div>
+  <div id="modules-container" style="display:none;"></div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<script>
-  // ==================== DADOS DA FORMAÇÃO ====================
-  let cursoData = {
-    nome: localStorage.getItem('cursoAtualNome') || 'Prevenção de Acidentes no Trabalho',
-    duracao: localStorage.getItem('cursoAtualDuracao') || '45 minutos',
-    descricao: localStorage.getItem('cursoAtualDesc') || 'Formação obrigatória sobre prevenção de acidentes.'
-  };
-  
-  let nomeUser = localStorage.getItem('usuarioAtivo') || 'Colaborador';
-  document.getElementById('user-name-display').textContent = 'Olá, ' + nomeUser;
-  document.getElementById('hero-title').textContent = cursoData.nome;
-  document.getElementById('hero-desc').textContent = cursoData.descricao;
-  document.getElementById('meta-duration').textContent = cursoData.duracao;
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
 
+  const firebaseConfig = {
+    apiKey: "AIzaSyAwywvboQgWqkrZlbwrUPdaUq-gLnWM64E",
+    authDomain: "plataforma-ssa-3130e.firebaseapp.com",
+    projectId: "plataforma-ssa-3130e",
+    storageBucket: "plataforma-ssa-3130e.firebasestorage.app",
+    messagingSenderId: "850671249674",
+    appId: "1:850671249674:web:53a115408f8006745c32f3"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.db = db;
+  window.doc = doc;
+  window.getDoc = getDoc;
+  window.collection = collection;
+  window.addDoc = addDoc;
+</script>
+
+<script>
   let modules = [];
-  try {
-    const savedModules = localStorage.getItem('cursoAtualModulos');
-    if(savedModules) modules = JSON.parse(savedModules);
-  } catch(e) {
-    console.error('Erro ao carregar módulos:', e);
-  }
-  
+  let perguntas = [];
+  let completedModules = {};
+  let answers = {};
+  let videoIntervals = {};
+  let quizPassed = false;
+  let cursoId = null;
+  let nomeUser = localStorage.getItem('usuarioAtivo') || 'Colaborador';
+  let cursoData = { nome: '', duracao: '', descricao: '' };
+  const startTime = new Date();
+
+  function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+  function fmtDate(d) { return d.toLocaleDateString('pt-PT', {day:'2-digit', month:'short', year:'numeric'}); }
+
   // ==================== LER TOKEN DA URL ====================
-  function carregarDoToken() {
+  function lerTokenUrl() {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     
-    console.log("🔍 A analisar URL...");
-    console.log("URL completa:", window.location.href);
-    console.log("Token encontrado:", token);
-    
     if(token && token !== 'null' && token !== 'undefined') {
-      console.log("🔑 Token encontrado na URL:", token);
       try {
         const tokenData = JSON.parse(atob(token));
-        console.log("📦 Dados do token:", tokenData);
-        
-        const tokenExpiracao = tokenData.timestamp || 0;
-        const agora = Date.now();
-        const diasPassados = (agora - tokenExpiracao) / (1000 * 60 * 60 * 24);
-        
-        if(diasPassados > 30) {
-          toast('⚠️ Este link expirou. Por favor, solicite um novo convite.');
-          return;
-        }
+        console.log("Token encontrado:", tokenData);
         
         if(tokenData.user) {
           localStorage.setItem('usuarioAtivo', tokenData.user);
           nomeUser = tokenData.user;
           document.getElementById('user-name-display').textContent = 'Olá, ' + nomeUser;
-          console.log("👤 Colaborador identificado:", nomeUser);
+        }
+        
+        if(tokenData.prazo) {
+          document.getElementById('prazo-data').textContent = tokenData.prazo;
         }
         
         if(tokenData.cursoId) {
-          const cursos = JSON.parse(localStorage.getItem('listaCursos') || '[]');
-          console.log("📚 Total de formações:", cursos.length);
-          const curso = cursos.find(c => c.id == tokenData.cursoId);
-          
-          if(curso) {
-            console.log("📚 Formação encontrada:", curso.nome);
-            
-            cursoData.nome = curso.nome;
-            cursoData.duracao = curso.duracao || '45 minutos';
-            cursoData.descricao = curso.descricao || '';
-            modules = curso.modulos || [];
-            
-            localStorage.setItem('cursoAtualNome', curso.nome);
-            localStorage.setItem('cursoAtualDuracao', curso.duracao || '45 minutos');
-            localStorage.setItem('cursoAtualDesc', curso.descricao || '');
-            localStorage.setItem('cursoAtualModulos', JSON.stringify(modules));
-            localStorage.setItem('cursoAtualPerguntas', JSON.stringify(curso.perguntas || []));
-            
-            document.getElementById('hero-title').textContent = cursoData.nome;
-            document.getElementById('hero-desc').textContent = cursoData.descricao;
-            document.getElementById('meta-duration').textContent = cursoData.duracao;
-            
-            toast(`✅ Formação "${curso.nome}" carregada com sucesso!`);
-          } else {
-            console.error("❌ Formação não encontrada com ID:", tokenData.cursoId);
-            toast('⚠️ Formação não encontrada. Contacte o administrador.');
-          }
+          return tokenData.cursoId;
         }
-        
-        const savedToken = localStorage.getItem(`token_${token}`);
-        if(!savedToken) {
-          localStorage.setItem(`token_${token}`, JSON.stringify(tokenData));
-          setTimeout(() => localStorage.removeItem(`token_${token}`), 30 * 24 * 60 * 60 * 1000);
-        }
-        
       } catch(e) {
-        console.error("❌ Erro ao ler token:", e);
-        toast('⚠️ Link inválido. Contacte o administrador.');
-      }
-    } else {
-      console.log("ℹ️ Nenhum token encontrado na URL. Usando dados do localStorage.");
-      if(localStorage.getItem('cursoAtualNome')) {
-        console.log("📚 Usando formação salva:", localStorage.getItem('cursoAtualNome'));
+        console.error('Erro ao ler token:', e);
       }
     }
+    
+    // Se não houver token, tenta pegar do localStorage
+    return localStorage.getItem('cursoAtualId');
   }
-  
-  carregarDoToken();
 
-  // ==================== ESTADO ====================
-  let completedModules = {}, answers = {}, videoIntervals = {};
-  let quizPassed = false;
-  const startTime = new Date();
-
-  function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
-  function fmtDate(d) { return d.toLocaleDateString('pt-PT', {day:'2-digit', month:'short', year:'numeric'}); }
+  // ==================== CARREGAR FORMAÇÃO DO FIREBASE ====================
+  async function carregarFormacao(id) {
+    const loadingDiv = document.getElementById('loading');
+    const modulesContainer = document.getElementById('modules-container');
+    
+    loadingDiv.style.display = 'block';
+    modulesContainer.style.display = 'none';
+    
+    if(!id) {
+      loadingDiv.innerHTML = '❌ Nenhuma formação selecionada.';
+      return;
+    }
+    
+    try {
+      const docRef = window.doc(window.db, 'formacoes', id);
+      const docSnap = await window.getDoc(docRef);
+      
+      if(docSnap.exists()) {
+        const data = docSnap.data();
+        cursoData.nome = data.nome || 'Formação';
+        cursoData.duracao = data.duracao || '45 minutos';
+        cursoData.descricao = data.descricao || '';
+        modules = data.modulos || [];
+        perguntas = data.perguntas || [];
+        
+        // Atualizar interface
+        document.getElementById('hero-title').textContent = cursoData.nome;
+        document.getElementById('hero-desc').textContent = cursoData.descricao;
+        document.getElementById('meta-duration').textContent = cursoData.duracao;
+        document.getElementById('meta-modules').textContent = modules.length + ' módulos';
+        
+        loadingDiv.style.display = 'none';
+        modulesContainer.style.display = 'block';
+        
+        renderModules();
+        updateProgress();
+      } else {
+        loadingDiv.innerHTML = '❌ Formação não encontrada.';
+      }
+    } catch(error) {
+      console.error('Erro ao carregar formação:', error);
+      loadingDiv.innerHTML = '❌ Erro ao carregar formação. Tente novamente.';
+    }
+  }
 
   function updateProgress() {
     const total = modules.length + 1;
@@ -624,8 +611,8 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
         <div class="section-header" onclick="toggleSection(${module.id})">
           <div class="s-num" id="num-${module.id}">${idx + 1}</div>
           <div class="s-info">
-          <div class="s-title">${module.titulo}</div
-<div class="s-meta">${module.tipo === 'video' ? '🎬 Vídeo' : module.tipo === 'file' ? '📁 Ficheiro' : '📄 Texto'} · ${module.duracao}</div>
+            <div class="s-title">Módulo ${idx + 1} — ${module.titulo}</div>
+            <div class="s-meta">${module.tipo === 'video' ? '🎬 Vídeo' : module.tipo === 'file' ? '📁 Ficheiro' : '📄 Texto'} · ${module.duracao}</div>
           </div>
           <div class="s-status" id="status-${module.id}">${isLocked ? '🔒' : '▶'}</div>
         </div>
@@ -730,12 +717,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     `;
     container.appendChild(quizBlock);
     
-    let perguntas = [];
-    try {
-      const savedPerguntas = localStorage.getItem('cursoAtualPerguntas');
-      if(savedPerguntas) perguntas = JSON.parse(savedPerguntas);
-    } catch(e) {}
-    
     if(perguntas.length === 0) {
       perguntas = [
         { texto: "Qual é o EPI obrigatório em zonas com ruído acima de 85 dB?", opcoes: ["Luvas", "Proteção auricular", "Óculos", "Nenhum"], correta: "B" },
@@ -763,7 +744,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     document.getElementById('btn-submit').disabled = answered < window.totalPerguntas;
   }
   
-  function submitQuiz() {
+  async function submitQuiz() {
     let score = 0;
     for(let i = 0; i < window.totalPerguntas; i++) {
       const isCorrect = window.respostas[i] === window.perguntas[i].correta;
@@ -786,10 +767,17 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
       document.getElementById('result-msg').textContent = `Acertaste ${score} de ${window.totalPerguntas} perguntas (${pct}%). O teu certificado foi gerado.`;
       document.getElementById('btn-see-cert').style.display = 'inline-flex';
       updateProgress();
-      const notaObj = { nome: nomeUser, curso: cursoData.nome, nota: pct + '%', data: fmtDate(new Date()) };
-      let historico = []; try { historico = JSON.parse(localStorage.getItem('historicoNotas') || '[]'); } catch(e) {}
-      historico.push(notaObj);
-      localStorage.setItem('historicoNotas', JSON.stringify(historico));
+      
+      // Guardar no histórico do Firebase
+      try {
+        await window.addDoc(window.collection(window.db, 'historico'), {
+          nome: nomeUser,
+          curso: cursoData.nome,
+          nota: pct + '%',
+          data: fmtDate(new Date()),
+          dataTimestamp: Date.now()
+        });
+      } catch(e) { console.error('Erro ao guardar histórico:', e); }
     } else {
       document.getElementById('result-ring').classList.add('fail');
       document.getElementById('score-num').classList.add('fail');
@@ -842,6 +830,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     }
   }
   
+  // ==================== INICIALIZAÇÃO ====================
   window.toggleSection = toggleSection;
   window.selectOpt = selectOpt;
   window.submitQuiz = submitQuiz;
@@ -849,8 +838,13 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   window.showCertificate = showCertificate;
   window.confirmModule = confirmModule;
   
-  renderModules();
-  updateProgress();
+  // Carregar formação
+  const cursoIdCarregado = lerTokenUrl();
+  if(cursoIdCarregado) {
+    carregarFormacao(cursoIdCarregado);
+  } else {
+    document.getElementById('loading').innerHTML = '❌ Nenhuma formação selecionada.';
+  }
 </script>
 </body>
 </html>
