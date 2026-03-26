@@ -178,15 +178,15 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
 }
 .video-wrap iframe { width: 100%; height: 100%; border: none; }
 
-/* Visualizador de PDF */
-.pdf-viewer {
+/* Visualizador de documentos */
+.doc-viewer {
   background: #fafaf8;
   border: 1px solid var(--birkenstock-border);
   border-radius: 10px;
   margin: 20px 0;
   overflow: hidden;
 }
-.pdf-toolbar {
+.doc-viewer-header {
   background: #f5f5f5;
   padding: 12px 16px;
   display: flex;
@@ -195,25 +195,34 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   border-bottom: 1px solid var(--birkenstock-border);
   flex-wrap: wrap;
   gap: 10px;
-}
-.pdf-content { padding: 0; min-height: 500px; max-height: 650px; overflow: auto; background: #f5f5f5; }
-.pdf-iframe { width: 100%; height: 600px; border: none; }
-.pdf-page-container { text-align: center; background: white; margin: 10px; padding: 10px; }
-.pdf-page-container canvas { max-width: 100%; height: auto; }
-.file-download {
-  display: inline-block;
-  background: var(--birkenstock-blue);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 6px;
-  text-decoration: none;
   font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  transition: all 0.2s;
+  color: var(--birkenstock-gray);
 }
-.file-download:hover { background: var(--birkenstock-blue-dark); }
+.doc-content {
+  padding: 0;
+  min-height: 500px;
+  max-height: 650px;
+  overflow: auto;
+  background: #f5f5f5;
+  text-align: center;
+}
+.doc-iframe {
+  width: 100%;
+  height: 600px;
+  border: none;
+}
+.doc-image {
+  max-width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+  margin: 20px auto;
+  display: block;
+}
+.doc-placeholder {
+  padding: 60px;
+  text-align: center;
+  color: var(--birkenstock-gray);
+}
 
 .text-content { font-size: 0.9rem; line-height: 1.8; color: var(--birkenstock-gray); margin: 20px 0; }
 
@@ -279,9 +288,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
 .btn-loading {
   opacity: 0.7;
   cursor: wait !important;
-}
-.btn-loading .btn-confirm {
-  cursor: wait;
 }
 
 /* Quiz */
@@ -515,7 +521,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   function toast(msg, isError = false) { 
     const t = document.getElementById('toast'); 
     t.textContent = msg; 
-    t.style.background = isError ? 'var(--danger)' : 'var(--birkenstock-black)';
+    t.style.background = isError ? '#dc2626' : '#1a1a1a';
     t.classList.add('show'); 
     setTimeout(() => t.classList.remove('show'), 3500); 
   }
@@ -589,39 +595,68 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     return url.includes('drive.google.com');
   }
 
+  // Verificar se URL é imagem
+  function isImageUrl(url) {
+    const imageExtensions = /\.(jpg|jpeg|png|gif|webp|bmp|svg)(\?|$)/i;
+    return imageExtensions.test(url);
+  }
+
+  // Verificar se URL é PowerPoint
+  function isPowerPointUrl(url) {
+    return url.includes('.pptx') || url.includes('.ppt') || url.includes('powerpoint');
+  }
+
   // Verificar se URL é PDF
   function isPdfUrl(url) {
     return url.toLowerCase().endsWith('.pdf') || url.includes('.pdf?') || url.includes('/pdf/');
   }
 
-  // Carregar PDF com embed
-  function renderPdfEmbed(url, containerId) {
+  // Renderizar conteúdo baseado no tipo
+  function renderContent(url, containerId, moduleId) {
     const container = document.getElementById(containerId);
     if (!container) return;
     
-    // Tentar usar embed do Google Drive se for Drive
-    if (isGoogleDriveUrl(url)) {
+    // Detectar tipo de conteúdo
+    if (isYoutubeUrl(url)) {
+      const embedUrl = getYoutubeEmbedUrl(url);
+      container.innerHTML = `<div class="video-wrap"><iframe src="${embedUrl}" frameborder="0" allowfullscreen></iframe></div>`;
+      setTimeout(() => markModuleAsViewed(moduleId), 1000);
+    }
+    else if (isGoogleDriveUrl(url)) {
       const embedUrl = getGoogleDriveEmbedUrl(url);
       if (embedUrl) {
-        container.innerHTML = `<iframe src="${embedUrl}" style="width:100%; height:600px; border:none;" allow="autoplay"></iframe>`;
-        return;
+        container.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><span>📄 Documento Google Drive</span></div><div class="doc-content"><iframe src="${embedUrl}" class="doc-iframe" allow="autoplay"></iframe></div></div>`;
+      } else {
+        container.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><span>📄 Documento</span></div><div class="doc-content"><iframe src="${url}" class="doc-iframe" allow="autoplay"></iframe></div></div>`;
       }
+      setTimeout(() => markModuleAsViewed(moduleId), 1000);
     }
-    
-    // Fallback: usar iframe normal
-    container.innerHTML = `<iframe src="${url}" style="width:100%; height:600px; border:none;"></iframe>`;
+    else if (isImageUrl(url)) {
+      container.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><span>🖼️ Imagem</span></div><div class="doc-content"><img src="${url}" class="doc-image" alt="Conteúdo da formação" onload="markModuleAsViewed('${moduleId}')" onerror="this.parentElement.innerHTML='<div class=\'doc-placeholder\'>⚠️ Imagem não disponível</div>'"></div></div>`;
+    }
+    else if (isPdfUrl(url)) {
+      // Usar iframe para PDF
+      container.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><span>📄 Documento PDF</span></div><div class="doc-content"><iframe src="${url}" class="doc-iframe" allow="autoplay"></iframe></div></div>`;
+      setTimeout(() => markModuleAsViewed(moduleId), 1000);
+    }
+    else {
+      // Fallback: iframe genérico
+      container.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><span>📁 Conteúdo</span></div><div class="doc-content"><iframe src="${url}" class="doc-iframe" allow="autoplay"></iframe></div></div>`;
+      setTimeout(() => markModuleAsViewed(moduleId), 1000);
+    }
   }
 
-  // Renderizar vídeo do YouTube
-  function renderVideoEmbed(url, containerId) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    
-    const embedUrl = getYoutubeEmbedUrl(url);
-    if (embedUrl) {
-      container.innerHTML = `<iframe src="${embedUrl}" frameborder="0" allowfullscreen style="width:100%; height:100%;"></iframe>`;
-    } else {
-      container.innerHTML = `<iframe src="${url}" frameborder="0" allowfullscreen style="width:100%; height:100%;"></iframe>`;
+  function markModuleAsViewed(moduleId) {
+    const confirmBtn = document.getElementById(`btn-confirm-${moduleId}`);
+    if (confirmBtn && confirmBtn.disabled) {
+      confirmBtn.disabled = false;
+    }
+    const fillEl = document.getElementById(`fill-${moduleId}`);
+    const pctEl = document.getElementById(`pct-${moduleId}`);
+    if (fillEl && fillEl.style.width !== '100%') {
+      fillEl.style.width = '100%';
+      if (pctEl) pctEl.textContent = '100%';
+      toast('✅ Conteúdo visualizado! Pode confirmar a conclusão.');
     }
   }
 
@@ -729,17 +764,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     }
   }
 
-  function markModuleAsViewed(moduleId) {
-    const confirmBtn = document.getElementById(`btn-confirm-${moduleId}`);
-    if (confirmBtn) {
-      confirmBtn.disabled = false;
-    }
-    const fillEl = document.getElementById(`fill-${moduleId}`);
-    const pctEl = document.getElementById(`pct-${moduleId}`);
-    if (fillEl) fillEl.style.width = '100%';
-    if (pctEl) pctEl.textContent = '100%';
-  }
-
   function renderModules() {
     const container = document.getElementById('modules-container');
     container.innerHTML = '';
@@ -767,56 +791,42 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
       body.id = 'body-' + module.id;
       
       let contentDiv = document.createElement('div');
-      let contentHtml = '';
+      contentDiv.id = `content-${module.id}`;
       
-      // Processar conteúdo do módulo
       const conteudo = module.conteudo || {};
       const url = conteudo.url || '';
       
       if (module.tipo === 'video' && url) {
-        contentHtml = `<div class="video-wrap" id="video-${module.id}"></div>`;
-        contentDiv.innerHTML = contentHtml;
+        contentDiv.innerHTML = `<div class="video-wrap" id="video-${module.id}"></div>`;
+        body.appendChild(contentDiv);
         setTimeout(() => {
-          renderVideoEmbed(url, `video-${module.id}`);
+          const embedUrl = getYoutubeEmbedUrl(url);
+          if (embedUrl) {
+            document.getElementById(`video-${module.id}`).innerHTML = `<iframe src="${embedUrl}" frameborder="0" allowfullscreen style="width:100%; height:100%;"></iframe>`;
+          } else {
+            document.getElementById(`video-${module.id}`).innerHTML = `<iframe src="${url}" frameborder="0" allowfullscreen style="width:100%; height:100%;"></iframe>`;
+          }
           markModuleAsViewed(module.id);
         }, 100);
       }
-      else if (module.tipo === 'file' && url) {
-        if (isYoutubeUrl(url)) {
-          contentHtml = `<div class="video-wrap" id="video-${module.id}"></div>`;
-          contentDiv.innerHTML = contentHtml;
-          setTimeout(() => {
-            renderVideoEmbed(url, `video-${module.id}`);
-            markModuleAsViewed(module.id);
-          }, 100);
-        }
-        else if (isPdfUrl(url) || isGoogleDriveUrl(url)) {
-          const viewerId = `pdf-viewer-${module.id}`;
-          contentHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>📄 Documento</span><a href="${url}" target="_blank" class="file-download">⬇️ Abrir em nova aba</a></div><div class="pdf-content" id="${viewerId}"><div style="padding:40px; text-align:center;">📄 A carregar documento...</div></div></div>`;
-          contentDiv.innerHTML = contentHtml;
-          setTimeout(() => {
-            renderPdfEmbed(url, viewerId);
-            markModuleAsViewed(module.id);
-          }, 100);
-        }
-        else {
-          contentHtml = `<div class="text-content"><a href="${url}" target="_blank" class="file-download" style="display:inline-block;">🔗 Abrir conteúdo</a><p style="margin-top:16px;">Clique no botão acima para aceder ao conteúdo.</p></div>`;
-          contentDiv.innerHTML = contentHtml;
-          setTimeout(() => markModuleAsViewed(module.id), 500);
-        }
-      }
       else if (module.tipo === 'text' && conteudo.texto) {
-        contentHtml = `<div class="text-content">${conteudo.texto}</div>`;
-        contentDiv.innerHTML = contentHtml;
+        contentDiv.innerHTML = `<div class="text-content">${conteudo.texto}</div>`;
+        body.appendChild(contentDiv);
         setTimeout(() => markModuleAsViewed(module.id), 500);
+      }
+      else if (url) {
+        // Ficheiro ou URL
+        contentDiv.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><span>📄 A carregar conteúdo...</span></div><div class="doc-content" id="doc-content-${module.id}"><div style="padding:40px; text-align:center;">⏳ A carregar...</div></div></div>`;
+        body.appendChild(contentDiv);
+        setTimeout(() => {
+          renderContent(url, `doc-content-${module.id}`, module.id);
+        }, 100);
       }
       else {
-        contentHtml = `<div class="text-content"><p>Conteúdo não disponível.</p></div>`;
-        contentDiv.innerHTML = contentHtml;
+        contentDiv.innerHTML = `<div class="text-content"><p>Conteúdo não disponível.</p></div>`;
+        body.appendChild(contentDiv);
         setTimeout(() => markModuleAsViewed(module.id), 500);
       }
-      
-      body.appendChild(contentDiv);
       
       // Tracker de progresso
       const trackerDiv = document.createElement('div');
@@ -851,32 +861,49 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   }
   
   async function confirmModule(moduleId) {
+    const btn = document.getElementById(`btn-confirm-${moduleId}`);
+    if (!btn || btn.disabled) return;
+    
     showLoading(`btn-confirm-${moduleId}`, true);
     
-    // Simular pequeno delay para feedback visual
+    // Pequeno delay para feedback visual
     await new Promise(resolve => setTimeout(resolve, 500));
     
     completedModules[moduleId] = true;
     const block = document.getElementById('block-' + moduleId);
-    block.classList.add('completed');
-    const confirmBtn = document.getElementById('btn-confirm-' + moduleId);
+    if (block) block.classList.add('completed');
+    
+    const confirmBtn = document.getElementById(`btn-confirm-${moduleId}`);
     if (confirmBtn) confirmBtn.style.display = 'none';
-    const confirmedDiv = document.getElementById('confirmed-' + moduleId);
+    
+    const confirmedDiv = document.getElementById(`confirmed-${moduleId}`);
     if (confirmedDiv) confirmedDiv.style.display = 'flex';
+    
     toast('✅ Módulo concluído!');
     updateProgress();
     
+    // Desbloquear próximo módulo
     const idx = modules.findIndex(m => m.id === moduleId);
     if (idx < modules.length - 1) {
       const nextBlock = document.getElementById('block-' + modules[idx + 1].id);
-      if (nextBlock) nextBlock.classList.remove('locked');
+      if (nextBlock) {
+        nextBlock.classList.remove('locked');
+        // Rolar até o próximo módulo
+        setTimeout(() => {
+          nextBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+      }
       toast('📚 Próximo módulo desbloqueado!');
     } else {
+      // Último módulo - desbloquear quiz
       const quizBlock = document.getElementById('block-quiz');
       if (quizBlock) {
         quizBlock.classList.remove('locked');
         const statusQuiz = document.getElementById('status-quiz');
         if (statusQuiz) statusQuiz.textContent = '📝';
+        setTimeout(() => {
+          quizBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
         toast('📝 Avaliação desbloqueada!');
       }
     }
@@ -1095,6 +1122,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   window.showCertificate = showCertificate;
   window.confirmModule = confirmModule;
   window.toast = toast;
+  window.markModuleAsViewed = markModuleAsViewed;
   
   window.addEventListener('load', function() {
     const usuarioAtivo = localStorage.getItem('usuarioAtivo');
