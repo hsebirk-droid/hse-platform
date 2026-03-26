@@ -7,6 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<!-- Google API para Google Drive -->
+<script src="https://apis.google.com/js/api.js"></script>
 <style>
 :root {
   --birkenstock-blue: #00338D;
@@ -255,6 +257,23 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
 }
 .badge-success { background: var(--success-bg); color: var(--success); }
 
+.google-auth-status {
+  background: var(--info-bg);
+  border: 1px solid var(--info);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.google-auth-status .status-text { color: var(--info); font-weight: 500; }
+.google-auth-status .status-text.success { color: var(--success); }
+.google-auth-status button { background: var(--birkenstock-blue); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+
 @media (max-width: 768px) {
   .container { padding: 20px 16px; }
   .sec-body { padding: 16px; }
@@ -297,6 +316,14 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   <div class="sec" id="sec-formacao">
     <div class="sec-head"><h2>🎓 Criar Nova Formação</h2><div id="editando-id" style="color:white;font-size:12px;"></div></div>
     <div class="sec-body">
+      <!-- Status da autenticação Google Drive -->
+      <div id="google-auth-status" class="google-auth-status" style="display:none;">
+        <span class="status-text">📁 Estado do Google Drive:</span>
+        <span id="google-status-text">A carregar...</span>
+        <button id="google-login-btn" onclick="autenticarGoogleDrive()" style="display:none;">🔐 Autenticar com Google</button>
+        <button id="google-logout-btn" onclick="desautenticarGoogleDrive()" style="display:none;">🚪 Sair do Google</button>
+      </div>
+      
       <div class="frow">
         <div class="fg"><label>Título *</label><input type="text" id="f-titulo" placeholder="Ex: Atendimento ao Cliente"></div>
         <div class="fg"><label>Duração</label><input type="text" id="f-duracao" placeholder="45 minutos"></div>
@@ -437,7 +464,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     </div>
     <div id="modulo-conteudo-file" style="display:none;">
       <div class="fg"><label>URL Externa (opcional)</label><input type="text" id="modulo-url-externa" placeholder="https://..."></div>
-      <div class="upload-area" onclick="document.getElementById('file-input-modulo').click()">📁 Ou selecionar ficheiro</div>
+      <div class="upload-area" onclick="document.getElementById('file-input-modulo').click()">📁 Ou selecionar ficheiro (será guardado no Google Drive)</div>
       <input type="file" id="file-input-modulo" style="display:none" onchange="uploadFicheiroModulo(this.files)">
       <div id="file-preview-modulo" style="margin-top: 8px; font-size: 12px;"></div>
     </div>
@@ -460,8 +487,8 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
-  import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-storage.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-storage.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAwywvboQgWqkrZlbwrUPdaUq-gLnWM64E",
@@ -486,12 +513,21 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   window.deleteDoc = deleteDoc;
   window.query = query;
   window.orderBy = orderBy;
+  window.getDoc = getDoc;
   window.ref = ref;
   window.uploadBytes = uploadBytes;
   window.getDownloadURL = getDownloadURL;
 </script>
 
 <script>
+  // ==================== CONFIGURAÇÃO GOOGLE DRIVE ====================
+  // IMPORTANTE: Substitua pelas suas credenciais do Google Cloud Console
+  const GOOGLE_API_KEY = "SUA_API_KEY_AQUI";
+  const GOOGLE_CLIENT_ID = "SEU_CLIENT_ID_AQUI.apps.googleusercontent.com";
+  
+  let googleAuthInstance = null;
+  let googleIsSignedIn = false;
+  
   let adminConfig = JSON.parse(localStorage.getItem('admin_config') || '{"adminPassword":"SSA2024admin"}');
   let modulos = [], perguntas = [], editandoModuloId = null, editandoPerguntaId = null, moduloTipoAtual = 'video', ficheiroTemp = null;
   let editandoFormacaoId = null;
@@ -499,653 +535,79 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   const defaultCert = { titulo: "Certificado de Formação", texto: "Certifica-se que {{nome}} concluiu {{formacao}} com {{nota}}.\nEmitido em {{data}}.", rodape: "Direção de Formação" };
   let certTemplate = JSON.parse(localStorage.getItem('cert_template') || JSON.stringify(defaultCert));
 
-  async function carregarFormacoes() {
-    const q = window.query(window.collection(window.db, 'formacoes'), window.orderBy('dataTimestamp', 'desc'));
-    const querySnapshot = await window.getDocs(q);
-    const cursos = [];
-    querySnapshot.forEach((doc) => { cursos.push({ id: doc.id, ...doc.data() }); });
-    return cursos;
-  }
-
-  async function carregarColaboradores() {
-    const querySnapshot = await window.getDocs(window.collection(window.db, 'colaboradores'));
-    const colaboradores = [];
-    querySnapshot.forEach((doc) => { colaboradores.push({ id: doc.id, ...doc.data() }); });
-    return colaboradores;
-  }
-
-  async function carregarHistorico() {
-    const q = window.query(window.collection(window.db, 'historico'), window.orderBy('dataTimestamp', 'desc'));
-    const querySnapshot = await window.getDocs(q);
-    const historico = [];
-    querySnapshot.forEach((doc) => { historico.push({ id: doc.id, ...doc.data() }); });
-    return historico;
-  }
-
-  async function atualizarDashboard() {
-    const cursos = await carregarFormacoes();
-    const colaboradores = await carregarColaboradores();
-    const historico = await carregarHistorico();
-    document.getElementById('dashboard-grid').innerHTML = `
-      <div class="dash-card"><div class="dash-icon" style="background:var(--info-bg)">👥</div><div class="dash-info"><h3>${colaboradores.length}</h3><p>Colaboradores</p></div></div>
-      <div class="dash-card"><div class="dash-icon" style="background:var(--success-bg)">📚</div><div class="dash-info"><h3>${cursos.length}</h3><p>Formações</p></div></div>
-      <div class="dash-card"><div class="dash-icon" style="background:var(--purple-bg)">🏅</div><div class="dash-info"><h3>${historico.length}</h3><p>Certificados</p></div></div>`;
-    const recentes = historico.slice(0,5);
-    document.getElementById('recent-activities').innerHTML = recentes.length ? recentes.map(h => `<div class="item-card"><div class="item-card-info"><strong>${h.nome}</strong> concluiu "${h.curso}" com ${h.nota}</div><div class="item-card-meta">${h.data}</div></div>`).join('') : '<div class="empty">Sem atividades recentes.</div>';
-  }
-
-  async function renderFormacoesLista() {
-    const cursos = await carregarFormacoes();
-    const container = document.getElementById('formacoes-list');
-    if(!cursos.length) { container.innerHTML = '<div class="empty">Nenhuma formação criada.</div>'; return; }
-    container.innerHTML = cursos.map(curso => `
-      <div class="item-card">
-        <div class="item-card-info">
-          <div class="item-card-title">📘 ${curso.nome}</div>
-          <div class="item-card-meta">${curso.modulos?.length || 0} módulos · ${curso.perguntas?.length || 0} perguntas</div>
-        </div>
-        <div class="item-card-actions">
-          <button onclick="editarFormacao('${curso.id}')" style="color:var(--info)">✏️ Editar</button>
-          <button onclick="apagarFormacao('${curso.id}')" style="color:var(--danger)">🗑️ Apagar</button>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  async function apagarFormacao(id) {
-    if(!confirm('Apagar esta formação permanentemente?')) return;
-    try {
-      await window.deleteDoc(window.doc(window.db, 'formacoes', id));
-      toast('✅ Formação apagada!');
-      renderFormacoesLista();
-      atualizarDashboard();
-      atualizarSelectores();
-    } catch(error) { console.error('Erro:', error); alert('Erro ao apagar formação.'); }
-  }
-
-  function toast(msg) { alert(msg); }
-
-  function inserirPlaceholder(ph) { 
-    const textarea = document.getElementById('cert-texto');
-    textarea.value += ph; 
-    textarea.focus();
-  }
+  // ==================== FUNÇÕES GOOGLE DRIVE ====================
   
-  function previewCertificado() {
-    const preview = document.getElementById('cert-preview');
-    const content = document.getElementById('cert-preview-content');
-    let texto = certTemplate.texto;
-    Object.entries({nome:"Exemplo", formacao:"Formação Teste", data:new Date().toLocaleDateString('pt-PT'), nota:"85%", validade:"2027", certificado_id:"CERT-001"}).forEach(([k,v]) => texto = texto.replace(new RegExp(`{{${k}}}`, 'g'), v));
-    content.innerHTML = `<div style="text-align:center;padding:20px;border:2px solid var(--birkenstock-gold);border-radius:16px;"><h2 style="color:var(--birkenstock-blue);">${certTemplate.titulo}</h2><div style="margin:20px 0;">${texto.replace(/\n/g,'<br>')}</div><div style="margin-top:20px; font-size:12px;">${certTemplate.rodape}</div></div>`;
-    preview.style.display = 'block';
-  }
-  
-  function salvarTemplateCertificado() {
-    certTemplate = { 
-      titulo: document.getElementById('cert-titulo').value, 
-      texto: document.getElementById('cert-texto').value, 
-      rodape: document.getElementById('cert-rodape').value 
-    };
-    localStorage.setItem('cert_template', JSON.stringify(certTemplate));
-    toast('✅ Template salvo!');
-  }
-  
-  function resetTemplateCertificado() {
-    certTemplate = JSON.parse(JSON.stringify(defaultCert));
-    document.getElementById('cert-titulo').value = certTemplate.titulo;
-    document.getElementById('cert-texto').value = certTemplate.texto;
-    document.getElementById('cert-rodape').value = certTemplate.rodape;
-    toast('✅ Template restaurado!');
-  }
-
-  function abrirModalModulo(tipo) {
-    moduloTipoAtual = tipo; 
-    editandoModuloId = null; 
-    ficheiroTemp = null;
-    
-    const titulos = { video: '🎬 Vídeo', text: '📄 Texto', file: '📁 Ficheiro/URL' };
-    document.getElementById('modal-modulo-titulo').textContent = titulos[tipo];
-    document.getElementById('modulo-titulo').value = ''; 
-    document.getElementById('modulo-duracao').value = '';
-    
-    document.getElementById('modulo-conteudo-video').style.display = tipo === 'video' ? 'block' : 'none';
-    document.getElementById('modulo-conteudo-texto').style.display = tipo === 'text' ? 'block' : 'none';
-    document.getElementById('modulo-conteudo-file').style.display = tipo === 'file' ? 'block' : 'none';
-    
-    document.getElementById('modulo-video-url').value = '';
-    document.getElementById('modulo-texto-conteudo').value = '';
-    document.getElementById('modulo-url-externa').value = '';
-    document.getElementById('file-preview-modulo').innerHTML = '';
-    
-    document.getElementById('modal-modulo').style.display = 'flex';
-  }
-  
-  function editarModulo(id) { 
-    const m = modulos.find(m => m.id === id); 
-    if(!m) return; 
-    editandoModuloId = id; 
-    moduloTipoAtual = m.tipo; 
-    document.getElementById('modulo-titulo').value = m.titulo; 
-    document.getElementById('modulo-duracao').value = m.duracao; 
-    document.getElementById('modulo-conteudo-video').style.display = m.tipo === 'video' ? 'block' : 'none';
-    document.getElementById('modulo-conteudo-texto').style.display = m.tipo === 'text' ? 'block' : 'none';
-    document.getElementById('modulo-conteudo-file').style.display = m.tipo === 'file' ? 'block' : 'none';
-    
-    if(m.tipo === 'video' && m.conteudo.url) {
-      document.getElementById('modulo-video-url').value = m.conteudo.url;
-    }
-    if(m.tipo === 'text' && m.conteudo.texto) {
-      document.getElementById('modulo-texto-conteudo').value = m.conteudo.texto;
-    }
-    if(m.tipo === 'file') {
-      if(m.conteudo.url) {
-        document.getElementById('modulo-url-externa').value = m.conteudo.url;
-      } else if(m.conteudo.fileData) {
-        ficheiroTemp = m.conteudo;
-        document.getElementById('file-preview-modulo').innerHTML = `📎 ${m.conteudo.fileName}`;
-      }
-    }
-    document.getElementById('modal-modulo').style.display = 'flex'; 
-  }
-  
-  function uploadFicheiroModulo(files) { 
-    if(!files || !files[0]) return; 
-    const reader = new FileReader(); 
-    reader.onload = e => { 
-      ficheiroTemp = { 
-        id: Date.now(), 
-        name: files[0].name, 
-        type: files[0].type, 
-        size: files[0].size, 
-        data: e.target.result 
-      }; 
-      document.getElementById('file-preview-modulo').innerHTML = `📎 ${files[0].name} (${Math.round(files[0].size/1024)} KB)`;
-    }; 
-    reader.readAsDataURL(files[0]); 
-  }
-  
-  function salvarModulo() {
-    const titulo = document.getElementById('modulo-titulo').value.trim();
-    if(!titulo){ alert('Título obrigatório'); return; }
-    
-    let conteudo = {};
-    let tipo = moduloTipoAtual;
-    
-    if(moduloTipoAtual === 'video'){ 
-      const url = document.getElementById('modulo-video-url').value.trim(); 
-      if(!url){ alert('URL do vídeo obrigatório'); return; } 
-      conteudo = { url }; 
-    }
-    else if(moduloTipoAtual === 'text'){ 
-      const texto = document.getElementById('modulo-texto-conteudo').value; 
-      if(!texto){ alert('Conteúdo obrigatório'); return; } 
-      conteudo = { texto }; 
-    }
-    else if(moduloTipoAtual === 'file'){ 
-      const urlExterna = document.getElementById('modulo-url-externa').value.trim();
-      if(urlExterna) {
-        conteudo = { url: urlExterna };
-      } else if(ficheiroTemp) {
-        conteudo = { 
-          fileId: ficheiroTemp.id, 
-          fileName: ficheiroTemp.name, 
-          fileData: ficheiroTemp.data,
-          fileType: ficheiroTemp.type
-        }; 
-      } else {
-        alert('Selecione um ficheiro ou insira uma URL'); 
-        return;
-      }
+  // Inicializar a API do Google
+  function initGoogleAPI() {
+    if (typeof gapi === 'undefined') {
+      console.error('API do Google não carregada');
+      setTimeout(initGoogleAPI, 1000);
+      return;
     }
     
-    const duracao = document.getElementById('modulo-duracao').value.trim() || '15 min';
-    
-    if(editandoModuloId){ 
-      const idx = modulos.findIndex(m => m.id === editandoModuloId); 
-      if(idx !== -1) modulos[idx] = { ...modulos[idx], titulo, tipo, conteudo, duracao }; 
-    } else {
-      modulos.push({ id: Date.now(), titulo, tipo, conteudo, duracao });
-    }
-    
-    renderModulos(); 
-    fecharModal('modal-modulo');
-  }
-  
-  function removerModulo(id) { 
-    if(confirm('Remover módulo?')){ 
-      modulos = modulos.filter(m => m.id !== id); 
-      renderModulos(); 
-    } 
-  }
-  
-  function renderModulos() { 
-    const container = document.getElementById('modulos-container'); 
-    if(!modulos.length){ 
-      container.innerHTML = '<div class="alert alert-warning">Nenhum módulo adicionado.</div>'; 
-      return; 
-    } 
-    container.innerHTML = modulos.map(m => `
-      <div class="modulo-card">
-        <div class="modulo-header">
-          <div class="modulo-titulo">📌 ${m.titulo}</div>
-          <div class="modulo-tipo">${m.tipo === 'video' ? '🎬 Vídeo' : m.tipo === 'text' ? '📄 Texto' : '📁 Ficheiro'} · ${m.duracao}</div>
-          <div>
-            <button onclick="editarModulo(${m.id})" style="background:none;border:none;cursor:pointer;color:var(--info);">✏️</button>
-            <button onclick="removerModulo(${m.id})" style="background:none;border:none;cursor:pointer;color:var(--danger);">🗑️</button>
-          </div>
-        </div>
-      </div>
-    `).join(''); 
-  }
-
-  function abrirModalPergunta(){ 
-    editandoPerguntaId = null; 
-    document.getElementById('pergunta-texto').value = ''; 
-    document.getElementById('pergunta-opcao-a').value = ''; 
-    document.getElementById('pergunta-opcao-b').value = ''; 
-    document.getElementById('pergunta-opcao-c').value = ''; 
-    document.getElementById('pergunta-opcao-d').value = ''; 
-    document.getElementById('pergunta-correta').value = 'A'; 
-    document.getElementById('modal-pergunta').style.display = 'flex'; 
-  }
-  
-  function editarPergunta(id){ 
-    const p = perguntas.find(p => p.id === id); 
-    if(!p) return; 
-    editandoPerguntaId = id; 
-    document.getElementById('pergunta-texto').value = p.texto; 
-    document.getElementById('pergunta-opcao-a').value = p.opcoes[0]; 
-    document.getElementById('pergunta-opcao-b').value = p.opcoes[1]; 
-    document.getElementById('pergunta-opcao-c').value = p.opcoes[2]; 
-    document.getElementById('pergunta-opcao-d').value = p.opcoes[3]; 
-    document.getElementById('pergunta-correta').value = p.correta; 
-    document.getElementById('modal-pergunta').style.display = 'flex'; 
-  }
-  
-  function salvarPergunta(){ 
-    const texto = document.getElementById('pergunta-texto').value.trim(); 
-    if(!texto){ alert('Texto da pergunta obrigatório'); return; } 
-    const opcoes = [
-      document.getElementById('pergunta-opcao-a').value.trim(),
-      document.getElementById('pergunta-opcao-b').value.trim(),
-      document.getElementById('pergunta-opcao-c').value.trim(),
-      document.getElementById('pergunta-opcao-d').value.trim()
-    ]; 
-    if(opcoes.some(o => !o)){ alert('Todas as opções são obrigatórias'); return; } 
-    const correta = document.getElementById('pergunta-correta').value; 
-    
-    if(editandoPerguntaId){ 
-      const idx = perguntas.findIndex(p => p.id === editandoPerguntaId); 
-      if(idx !== -1) perguntas[idx] = { ...perguntas[idx], texto, opcoes, correta }; 
-    } else {
-      perguntas.push({ id: Date.now(), texto, opcoes, correta });
-    }
-    renderPerguntas(); 
-    fecharModal('modal-pergunta'); 
-  }
-  
-  function removerPergunta(id){ 
-    if(confirm('Remover pergunta?')){ 
-      perguntas = perguntas.filter(p => p.id !== id); 
-      renderPerguntas(); 
-    } 
-  }
-  
-  function renderPerguntas(){ 
-    const container = document.getElementById('perguntas-container'); 
-    if(!perguntas.length){ 
-      container.innerHTML = '<div class="alert alert-warning">Nenhuma pergunta adicionada.</div>'; 
-      return; 
-    } 
-    container.innerHTML = perguntas.map(p => `
-      <div class="pergunta-card">
-        <div class="pergunta-header">
-          <div class="modulo-titulo">📝 ${p.texto}</div>
-          <div>
-            <button onclick="editarPergunta(${p.id})" style="background:none;border:none;cursor:pointer;color:var(--info);">✏️</button>
-            <button onclick="removerPergunta(${p.id})" style="background:none;border:none;cursor:pointer;color:var(--danger);">🗑️</button>
-          </div>
-        </div>
-        <div style="font-size:12px;color:var(--success);margin-top:8px;">✓ Correta: ${p.correta}</div>
-      </div>
-    `).join(''); 
-  }
-
-  async function renderColabs() {
-    const colaboradores = await carregarColaboradores();
-    const container = document.getElementById('colab-list');
-    if(!colaboradores.length) { container.innerHTML = '<div class="empty">Nenhum colaborador cadastrado.</div>'; return; }
-    container.innerHTML = colaboradores.map((c) => `
-      <div class="item-card">
-        <div class="item-card-info">
-          <strong>${c.user}</strong>
-          <div class="item-card-meta">${c.email || 'sem email'}</div>
-        </div>
-        <div class="item-card-actions">
-          <button onclick="removerColab('${c.id}')" style="color:var(--danger)">🗑️ Remover</button>
-        </div>
-      </div>
-    `).join('');
-  }
-  
-  async function removerColab(id) { 
-    if(confirm('Remover colaborador?')) { 
-      await window.deleteDoc(window.doc(window.db, 'colaboradores', id)); 
-      renderColabs(); 
-      atualizarSelectores(); 
-      atualizarDashboard(); 
-    } 
-  }
-  
-  async function saveUser() {
-    const user = document.getElementById('u-nome').value.trim().toLowerCase();
-    const email = document.getElementById('u-email').value.trim();
-    const pass = document.getElementById('u-pass').value;
-    if(!user || !pass) { alert('Preencha utilizador e password.'); return; }
-    await window.addDoc(window.collection(window.db, 'colaboradores'), { user, email, pass, dataCriacao: new Date().toISOString() });
-    alert('✅ Colaborador criado!');
-    document.getElementById('u-nome').value = ''; 
-    document.getElementById('u-email').value = ''; 
-    document.getElementById('u-pass').value = '';
-    renderColabs(); 
-    atualizarSelectores(); 
-    atualizarDashboard();
-  }
-  
-  function importColaboradores(files) { 
-    if(!files || !files[0]) return; 
-    const reader = new FileReader(); 
-    reader.onload = async function(e) { 
-      const lines = e.target.result.split('\n'); 
-      let imported = 0; 
-      for(let i = 1; i < lines.length; i++){ 
-        const parts = lines[i].split(','); 
-        if(parts.length >= 3){ 
-          const user = parts[0].trim().toLowerCase(); 
-          const pass = parts[1].trim(); 
-          const email = parts[2].trim(); 
-          if(user && pass){ 
-            await window.addDoc(window.collection(window.db, 'colaboradores'), { user, email, pass, dataCriacao: new Date().toISOString() }); 
-            imported++; 
-          } 
-        } 
-      } 
-      alert(`✅ Importados ${imported} colaboradores!`); 
-      renderColabs(); 
-      atualizarSelectores(); 
-      atualizarDashboard(); 
-    }; 
-    reader.readAsText(files[0], 'UTF-8'); 
-  }
-  
-  function downloadModeloCSV(){ 
-    const csv = "utilizador,password,email\njoao.silva,pass123,joao@empresa.pt\nmaria.santos,ssa456,maria@empresa.pt"; 
-    const blob = new Blob([csv], {type:'text/csv'}); 
-    const link = document.createElement('a'); 
-    link.href = URL.createObjectURL(blob); 
-    link.download = 'modelo_colaboradores.csv'; 
-    link.click(); 
-  }
-
-  async function atualizarSelectores() {
-    const cursos = await carregarFormacoes();
-    const colaboradores = await carregarColaboradores();
-    document.getElementById('atribuir-curso').innerHTML = '<option value="">Selecione uma formação</option>' + cursos.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
-    document.getElementById('colab-selector-grid').innerHTML = colaboradores.map(c => `<label class="colab-check"><input type="checkbox" value="${c.user}" data-email="${c.email || ''}"> ${c.user}</label>`).join('');
-  }
-  
-  function selecionarTodos(){ 
-    document.querySelectorAll('#colab-selector-grid input').forEach(cb => cb.checked = true); 
-  }
-  
-  function deselecionarTodos(){ 
-    document.querySelectorAll('#colab-selector-grid input').forEach(cb => cb.checked = false); 
-  }
-  
-  function gerarLinks(){
-    const cursoId = document.getElementById('atribuir-curso').value; 
-    if(!cursoId){ alert('Selecione uma formação'); return; }
-    
-    const selected = Array.from(document.querySelectorAll('#colab-selector-grid input:checked')).map(cb => { 
-      return { user: cb.value, email: cb.dataset.email }; 
+    gapi.load('client:auth2', () => {
+      gapi.client.init({
+        apiKey: GOOGLE_API_KEY,
+        clientId: GOOGLE_CLIENT_ID,
+        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+        scope: 'https://www.googleapis.com/auth/drive.file'
+      }).then(() => {
+        console.log('✅ Google Drive API inicializada');
+        googleAuthInstance = gapi.auth2.getAuthInstance();
+        
+        // Verificar estado da autenticação
+        googleIsSignedIn = googleAuthInstance.isSignedIn.get();
+        atualizarStatusGoogle();
+        
+        // Ouvir mudanças no estado de autenticação
+        googleAuthInstance.isSignedIn.listen(estado => {
+          googleIsSignedIn = estado;
+          atualizarStatusGoogle();
+        });
+        
+      }).catch(error => {
+        console.error('Erro ao inicializar Google API:', error);
+        document.getElementById('google-status-text').textContent = '❌ Erro ao conectar ao Google Drive';
+      });
     });
-    
-    if(!selected.length){ alert('Selecione colaboradores'); return; }
-    
-    const baseUrl = window.location.origin + window.location.pathname.replace('admin.html','') + 'formacao_colaborador.html';
-    const links = selected.map(c => { 
-      const tokenData = { user: c.user, cursoId: cursoId, prazo: document.getElementById('atribuir-prazo').value || '31/12/2026', timestamp: Date.now() }; 
-      const token = btoa(JSON.stringify(tokenData)).replace(/=/g,''); 
-      const link = `${baseUrl}?token=${token}`; 
-      localStorage.setItem(`token_${token}`, JSON.stringify(tokenData)); 
-      return { user: c.user, email: c.email, link }; 
-    });
-    
-    document.getElementById('links-list').innerHTML = links.map(l => `
-      <div class="item-card">
-        <div class="item-card-info">
-          <strong>${l.user}</strong>
-          <div style="font-size:11px;word-break:break-all;margin-top:4px;">${l.link}</div>
-        </div>
-        <button class="btn-sm" onclick="copiarLink('${l.link}')">📋 Copiar</button>
-      </div>
-    `).join('');
-    document.getElementById('links-gerados').style.display = 'block';
-    alert(`✅ ${links.length} link(s) gerados!`);
-    return links;
   }
   
-  function copiarLink(link){ 
-    navigator.clipboard.writeText(link); 
-    alert('🔗 Link copiado!'); 
-  }
-  
-  function enviarEmails(){ 
-    const links = gerarLinks();
-    if(!links || links.length === 0) return; 
-    links.forEach(l => { 
-      if(l.email && l.email.trim()){ 
-        const assunto = encodeURIComponent(`[Birkenstock] Nova formação atribuída`); 
-        const corpo = encodeURIComponent(`Olá ${l.user},\n\nFoi-lhe atribuída uma nova formação na plataforma Birkenstock S&CC.\n\nAceda através do link:\n${l.link}\n\nAtenciosamente,\nEquipa de Formação`); 
-        window.open(`mailto:${l.email}?subject=${assunto}&body=${corpo}`); 
-      } else { 
-        alert(`⚠️ Colaborador ${l.user} sem email. Link: ${l.link}`); 
-      } 
-    }); 
-  }
-
-  async function publicarFormacao(){
-    const titulo = document.getElementById('f-titulo').value.trim();
-    if(!titulo){ alert('Título obrigatório'); return; }
-    if(!modulos.length){ alert('Adicione pelo menos um módulo'); return; }
-    if(!perguntas.length){ alert('Adicione pelo menos uma pergunta'); return; }
+  // Atualizar a interface com o estado do Google Drive
+  function atualizarStatusGoogle() {
+    const statusDiv = document.getElementById('google-auth-status');
+    const statusText = document.getElementById('google-status-text');
+    const loginBtn = document.getElementById('google-login-btn');
+    const logoutBtn = document.getElementById('google-logout-btn');
     
-    const novaFormacao = { 
-      nome: titulo, 
-      duracao: document.getElementById('f-duracao').value || '30 min', 
-      descricao: document.getElementById('f-descricao').value, 
-      modulos: [...modulos], 
-      perguntas: perguntas.map(p => ({texto: p.texto, opcoes: p.opcoes, correta: p.correta})), 
-      data: new Date().toLocaleDateString('pt-PT'), 
-      dataTimestamp: Date.now() 
-    };
+    if (!statusDiv) return;
     
-    try {
-      await window.addDoc(window.collection(window.db, 'formacoes'), novaFormacao);
-      alert(`✅ Formação "${titulo}" publicada com sucesso!`);
-      document.getElementById('f-titulo').value = ''; 
-      document.getElementById('f-duracao').value = ''; 
-      document.getElementById('f-descricao').value = '';
-      modulos = []; 
-      perguntas = [];
-      renderModulos(); 
-      renderPerguntas(); 
-      renderFormacoesLista(); 
-      atualizarSelectores(); 
-      atualizarDashboard();
-    } catch(error) { 
-      console.error('Erro:', error); 
-      alert('❌ Erro ao publicar formação.'); 
+    statusDiv.style.display = 'flex';
+    
+    if (googleIsSignedIn && googleAuthInstance) {
+      const user = googleAuthInstance.currentUser.get();
+      const profile = user.getBasicProfile();
+      const email = profile.getEmail();
+      statusText.innerHTML = `✅ Autenticado como: <strong>${email}</strong> (ficheiros guardados no Google Drive)`;
+      statusText.className = 'status-text success';
+      loginBtn.style.display = 'none';
+      logoutBtn.style.display = 'inline-block';
+    } else {
+      statusText.innerHTML = '⚠️ Não autenticado. Autentique-se para guardar ficheiros no Google Drive.';
+      statusText.className = 'status-text';
+      loginBtn.style.display = 'inline-block';
+      logoutBtn.style.display = 'none';
     }
   }
-
-  async function renderHistorico() {
-    const historico = await carregarHistorico();
-    const tbody = document.getElementById('lista-notas');
-    if(!historico.length){ tbody.innerHTML = '<tr><td colspan="6" class="empty">Nenhum resultado registado</td></tr>'; return; }
-    tbody.innerHTML = historico.map(h => `
-      <tr>
-        <td><strong>${h.nome}</strong></td>
-        <td>${h.email || '-'}</td>
-        <td>${h.curso}</td>
-        <td>${h.data}</td>
-        <td><span class="badge badge-success">${h.nota}</span></td>
-        <td><button class="btn-sm" onclick="alert('Certificado de ${h.nome}')">📄 Ver</button></td>
-      </tr>
-    `).join('');
-  }
   
-  function exportarHistoricoCSV(){ 
-    alert('📥 Exportação CSV será implementada em breve.'); 
-  }
-  
-  function exportarHistoricoExcel(){ 
-    alert('📊 Exportação Excel será implementada em breve.'); 
-  }
-  
-  async function limparHistorico(){ 
-    if(confirm('Apagar todo o histórico de formações?')){ 
-      const historico = await carregarHistorico();
-      for(const item of historico) {
-        await window.deleteDoc(window.doc(window.db, 'historico', item.id));
-      }
-      renderHistorico(); 
-      atualizarDashboard();
-      alert('✅ Histórico limpo!');
-    } 
-  }
-
-  function checkPasswordStrength(pass){ 
-    let s = 0; 
-    if(pass.length >= 8) s++; 
-    if(/[A-Z]/.test(pass)) s++; 
-    if(/[0-9]/.test(pass)) s++; 
-    if(/[^a-zA-Z0-9]/.test(pass)) s++; 
-    const d = document.getElementById('password-strength'); 
-    d.className = 'password-strength'; 
-    if(s <= 1) d.classList.add('strength-weak'); 
-    else if(s <= 2) d.classList.add('strength-medium'); 
-    else d.classList.add('strength-strong'); 
-  }
-  
-  function alterarPasswordAdmin(){ 
-    const atual = document.getElementById('admin-pass-atual').value; 
-    const nova = document.getElementById('admin-pass-nova').value; 
-    const conf = document.getElementById('admin-pass-confirm').value; 
-    if(atual !== adminConfig.adminPassword){ alert('❌ Password atual incorreta'); return; } 
-    if(nova !== conf){ alert('❌ Passwords não coincidem'); return; } 
-    if(nova.length < 6){ alert('❌ Mínimo 6 caracteres'); return; } 
-    adminConfig.adminPassword = nova; 
-    localStorage.setItem('admin_config', JSON.stringify(adminConfig)); 
-    alert('✅ Password alterada!'); 
-    document.getElementById('admin-pass-atual').value = ''; 
-    document.getElementById('admin-pass-nova').value = ''; 
-    document.getElementById('admin-pass-confirm').value = ''; 
-  }
-
-  function fecharModal(id){ 
-    document.getElementById(id).style.display = 'none'; 
-  }
-  
-  function switchTab(tabId){
-    document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
-    document.getElementById(`sec-${tabId}`).classList.add('active');
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
-    if(tabId === 'colaboradores') renderColabs();
-    if(tabId === 'historico') renderHistorico();
-    if(tabId === 'atribuir') atualizarSelectores();
-    if(tabId === 'dashboard') atualizarDashboard();
-    if(tabId === 'lista-formacoes') renderFormacoesLista();
-    if(tabId === 'certificado'){
-      document.getElementById('cert-titulo').value = certTemplate.titulo; 
-      document.getElementById('cert-texto').value = certTemplate.texto; 
-      document.getElementById('cert-rodape').value = certTemplate.rodape; 
+  // Autenticar com Google Drive
+  function autenticarGoogleDrive() {
+    if (!googleAuthInstance) {
+      alert('A carregar API do Google... Aguarde um momento');
+      return;
     }
-  }
-
-  // Event Listeners
-  document.getElementById('btn-save-user').addEventListener('click', saveUser);
-  document.getElementById('btn-publicar').addEventListener('click', publicarFormacao);
-  document.getElementById('btn-limpar').addEventListener('click', limparHistorico);
-  document.getElementById('btn-enviar-emails').addEventListener('click', enviarEmails);
-  document.getElementById('btn-gerar-links').addEventListener('click', gerarLinks);
-  document.getElementById('btn-salvar-modulo').addEventListener('click', salvarModulo);
-  document.getElementById('btn-salvar-pergunta').addEventListener('click', salvarPergunta);
-  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
-
-  // Inicialização
-  renderModulos(); 
-  renderPerguntas(); 
-  renderColabs(); 
-  renderHistorico(); 
-  atualizarSelectores(); 
-  atualizarDashboard(); 
-  renderFormacoesLista();
-
-  // Expor funções globalmente
-  window.abrirModalModulo = abrirModalModulo;
-  window.editarModulo = editarModulo;
-  window.removerModulo = removerModulo;
-  window.abrirModalPergunta = abrirModalPergunta;
-  window.editarPergunta = editarPergunta;
-  window.removerPergunta = removerPergunta;
-  window.removerColab = removerColab;
-  window.uploadFicheiroModulo = uploadFicheiroModulo;
-  window.copiarLink = copiarLink;
-  window.inserirPlaceholder = inserirPlaceholder;
-  window.previewCertificado = previewCertificado;
-  window.salvarTemplateCertificado = salvarTemplateCertificado;
-  window.resetTemplateCertificado = resetTemplateCertificado;
-  window.alterarPasswordAdmin = alterarPasswordAdmin;
-  window.checkPasswordStrength = checkPasswordStrength;
-  window.selecionarTodos = selecionarTodos;
-  window.deselecionarTodos = deselecionarTodos;
-  window.exportarHistoricoCSV = exportarHistoricoCSV;
-  window.exportarHistoricoExcel = exportarHistoricoExcel;
-  window.editarFormacao = async (id) => {
-    const docRef = window.doc(window.db, 'formacoes', id);
-    const docSnap = await window.getDoc(docRef);
-    if(docSnap.exists()) {
-      const data = docSnap.data();
-      document.getElementById('f-titulo').value = data.nome;
-      document.getElementById('f-duracao').value = data.duracao;
-      document.getElementById('f-descricao').value = data.descricao;
-      modulos = data.modulos || [];
-      perguntas = data.perguntas || [];
-      editandoFormacaoId = id;
-      renderModulos();
-      renderPerguntas();
-      document.getElementById('editando-id').innerHTML = `✏️ Editando: ${data.nome}`;
-      document.getElementById('btn-cancelar-edicao').style.display = 'inline-block';
-      switchTab('formacao');
-    }
-  };
-  
-  window.cancelarEdicao = () => {
-    editandoFormacaoId = null;
-    document.getElementById('f-titulo').value = '';
-    document.getElementById('f-duracao').value = '';
-    document.getElementById('f-descricao').value = '';
-    modulos = [];
-    perguntas = [];
-    renderModulos();
-    renderPerguntas();
-    document.getElementById('editando-id').innerHTML = '';
-    document.getElementById('btn-cancelar-edicao').style.display = 'none';
-  };
-  
-  document.getElementById('btn-cancelar-edicao').addEventListener('click', () => window.cancelarEdicao());
-</script>
-</body>
-</html>
+    
+    googleAuthInstance.signIn().then(() => {
+      toast('✅ Autenticado com sucesso no Google Drive!');
+      atualizarStatusGoogle();
+    }).catch(error => {
+      console.error('
