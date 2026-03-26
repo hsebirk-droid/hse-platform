@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Birkenstock S&CC Portugal — Plataforma HSE</title>
+<title>Birkenstock S&CC Portugal — Plataforma de Formação</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -35,6 +35,8 @@ body {
   align-items: center;
   justify-content: space-between;
   border-bottom: 2px solid var(--birkenstock-gold);
+  flex-wrap: wrap;
+  gap: 16px;
 }
 .topbar .logo-text {
   font-weight: 700;
@@ -51,7 +53,6 @@ body {
   color: rgba(255,255,255,.5);
   font-size: 12px;
   letter-spacing: .06em;
-  text-transform: uppercase;
 }
 
 .wrap {
@@ -64,7 +65,7 @@ body {
 
 .card {
   background: var(--white);
-  border-radius: 12px;
+  border-radius: 16px;
   width: 100%;
   max-width: 420px;
   overflow: hidden;
@@ -141,18 +142,19 @@ body {
   width: 100%;
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 11px 14px;
+  border-radius: 8px;
+  padding: 12px 14px;
   color: #1a1a1a;
   font-size: 14px;
   outline: none;
+  transition: all 0.2s;
 }
 .fg input:focus { border-color: var(--birkenstock-blue); }
 
 .errmsg {
   background: var(--danger-bg);
   border: 1px solid #fecaca;
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 10px 14px;
   font-size: 13px;
   color: var(--danger);
@@ -165,7 +167,7 @@ body {
   background: var(--birkenstock-blue);
   color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 13px;
   font-size: 14px;
   font-weight: 700;
@@ -188,9 +190,11 @@ body {
 .password-hint {
   font-size: 10px;
   color: var(--birkenstock-gray);
-  margin-top: 4px;
+  margin-top: 12px;
+  text-align: center;
   display: flex;
   justify-content: space-between;
+  gap: 16px;
 }
 </style>
 </head>
@@ -201,7 +205,7 @@ body {
     BIRKENSTOCK
     <small>S&CC PORTUGAL</small>
   </div>
-  <span>Plataforma HSE · Formação Profissional</span>
+  <span>Plataforma de Formação</span>
 </div>
 
 <div class="wrap">
@@ -213,7 +217,7 @@ body {
       </div>
     </div>
     <div class="card-body">
-      <h2>Portal de Formação HSE</h2>
+      <h2>Portal de Formação</h2>
       
       <div class="tabs">
         <button class="tab active" id="tab-colab">👥 Colaborador</button>
@@ -247,12 +251,12 @@ body {
       </div>
       
       <div class="password-hint">
-        <span>🔐 Admin: contacte o gestor</span>
+        <span>🔐 Acesso administrador</span>
         <span>❓ Dúvidas? Fale com RH</span>
       </div>
     </div>
     <div class="footer">
-      &copy; 2026 Birkenstock S&CC Portugal · HSE
+      &copy; 2026 Birkenstock S&CC Portugal · Plataforma de Formação
     </div>
   </div>
 </div>
@@ -260,7 +264,7 @@ body {
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
   import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
-  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAwywvboQgWqkrZlbwrUPdaUq-gLnWM64E",
@@ -281,7 +285,6 @@ body {
   window.getDocs = getDocs;
   window.query = query;
   window.where = where;
-  window.signInWithEmailAndPassword = signInWithEmailAndPassword;
 </script>
 
 <script>
@@ -311,7 +314,7 @@ body {
     
     isLoggingIn = true;
     document.getElementById('btn-colab').disabled = true;
-    document.getElementById('btn-colab').textContent = 'A carregar...';
+    document.getElementById('btn-colab').textContent = 'A validar...';
     
     try {
       const q = window.query(window.collection(window.db, 'colaboradores'), window.where('user', '==', user));
