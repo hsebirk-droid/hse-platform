@@ -66,7 +66,56 @@ header .logo-text small {
 }
 .btn-sair:hover { border-color: rgba(255,255,255,.7); color: #fff; }
 
-.container { max-width: 1400px; margin: 0 auto; padding: 32px 24px; }
+/* Barra Google Drive */
+.google-drive-bar {
+  background: var(--birkenstock-blue);
+  padding: 12px 24px;
+  margin: 0 24px 20px 24px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.google-drive-bar .title {
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+}
+.google-drive-bar .status {
+  color: rgba(255,255,255,0.8);
+  font-size: 13px;
+}
+.google-drive-bar .btn-auth {
+  background: var(--birkenstock-gold);
+  color: var(--birkenstock-blue);
+  border: none;
+  padding: 6px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.google-drive-bar .btn-auth:hover {
+  transform: scale(1.02);
+  background: #d4b06c;
+}
+.google-drive-bar .btn-backup {
+  background: var(--success);
+  color: white;
+  border: none;
+  padding: 6px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.google-drive-bar .btn-backup:hover {
+  background: #15803d;
+}
+
+.container { max-width: 1400px; margin: 0 auto; padding: 0 24px 32px 24px; }
 
 .dashboard-grid {
   display: grid;
@@ -174,7 +223,6 @@ header .logo-text small {
 .item-card-meta { font-size: 11px; color: var(--birkenstock-gray); margin-top: 4px; }
 .item-card-actions { display: flex; gap: 8px; }
 .item-card-actions button { background: none; border: none; cursor: pointer; font-size: 14px; padding: 4px 8px; border-radius: 4px; transition: all 0.2s; }
-.item-card-actions button:hover { background: rgba(0,0,0,0.05); }
 
 .colab-selector { background: var(--bg); padding: 16px; border-radius: 8px; margin-bottom: 16px; }
 .colab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin-top: 12px; max-height: 300px; overflow-y: auto; }
@@ -199,8 +247,7 @@ header .logo-text small {
 
 .cert-editor { background: var(--bg); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
 .cert-preview { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 40px; margin-top: 20px; }
-.placeholder-badge { background: var(--info-bg); color: var(--info); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-family: monospace; cursor: pointer; display: inline-block; margin: 4px; transition: all 0.2s; }
-.placeholder-badge:hover { background: var(--info); color: white; }
+.placeholder-badge { background: var(--info-bg); color: var(--info); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-family: monospace; cursor: pointer; display: inline-block; margin: 4px; }
 
 .password-strength { height: 4px; margin-top: 6px; border-radius: 2px; background: #e2e8f0; }
 .strength-weak { background: var(--danger); width: 33%; }
@@ -213,7 +260,7 @@ header .logo-text small {
 
 table { width: 100%; border-collapse: collapse; }
 th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
-th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-transform: uppercase; letter-spacing: 0.5px; }
+th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-transform: uppercase; }
 .empty { text-align: center; padding: 40px; color: var(--birkenstock-gray); }
 
 .modal {
@@ -245,8 +292,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   padding-bottom: 12px;
   border-bottom: 1px solid var(--border);
 }
-.modal-close { cursor: pointer; font-size: 24px; color: var(--birkenstock-gray); transition: all 0.2s; }
-.modal-close:hover { color: var(--birkenstock-blue); }
+.modal-close { cursor: pointer; font-size: 24px; color: var(--birkenstock-gray); }
 
 .badge {
   display: inline-block;
@@ -257,28 +303,12 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
 }
 .badge-success { background: var(--success-bg); color: var(--success); }
 
-.google-auth-status {
-  background: var(--info-bg);
-  border: 1px solid var(--info);
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 16px;
-  font-size: 13px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-.google-auth-status .status-text { color: var(--info); font-weight: 500; }
-.google-auth-status .status-text.success { color: var(--success); }
-.google-auth-status button { background: var(--birkenstock-blue); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
-
 @media (max-width: 768px) {
-  .container { padding: 20px 16px; }
+  .container { padding: 0 16px 20px 16px; }
   .sec-body { padding: 16px; }
   .tabs { padding: 8px; }
   .tab { padding: 8px 12px; font-size: 12px; }
+  .google-drive-bar { margin: 0 16px 16px 16px; }
 }
 </style>
 </head>
@@ -288,6 +318,16 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   <div class="logo-text">BIRKENSTOCK<small>S&CC PORTUGAL</small></div>
   <button class="btn-sair" onclick="location.href='index.html'">Sair</button>
 </header>
+
+<!-- Barra Google Drive com Backup -->
+<div class="google-drive-bar">
+  <div class="title">📁 Google Drive</div>
+  <div class="status" id="google-drive-status">⚠️ Não autenticado</div>
+  <div>
+    <button class="btn-auth" id="btn-google-auth" onclick="forcarAutenticacaoGoogle()">🔐 Autenticar</button>
+    <button class="btn-backup" id="btn-backup" onclick="fazerBackupDrive()" style="margin-left: 10px;">💾 Backup para Drive</button>
+  </div>
+</div>
 
 <div class="container">
   <div class="dashboard-grid" id="dashboard-grid"></div>
@@ -316,35 +356,23 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   <div class="sec" id="sec-formacao">
     <div class="sec-head"><h2>🎓 Criar Nova Formação</h2><div id="editando-id" style="color:white;font-size:12px;"></div></div>
     <div class="sec-body">
-      <!-- Status da autenticação Google Drive -->
-      <div id="google-auth-status" class="google-auth-status" style="display:none;">
-        <span class="status-text">📁 Estado do Google Drive:</span>
-        <span id="google-status-text">A carregar...</span>
-        <button id="google-login-btn" onclick="autenticarGoogleDrive()" style="display:none;">🔐 Autenticar com Google</button>
-        <button id="google-logout-btn" onclick="desautenticarGoogleDrive()" style="display:none;">🚪 Sair do Google</button>
-      </div>
-      
       <div class="frow">
         <div class="fg"><label>Título *</label><input type="text" id="f-titulo" placeholder="Ex: Atendimento ao Cliente"></div>
         <div class="fg"><label>Duração</label><input type="text" id="f-duracao" placeholder="45 minutos"></div>
       </div>
-      <div class="fg"><label>Descrição</label><textarea id="f-descricao" rows="2" placeholder="Descreva o conteúdo da formação..."></textarea></div>
+      <div class="fg"><label>Descrição</label><textarea id="f-descricao" rows="2"></textarea></div>
       
       <div style="margin-top: 20px;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; align-items: center;">
-          <h3 style="font-size: 14px; color: var(--birkenstock-blue);">📦 Módulos</h3>
-          <div>
-            <button class="btn-sm btn" onclick="abrirModalModulo('video')">🎬 Vídeo</button>
-            <button class="btn-sm btn" onclick="abrirModalModulo('text')">📄 Texto</button>
-            <button class="btn-sm btn" onclick="abrirModalModulo('file')">📁 Ficheiro/URL</button>
-          </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+          <h3 style="font-size: 14px;">📦 Módulos</h3>
+          <div><button class="btn-sm btn" onclick="abrirModalModulo('video')">🎬 Vídeo</button><button class="btn-sm btn" onclick="abrirModalModulo('text')">📄 Texto</button><button class="btn-sm btn" onclick="abrirModalModulo('file')">📁 Ficheiro/URL</button></div>
         </div>
         <div id="modulos-container"></div>
       </div>
       
       <div style="margin-top: 20px;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; align-items: center;">
-          <h3 style="font-size: 14px; color: var(--birkenstock-blue);">📝 Perguntas</h3>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+          <h3 style="font-size: 14px;">📝 Perguntas</h3>
           <button class="btn-sm btn" onclick="abrirModalPergunta()">+ Adicionar</button>
         </div>
         <div id="perguntas-container"></div>
@@ -367,10 +395,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       <div class="colab-selector">
         <label>👥 Colaboradores</label>
         <div id="colab-selector-grid" class="colab-grid"></div>
-        <div style="margin-top:12px;">
-          <button class="btn-sm btn" onclick="selecionarTodos()">Selecionar Todos</button>
-          <button class="btn-sm btn" onclick="deselecionarTodos()">Limpar</button>
-        </div>
+        <div style="margin-top:12px;"><button class="btn-sm btn" onclick="selecionarTodos()">Selecionar Todos</button> <button class="btn-sm btn" onclick="deselecionarTodos()">Limpar</button></div>
       </div>
       <div class="frow" style="margin-top:16px;">
         <button class="btn-success btn" id="btn-enviar-emails">📧 Enviar Convites</button>
@@ -410,8 +435,8 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     <div class="sec-body">
       <div class="frow">
         <div class="fg"><label>Utilizador</label><input type="text" id="u-nome" placeholder="nome.apelido"></div>
-        <div class="fg"><label>Email</label><input type="email" id="u-email" placeholder="email@empresa.pt"></div>
-        <div class="fg"><label>Password</label><input type="password" id="u-pass" placeholder="********"></div>
+        <div class="fg"><label>Email</label><input type="email" id="u-email"></div>
+        <div class="fg"><label>Password</label><input type="password" id="u-pass"></div>
       </div>
       <div class="frow">
         <div class="fg"><label>Importar CSV</label><input type="file" id="import-csv" accept=".csv" onchange="importColaboradores(this.files)"></div>
@@ -436,59 +461,42 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   </div>
 
   <div class="sec" id="sec-historico">
-    <div class="sec-head"><h2>📊 Histórico de Formações</h2><div><button class="btn-sm" onclick="exportarHistoricoCSV()">📥 CSV</button><button class="btn-sm" onclick="exportarHistoricoExcel()">📊 Excel</button></div></div>
+    <div class="sec-head"><h2>📊 Histórico de Formações</h2><div><button class="btn-sm" onclick="exportarHistoricoCSV()">📥 CSV</button><button class="btn-sm" onclick="exportarHistoricoExcel()">📊 Excel</button><button class="btn-sm btn-success" onclick="backupHistoricoDrive()">💾 Backup Drive</button></div></div>
     <div class="sec-body">
       <div style="overflow-x:auto;">
-         <table>
-          <thead>
-             <tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr>
-          </thead>
+        <table>
+          <thead><tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr></thead>
           <tbody id="lista-notas"></tbody>
-         </table>
+        </table>
       </div>
       <button id="btn-limpar" class="btn-sm btn-danger" style="margin-top:16px;">🗑️ Limpar Histórico</button>
     </div>
   </div>
 </div>
 
-<div id="modal-modulo" class="modal">
-  <div class="modal-content">
-    <div class="modal-header"><h3 id="modal-modulo-titulo">Módulo</h3><span class="modal-close" onclick="fecharModal('modal-modulo')">&times;</span></div>
-    <div class="fg"><label>Título *</label><input type="text" id="modulo-titulo" placeholder="Título do módulo"></div>
-    <div class="fg"><label>Duração</label><input type="text" id="modulo-duracao" placeholder="Ex: 15 minutos"></div>
-    <div id="modulo-conteudo-video" style="display:none;">
-      <div class="fg"><label>URL do Vídeo *</label><input type="text" id="modulo-video-url" placeholder="https://www.youtube.com/embed/..."></div>
-    </div>
-    <div id="modulo-conteudo-texto" style="display:none;">
-      <div class="fg"><label>Conteúdo HTML *</label><textarea id="modulo-texto-conteudo" rows="6" placeholder="Digite o conteúdo do módulo..."></textarea></div>
-    </div>
-    <div id="modulo-conteudo-file" style="display:none;">
-      <div class="fg"><label>URL Externa (opcional)</label><input type="text" id="modulo-url-externa" placeholder="https://..."></div>
-      <div class="upload-area" onclick="document.getElementById('file-input-modulo').click()">📁 Ou selecionar ficheiro (será guardado no Google Drive)</div>
-      <input type="file" id="file-input-modulo" style="display:none" onchange="uploadFicheiroModulo(this.files)">
-      <div id="file-preview-modulo" style="margin-top: 8px; font-size: 12px;"></div>
-    </div>
-    <button class="btn" id="btn-salvar-modulo" style="margin-top:16px;">Salvar Módulo</button>
-  </div>
-</div>
+<div id="modal-modulo" class="modal"><div class="modal-content"><div class="modal-header"><h3 id="modal-modulo-titulo">Módulo</h3><span class="modal-close" onclick="fecharModal('modal-modulo')">&times;</span></div>
+  <div class="fg"><label>Título *</label><input type="text" id="modulo-titulo"></div>
+  <div class="fg"><label>Duração</label><input type="text" id="modulo-duracao"></div>
+  <div id="modulo-conteudo-video" style="display:none;"><div class="fg"><label>URL Vídeo</label><input type="text" id="modulo-video-url"></div></div>
+  <div id="modulo-conteudo-texto" style="display:none;"><div class="fg"><label>Conteúdo HTML</label><textarea id="modulo-texto-conteudo" rows="6"></textarea></div></div>
+  <div id="modulo-conteudo-file" style="display:none;"><div class="upload-area" onclick="document.getElementById('file-input-modulo').click()">📁 Selecionar ficheiro (será guardado no Google Drive)</div><input type="file" id="file-input-modulo" style="display:none" onchange="uploadFicheiroModulo(this.files)"><div id="file-preview-modulo"></div></div>
+  <button class="btn" id="btn-salvar-modulo">Salvar Módulo</button>
+</div></div>
 
-<div id="modal-pergunta" class="modal">
-  <div class="modal-content">
-    <div class="modal-header"><h3>Pergunta</h3><span class="modal-close" onclick="fecharModal('modal-pergunta')">&times;</span></div>
-    <div class="fg"><label>Texto da Pergunta *</label><input type="text" id="pergunta-texto" placeholder="Digite a pergunta..."></div>
-    <div class="fg"><label>Opção A *</label><input type="text" id="pergunta-opcao-a" placeholder="Opção A"></div>
-    <div class="fg"><label>Opção B *</label><input type="text" id="pergunta-opcao-b" placeholder="Opção B"></div>
-    <div class="fg"><label>Opção C *</label><input type="text" id="pergunta-opcao-c" placeholder="Opção C"></div>
-    <div class="fg"><label>Opção D *</label><input type="text" id="pergunta-opcao-d" placeholder="Opção D"></div>
-    <div class="fg"><label>Opção Correta *</label><select id="pergunta-correta"><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
-    <button class="btn" id="btn-salvar-pergunta" style="margin-top:16px;">Salvar Pergunta</button>
-  </div>
-</div>
+<div id="modal-pergunta" class="modal"><div class="modal-content"><div class="modal-header"><h3>Pergunta</h3><span class="modal-close" onclick="fecharModal('modal-pergunta')">&times;</span></div>
+  <div class="fg"><label>Texto</label><input type="text" id="pergunta-texto"></div>
+  <div class="fg"><label>Opção A</label><input type="text" id="pergunta-opcao-a"></div>
+  <div class="fg"><label>Opção B</label><input type="text" id="pergunta-opcao-b"></div>
+  <div class="fg"><label>Opção C</label><input type="text" id="pergunta-opcao-c"></div>
+  <div class="fg"><label>Opção D</label><input type="text" id="pergunta-opcao-d"></div>
+  <div class="fg"><label>Correta</label><select id="pergunta-correta"><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+  <button class="btn" id="btn-salvar-pergunta">Salvar</button>
+</div></div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
   import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
-  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-storage.js";
+  import { getStorage } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-storage.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAwywvboQgWqkrZlbwrUPdaUq-gLnWM64E",
@@ -514,9 +522,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   window.query = query;
   window.orderBy = orderBy;
   window.getDoc = getDoc;
-  window.ref = ref;
-  window.uploadBytes = uploadBytes;
-  window.getDownloadURL = getDownloadURL;
 </script>
 
 <script>
@@ -526,6 +531,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   
   let googleAuthInstance = null;
   let googleIsSignedIn = false;
+  let accessToken = null;
   
   let adminConfig = JSON.parse(localStorage.getItem('admin_config') || '{"adminPassword":"SSA2024admin"}');
   let modulos = [], perguntas = [], editandoModuloId = null, editandoPerguntaId = null, moduloTipoAtual = 'video', ficheiroTemp = null;
@@ -553,79 +559,62 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
         console.log('✅ Google Drive API inicializada');
         googleAuthInstance = gapi.auth2.getAuthInstance();
         googleIsSignedIn = googleAuthInstance.isSignedIn.get();
-        atualizarStatusGoogle();
+        
+        if (googleIsSignedIn) {
+          const user = googleAuthInstance.currentUser.get();
+          const authResponse = user.getAuthResponse();
+          accessToken = authResponse.access_token;
+          document.getElementById('google-drive-status').innerHTML = `✅ Autenticado como: ${user.getBasicProfile().getEmail()}`;
+          document.getElementById('google-drive-status').style.color = '#90EE90';
+        } else {
+          document.getElementById('google-drive-status').innerHTML = '⚠️ Não autenticado';
+        }
+        
         googleAuthInstance.isSignedIn.listen(estado => {
           googleIsSignedIn = estado;
-          atualizarStatusGoogle();
+          if (estado && googleAuthInstance.currentUser.get()) {
+            const user = googleAuthInstance.currentUser.get();
+            const authResponse = user.getAuthResponse();
+            accessToken = authResponse.access_token;
+            document.getElementById('google-drive-status').innerHTML = `✅ Autenticado como: ${user.getBasicProfile().getEmail()}`;
+            document.getElementById('google-drive-status').style.color = '#90EE90';
+          } else {
+            accessToken = null;
+            document.getElementById('google-drive-status').innerHTML = '⚠️ Não autenticado';
+            document.getElementById('google-drive-status').style.color = 'rgba(255,255,255,0.8)';
+          }
         });
       }).catch(error => {
         console.error('Erro ao inicializar Google API:', error);
-        const statusDiv = document.getElementById('google-status-text');
-        if (statusDiv) statusDiv.textContent = '❌ Erro ao conectar ao Google Drive';
       });
     });
   }
   
-  function atualizarStatusGoogle() {
-    const statusDiv = document.getElementById('google-auth-status');
-    const statusText = document.getElementById('google-status-text');
-    const loginBtn = document.getElementById('google-login-btn');
-    const logoutBtn = document.getElementById('google-logout-btn');
-    
-    if (!statusDiv) return;
-    
-    statusDiv.style.display = 'flex';
-    
-    if (googleIsSignedIn && googleAuthInstance) {
-      const user = googleAuthInstance.currentUser.get();
-      const profile = user.getBasicProfile();
-      const email = profile.getEmail();
-      statusText.innerHTML = `✅ Autenticado como: <strong>${email}</strong> (ficheiros guardados no Google Drive)`;
-      statusText.className = 'status-text success';
-      if (loginBtn) loginBtn.style.display = 'none';
-      if (logoutBtn) logoutBtn.style.display = 'inline-block';
-    } else {
-      statusText.innerHTML = '⚠️ Não autenticado. Autentique-se para guardar ficheiros no Google Drive.';
-      statusText.className = 'status-text';
-      if (loginBtn) loginBtn.style.display = 'inline-block';
-      if (logoutBtn) logoutBtn.style.display = 'none';
-    }
-  }
-  
-  function autenticarGoogleDrive() {
+  function forcarAutenticacaoGoogle() {
     if (!googleAuthInstance) {
-      alert('A carregar API do Google... Aguarde um momento');
+      alert('A carregar API do Google... Aguarde 5 segundos e tente novamente.');
       return;
     }
     
     googleAuthInstance.signIn().then(() => {
-      toast('✅ Autenticado com sucesso no Google Drive!');
-      atualizarStatusGoogle();
+      const user = googleAuthInstance.currentUser.get();
+      const authResponse = user.getAuthResponse();
+      accessToken = authResponse.access_token;
+      alert('✅ Autenticado com sucesso no Google Drive!');
+      document.getElementById('google-drive-status').innerHTML = `✅ Autenticado como: ${user.getBasicProfile().getEmail()}`;
+      document.getElementById('google-drive-status').style.color = '#90EE90';
     }).catch(error => {
       console.error('Erro na autenticação:', error);
-      alert('❌ Erro ao autenticar: ' + (error.error || error.message || 'Tente novamente'));
+      alert('❌ Erro ao autenticar: ' + (error.error || error.message || 'Tente novamente mais tarde'));
     });
   }
   
-  function desautenticarGoogleDrive() {
-    if (googleAuthInstance) {
-      googleAuthInstance.signOut().then(() => {
-        toast('🔓 Desautenticado do Google Drive');
-        atualizarStatusGoogle();
-      });
-    }
-  }
-  
-  async function uploadParaGoogleDrive(file) {
+  async function uploadParaGoogleDrive(file, folderName = 'formacoes_ficheiros') {
     return new Promise((resolve, reject) => {
-      if (!googleIsSignedIn || !googleAuthInstance) {
+      if (!accessToken) {
         reject('Necessário autenticar no Google Drive primeiro');
         return;
       }
-      
-      const user = googleAuthInstance.currentUser.get();
-      const authResponse = user.getAuthResponse();
-      const accessToken = authResponse.access_token;
       
       const metadata = {
         name: file.name,
@@ -665,13 +654,88 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     });
   }
   
+  async function uploadJSONParaDrive(data, nomeArquivo, pasta = 'backups') {
+    return new Promise((resolve, reject) => {
+      if (!accessToken) {
+        reject('Necessário autenticar no Google Drive primeiro');
+        return;
+      }
+      
+      const jsonString = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      const file = new File([blob], nomeArquivo, { type: 'application/json' });
+      
+      const metadata = {
+        name: nomeArquivo,
+        mimeType: 'application/json',
+        parents: ['root']
+      };
+      
+      const form = new FormData();
+      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+      form.append('file', file);
+      
+      fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+        method: 'POST',
+        headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
+        body: form
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.id) {
+          resolve({ id: data.id, url: `https://drive.google.com/file/d/${data.id}/view` });
+        } else {
+          reject('Erro no upload: ' + JSON.stringify(data));
+        }
+      })
+      .catch(error => reject(error));
+    });
+  }
+  
+  async function uploadCSVParaDrive(csvContent, nomeArquivo) {
+    return new Promise((resolve, reject) => {
+      if (!accessToken) {
+        reject('Necessário autenticar no Google Drive primeiro');
+        return;
+      }
+      
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const file = new File([blob], nomeArquivo, { type: 'text/csv' });
+      
+      const metadata = {
+        name: nomeArquivo,
+        mimeType: 'text/csv',
+        parents: ['root']
+      };
+      
+      const form = new FormData();
+      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+      form.append('file', file);
+      
+      fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+        method: 'POST',
+        headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
+        body: form
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.id) {
+          resolve({ id: data.id, url: `https://drive.google.com/file/d/${data.id}/view` });
+        } else {
+          reject('Erro no upload: ' + JSON.stringify(data));
+        }
+      })
+      .catch(error => reject(error));
+    });
+  }
+  
   async function uploadFicheiroModulo(files) {
     if(!files || !files[0]) return;
     const file = files[0];
     const maxSize = 10 * 1024 * 1024;
     
     if (file.size > maxSize) {
-      alert(`⚠️ O ficheiro "${file.name}" tem ${Math.round(file.size/1024/1024)}MB. O limite é 10MB.`);
+      alert(`⚠️ O ficheiro tem ${Math.round(file.size/1024/1024)}MB. Limite 10MB.`);
       return;
     }
     
@@ -680,8 +744,8 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     preview.style.color = 'var(--birkenstock-blue)';
     
     try {
-      if (!googleIsSignedIn) {
-        throw new Error('Necessário autenticar no Google Drive primeiro. Clique em "Autenticar com Google"');
+      if (!accessToken) {
+        throw new Error('Necessário autenticar no Google Drive primeiro');
       }
       
       const driveFile = await uploadParaGoogleDrive(file);
@@ -693,33 +757,83 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       const linkDiv = document.createElement('div');
       linkDiv.style.marginTop = '8px';
       linkDiv.style.fontSize = '11px';
-      linkDiv.innerHTML = `
-        <a href="${driveFile.viewUrl}" target="_blank" style="color: var(--birkenstock-blue);">🔗 Ver no Google Drive</a> | 
-        <a href="${driveFile.downloadUrl}" target="_blank" style="color: var(--birkenstock-blue);">⬇️ Download direto</a>
-      `;
+      linkDiv.innerHTML = `<a href="${driveFile.viewUrl}" target="_blank">🔗 Ver no Google Drive</a>`;
       preview.appendChild(linkDiv);
       
-      toast('✅ Ficheiro enviado para o Google Drive!');
+    } catch(error) {
+      preview.innerHTML = `❌ ${error.message}`;
+      preview.style.color = 'var(--danger)';
+    }
+  }
+  
+  async function fazerBackupDrive() {
+    if (!accessToken) {
+      alert('⚠️ Necessário autenticar no Google Drive primeiro! Clique em "Autenticar"');
+      return;
+    }
+    
+    const backupBtn = document.getElementById('btn-backup');
+    backupBtn.disabled = true;
+    backupBtn.textContent = '📤 A fazer backup...';
+    
+    try {
+      const dataAtual = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+      
+      // Backup das formações
+      const cursos = await carregarFormacoes();
+      await uploadJSONParaDrive(cursos, `backup_formacoes_${dataAtual}.json`);
+      
+      // Backup dos colaboradores
+      const colaboradores = await carregarColaboradores();
+      await uploadJSONParaDrive(colaboradores, `backup_colaboradores_${dataAtual}.json`);
+      
+      // Backup do histórico
+      const historico = await carregarHistorico();
+      await uploadJSONParaDrive(historico, `backup_historico_${dataAtual}.json`);
+      
+      // Backup do template do certificado
+      await uploadJSONParaDrive(certTemplate, `backup_certificado_${dataAtual}.json`);
+      
+      alert('✅ Backup completo guardado no Google Drive!\n\nForam guardados:\n- Formações\n- Colaboradores\n- Histórico\n- Template do Certificado');
       
     } catch(error) {
-      console.error('Erro no upload:', error);
-      preview.innerHTML = `❌ ${error.message || `Erro ao enviar "${file.name}"`}`;
-      preview.style.color = 'var(--danger)';
-      
-      if (error.message.includes('autenticar')) {
-        const authBtn = document.createElement('button');
-        authBtn.textContent = '🔐 Autenticar com Google';
-        authBtn.style.marginTop = '8px';
-        authBtn.style.padding = '6px 12px';
-        authBtn.style.background = 'var(--birkenstock-blue)';
-        authBtn.style.color = 'white';
-        authBtn.style.border = 'none';
-        authBtn.style.borderRadius = '6px';
-        authBtn.style.cursor = 'pointer';
-        authBtn.onclick = () => autenticarGoogleDrive();
-        preview.appendChild(authBtn);
-      }
+      console.error('Erro no backup:', error);
+      alert('❌ Erro ao fazer backup: ' + error.message);
+    } finally {
+      backupBtn.disabled = false;
+      backupBtn.textContent = '💾 Backup para Drive';
     }
+  }
+  
+  async function backupHistoricoDrive() {
+    if (!accessToken) {
+      alert('⚠️ Necessário autenticar no Google Drive primeiro!');
+      return;
+    }
+    
+    const btn = event.target;
+    btn.disabled = true;
+    btn.textContent = '📤 A enviar...';
+    
+    try {
+      const historico = await carregarHistorico();
+      const csvContent = gerarCSVHistorico(historico);
+      const dataAtual = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+      const result = await uploadCSVParaDrive(csvContent, `historico_formacoes_${dataAtual}.csv`);
+      alert(`✅ Histórico exportado para o Google Drive!\n\nLink: ${result.url}`);
+    } catch(error) {
+      alert('❌ Erro ao exportar: ' + error.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '💾 Backup Drive';
+    }
+  }
+  
+  function gerarCSVHistorico(historico) {
+    const headers = ['Colaborador', 'Email', 'Formação', 'Data', 'Nota'];
+    const rows = historico.map(h => [h.nome, h.email || '', h.curso, h.data, h.nota]);
+    const csvContent = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+    return csvContent;
   }
 
   // ==================== FUNÇÕES PRINCIPAIS ====================
@@ -781,38 +895,28 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     if(!confirm('Apagar esta formação permanentemente?')) return;
     try {
       await window.deleteDoc(window.doc(window.db, 'formacoes', id));
-      toast('✅ Formação apagada!');
+      alert('✅ Formação apagada!');
       renderFormacoesLista();
       atualizarDashboard();
       atualizarSelectores();
     } catch(error) { console.error('Erro:', error); alert('Erro ao apagar formação.'); }
   }
 
-  function toast(msg) { alert(msg); }
-
-  function inserirPlaceholder(ph) { 
-    const textarea = document.getElementById('cert-texto');
-    textarea.value += ph; 
-    textarea.focus();
-  }
+  function inserirPlaceholder(ph) { document.getElementById('cert-texto').value += ph; }
   
   function previewCertificado() {
     const preview = document.getElementById('cert-preview');
     const content = document.getElementById('cert-preview-content');
     let texto = certTemplate.texto;
     Object.entries({nome:"Exemplo", formacao:"Formação Teste", data:new Date().toLocaleDateString('pt-PT'), nota:"85%", validade:"2027", certificado_id:"CERT-001"}).forEach(([k,v]) => texto = texto.replace(new RegExp(`{{${k}}}`, 'g'), v));
-    content.innerHTML = `<div style="text-align:center;padding:20px;border:2px solid var(--birkenstock-gold);border-radius:16px;"><h2 style="color:var(--birkenstock-blue);">${certTemplate.titulo}</h2><div style="margin:20px 0;">${texto.replace(/\n/g,'<br>')}</div><div style="margin-top:20px; font-size:12px;">${certTemplate.rodape}</div></div>`;
+    content.innerHTML = `<div style="text-align:center;padding:20px;border:2px solid var(--birkenstock-gold);border-radius:16px;"><h2>${certTemplate.titulo}</h2><div>${texto.replace(/\n/g,'<br>')}</div><div style="margin-top:20px;">${certTemplate.rodape}</div></div>`;
     preview.style.display = 'block';
   }
   
   function salvarTemplateCertificado() {
-    certTemplate = { 
-      titulo: document.getElementById('cert-titulo').value, 
-      texto: document.getElementById('cert-texto').value, 
-      rodape: document.getElementById('cert-rodape').value 
-    };
+    certTemplate = { titulo: document.getElementById('cert-titulo').value, texto: document.getElementById('cert-texto').value, rodape: document.getElementById('cert-rodape').value };
     localStorage.setItem('cert_template', JSON.stringify(certTemplate));
-    toast('✅ Template salvo!');
+    alert('Template salvo!');
   }
   
   function resetTemplateCertificado() {
@@ -820,249 +924,51 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     document.getElementById('cert-titulo').value = certTemplate.titulo;
     document.getElementById('cert-texto').value = certTemplate.texto;
     document.getElementById('cert-rodape').value = certTemplate.rodape;
-    toast('✅ Template restaurado!');
+    alert('Template restaurado!');
   }
 
   function abrirModalModulo(tipo) {
-    moduloTipoAtual = tipo; 
-    editandoModuloId = null; 
-    ficheiroTemp = null;
-    
-    const titulos = { video: '🎬 Vídeo', text: '📄 Texto', file: '📁 Ficheiro/URL (Google Drive)' };
-    document.getElementById('modal-modulo-titulo').textContent = titulos[tipo];
-    document.getElementById('modulo-titulo').value = ''; 
-    document.getElementById('modulo-duracao').value = '';
-    
-    document.getElementById('modulo-conteudo-video').style.display = tipo === 'video' ? 'block' : 'none';
-    document.getElementById('modulo-conteudo-texto').style.display = tipo === 'text' ? 'block' : 'none';
-    document.getElementById('modulo-conteudo-file').style.display = tipo === 'file' ? 'block' : 'none';
-    
-    document.getElementById('modulo-video-url').value = '';
-    document.getElementById('modulo-texto-conteudo').value = '';
-    document.getElementById('modulo-url-externa').value = '';
+    moduloTipoAtual = tipo; editandoModuloId = null; ficheiroTemp = null;
+    document.getElementById('modal-modulo-titulo').textContent = tipo==='video'?'Vídeo':tipo==='text'?'Texto':'Ficheiro';
+    document.getElementById('modulo-titulo').value = ''; document.getElementById('modulo-duracao').value = '';
+    document.getElementById('modulo-conteudo-video').style.display = tipo==='video'?'block':'none';
+    document.getElementById('modulo-conteudo-texto').style.display = tipo==='text'?'block':'none';
+    document.getElementById('modulo-conteudo-file').style.display = tipo==='file'?'block':'none';
     document.getElementById('file-preview-modulo').innerHTML = '';
-    
-    if (tipo === 'file' && !googleIsSignedIn) {
-      const preview = document.getElementById('file-preview-modulo');
-      preview.innerHTML = '⚠️ Para guardar ficheiros, autentique-se no Google Drive primeiro.';
-      preview.style.color = 'var(--warning)';
-    }
-    
-    document.getElementById('modal-modulo').style.display = 'flex'; 
+    document.getElementById('modal-modulo').style.display = 'flex';
   }
   
-  function editarModulo(id) { 
-    const m = modulos.find(m => m.id === id); 
-    if(!m) return; 
-    editandoModuloId = id; 
-    moduloTipoAtual = m.tipo; 
-    document.getElementById('modulo-titulo').value = m.titulo; 
-    document.getElementById('modulo-duracao').value = m.duracao; 
-    document.getElementById('modulo-conteudo-video').style.display = m.tipo === 'video' ? 'block' : 'none';
-    document.getElementById('modulo-conteudo-texto').style.display = m.tipo === 'text' ? 'block' : 'none';
-    document.getElementById('modulo-conteudo-file').style.display = m.tipo === 'file' ? 'block' : 'none';
-    
-    if(m.tipo === 'video' && m.conteudo.url) {
-      document.getElementById('modulo-video-url').value = m.conteudo.url;
-    }
-    if(m.tipo === 'text' && m.conteudo.texto) {
-      document.getElementById('modulo-texto-conteudo').value = m.conteudo.texto;
-    }
-    if(m.tipo === 'file') {
-      if(m.conteudo.url) {
-        document.getElementById('modulo-url-externa').value = m.conteudo.url;
-      } else if(m.conteudo.fileName) {
-        ficheiroTemp = m.conteudo;
-        document.getElementById('file-preview-modulo').innerHTML = `📎 ${m.conteudo.fileName} (guardado no Google Drive)`;
-      }
-    }
-    document.getElementById('modal-modulo').style.display = 'flex'; 
-  }
+  function editarModulo(id) { const m = modulos.find(m=>m.id===id); if(!m) return; editandoModuloId=id; moduloTipoAtual=m.tipo; document.getElementById('modulo-titulo').value=m.titulo; document.getElementById('modulo-duracao').value=m.duracao; document.getElementById('modulo-conteudo-video').style.display=m.tipo==='video'?'block':'none'; document.getElementById('modulo-conteudo-texto').style.display=m.tipo==='text'?'block':'none'; document.getElementById('modulo-conteudo-file').style.display=m.tipo==='file'?'block':'none'; if(m.tipo==='video') document.getElementById('modulo-video-url').value=m.conteudo.url||''; if(m.tipo==='text') document.getElementById('modulo-texto-conteudo').value=m.conteudo.texto||''; if(m.tipo==='file' && m.conteudo.fileName) { ficheiroTemp=m.conteudo; document.getElementById('file-preview-modulo').innerHTML=`📎 ${m.conteudo.fileName}`; } document.getElementById('modal-modulo').style.display='flex'; }
   
   function salvarModulo() {
-    const titulo = document.getElementById('modulo-titulo').value.trim();
-    if(!titulo){ alert('Título obrigatório'); return; }
-    
-    let conteudo = {};
-    let tipo = moduloTipoAtual;
-    
-    if(moduloTipoAtual === 'video'){ 
-      const url = document.getElementById('modulo-video-url').value.trim(); 
-      if(!url){ alert('URL do vídeo obrigatório'); return; } 
-      conteudo = { url, tipo: 'video' }; 
-    }
-    else if(moduloTipoAtual === 'text'){ 
-      const texto = document.getElementById('modulo-texto-conteudo').value; 
-      if(!texto){ alert('Conteúdo obrigatório'); return; } 
-      conteudo = { texto, tipo: 'text' }; 
-    }
-    else if(moduloTipoAtual === 'file'){ 
-      const urlExterna = document.getElementById('modulo-url-externa').value.trim();
-      
-      if(urlExterna) {
-        conteudo = { 
-          url: urlExterna,
-          tipo: 'external_url',
-          isGoogleDrive: urlExterna.includes('drive.google.com')
-        };
-      } else if(ficheiroTemp && ficheiroTemp.url) {
-        conteudo = { 
-          fileId: ficheiroTemp.id,
-          fileName: ficheiroTemp.name,
-          fileType: ficheiroTemp.type,
-          fileSize: ficheiroTemp.size,
-          url: ficheiroTemp.url,
-          viewUrl: ficheiroTemp.viewUrl,
-          downloadUrl: ficheiroTemp.downloadUrl,
-          embedUrl: ficheiroTemp.embedUrl,
-          storage: 'googledrive',
-          tipo: 'drive_file'
-        }; 
-      } else {
-        alert('Selecione um ficheiro ou insira uma URL'); 
-        return;
-      }
-    }
-    
-    const duracao = document.getElementById('modulo-duracao').value.trim() || '15 min';
-    
-    if(editandoModuloId){ 
-      const idx = modulos.findIndex(m => m.id === editandoModuloId); 
-      if(idx !== -1) modulos[idx] = { ...modulos[idx], titulo, tipo, conteudo, duracao }; 
-    } else {
-      modulos.push({ id: Date.now(), titulo, tipo, conteudo, duracao });
-    }
-    
-    renderModulos(); 
-    fecharModal('modal-modulo');
+    const titulo=document.getElementById('modulo-titulo').value.trim(); if(!titulo){alert('Título obrigatório');return;}
+    let conteudo={};
+    if(moduloTipoAtual==='video'){ const url=document.getElementById('modulo-video-url').value.trim(); if(!url){alert('URL obrigatório');return;} conteudo={url}; }
+    else if(moduloTipoAtual==='text'){ const texto=document.getElementById('modulo-texto-conteudo').value; if(!texto){alert('Conteúdo obrigatório');return;} conteudo={texto}; }
+    else{ if(!ficheiroTemp){alert('Selecione um ficheiro');return;} conteudo={fileId:ficheiroTemp.id,fileName:ficheiroTemp.name,fileData:ficheiroTemp.data}; }
+    const duracao=document.getElementById('modulo-duracao').value.trim()||'15 min';
+    if(editandoModuloId){ const idx=modulos.findIndex(m=>m.id===editandoModuloId); if(idx!==-1) modulos[idx]={...modulos[idx],titulo,tipo:moduloTipoAtual,conteudo,duracao}; }
+    else modulos.push({id:Date.now(),titulo,tipo:moduloTipoAtual,conteudo,duracao});
+    renderModulos(); fecharModal('modal-modulo');
   }
   
-  function removerModulo(id) { 
-    if(confirm('Remover módulo?')){ 
-      modulos = modulos.filter(m => m.id !== id); 
-      renderModulos(); 
-    } 
-  }
+  function removerModulo(id) { if(confirm('Remover módulo?')){ modulos=modulos.filter(m=>m.id!==id); renderModulos(); } }
   
-  function renderModulos() { 
-    const container = document.getElementById('modulos-container'); 
-    if(!modulos.length){ 
-      container.innerHTML = '<div class="alert alert-warning">Nenhum módulo adicionado.</div>'; 
-      return; 
-    } 
-    container.innerHTML = modulos.map(m => `
-      <div class="modulo-card">
-        <div class="modulo-header">
-          <div class="modulo-titulo">📌 ${m.titulo}</div>
-          <div class="modulo-tipo">${m.tipo === 'video' ? '🎬 Vídeo' : m.tipo === 'text' ? '📄 Texto' : '📁 ' + (m.conteudo?.storage === 'googledrive' ? 'Google Drive' : 'Ficheiro')} · ${m.duracao}</div>
-          <div>
-            <button onclick="editarModulo(${m.id})" style="background:none;border:none;cursor:pointer;color:var(--info);">✏️</button>
-            <button onclick="removerModulo(${m.id})" style="background:none;border:none;cursor:pointer;color:var(--danger);">🗑️</button>
-          </div>
-        </div>
-      </div>
-    `).join(''); 
-  }
+  function renderModulos() { const container=document.getElementById('modulos-container'); if(!modulos.length){ container.innerHTML='<div class="alert alert-warning">Nenhum módulo.</div>'; return; } container.innerHTML=modulos.map(m=>`<div class="modulo-card"><div class="modulo-header"><div class="modulo-titulo">📌 ${m.titulo}</div><div class="modulo-tipo">${m.tipo==='video'?'🎬 Vídeo':m.tipo==='text'?'📄 Texto':'📁 Ficheiro'} · ${m.duracao}</div><div><button onclick="editarModulo(${m.id})">✏️</button><button onclick="removerModulo(${m.id})">🗑️</button></div></div></div>`).join(''); }
 
-  function abrirModalPergunta(){ 
-    editandoPerguntaId = null; 
-    document.getElementById('pergunta-texto').value = ''; 
-    document.getElementById('pergunta-opcao-a').value = ''; 
-    document.getElementById('pergunta-opcao-b').value = ''; 
-    document.getElementById('pergunta-opcao-c').value = ''; 
-    document.getElementById('pergunta-opcao-d').value = ''; 
-    document.getElementById('pergunta-correta').value = 'A'; 
-    document.getElementById('modal-pergunta').style.display = 'flex'; 
-  }
-  
-  function editarPergunta(id){ 
-    const p = perguntas.find(p => p.id === id); 
-    if(!p) return; 
-    editandoPerguntaId = id; 
-    document.getElementById('pergunta-texto').value = p.texto; 
-    document.getElementById('pergunta-opcao-a').value = p.opcoes[0]; 
-    document.getElementById('pergunta-opcao-b').value = p.opcoes[1]; 
-    document.getElementById('pergunta-opcao-c').value = p.opcoes[2]; 
-    document.getElementById('pergunta-opcao-d').value = p.opcoes[3]; 
-    document.getElementById('pergunta-correta').value = p.correta; 
-    document.getElementById('modal-pergunta').style.display = 'flex'; 
-  }
-  
-  function salvarPergunta(){ 
-    const texto = document.getElementById('pergunta-texto').value.trim(); 
-    if(!texto){ alert('Texto da pergunta obrigatório'); return; } 
-    const opcoes = [
-      document.getElementById('pergunta-opcao-a').value.trim(),
-      document.getElementById('pergunta-opcao-b').value.trim(),
-      document.getElementById('pergunta-opcao-c').value.trim(),
-      document.getElementById('pergunta-opcao-d').value.trim()
-    ]; 
-    if(opcoes.some(o => !o)){ alert('Todas as opções são obrigatórias'); return; } 
-    const correta = document.getElementById('pergunta-correta').value; 
-    
-    if(editandoPerguntaId){ 
-      const idx = perguntas.findIndex(p => p.id === editandoPerguntaId); 
-      if(idx !== -1) perguntas[idx] = { ...perguntas[idx], texto, opcoes, correta }; 
-    } else {
-      perguntas.push({ id: Date.now(), texto, opcoes, correta });
-    }
-    renderPerguntas(); 
-    fecharModal('modal-pergunta'); 
-  }
-  
-  function removerPergunta(id){ 
-    if(confirm('Remover pergunta?')){ 
-      perguntas = perguntas.filter(p => p.id !== id); 
-      renderPerguntas(); 
-    } 
-  }
-  
-  function renderPerguntas(){ 
-    const container = document.getElementById('perguntas-container'); 
-    if(!perguntas.length){ 
-      container.innerHTML = '<div class="alert alert-warning">Nenhuma pergunta adicionada.</div>'; 
-      return; 
-    } 
-    container.innerHTML = perguntas.map(p => `
-      <div class="pergunta-card">
-        <div class="pergunta-header">
-          <div class="modulo-titulo">📝 ${p.texto}</div>
-          <div>
-            <button onclick="editarPergunta(${p.id})" style="background:none;border:none;cursor:pointer;color:var(--info);">✏️</button>
-            <button onclick="removerPergunta(${p.id})" style="background:none;border:none;cursor:pointer;color:var(--danger);">🗑️</button>
-          </div>
-        </div>
-        <div style="font-size:12px;color:var(--success);margin-top:8px;">✓ Correta: ${p.correta}</div>
-      </div>
-    `).join(''); 
-  }
+  function abrirModalPergunta(){ editandoPerguntaId=null; document.getElementById('pergunta-texto').value=''; document.getElementById('pergunta-opcao-a').value=''; document.getElementById('pergunta-opcao-b').value=''; document.getElementById('pergunta-opcao-c').value=''; document.getElementById('pergunta-opcao-d').value=''; document.getElementById('pergunta-correta').value='A'; document.getElementById('modal-pergunta').style.display='flex'; }
+  function editarPergunta(id){ const p=perguntas.find(p=>p.id===id); if(!p) return; editandoPerguntaId=id; document.getElementById('pergunta-texto').value=p.texto; document.getElementById('pergunta-opcao-a').value=p.opcoes[0]; document.getElementById('pergunta-opcao-b').value=p.opcoes[1]; document.getElementById('pergunta-opcao-c').value=p.opcoes[2]; document.getElementById('pergunta-opcao-d').value=p.opcoes[3]; document.getElementById('pergunta-correta').value=p.correta; document.getElementById('modal-pergunta').style.display='flex'; }
+  function salvarPergunta(){ const texto=document.getElementById('pergunta-texto').value.trim(); if(!texto){alert('Texto obrigatório');return;} const opcoes=[document.getElementById('pergunta-opcao-a').value.trim(),document.getElementById('pergunta-opcao-b').value.trim(),document.getElementById('pergunta-opcao-c').value.trim(),document.getElementById('pergunta-opcao-d').value.trim()]; if(opcoes.some(o=>!o)){alert('Todas opções obrigatórias');return;} const correta=document.getElementById('pergunta-correta').value; if(editandoPerguntaId){ const idx=perguntas.findIndex(p=>p.id===editandoPerguntaId); if(idx!==-1) perguntas[idx]={...perguntas[idx],texto,opcoes,correta}; }else perguntas.push({id:Date.now(),texto,opcoes,correta}); renderPerguntas(); fecharModal('modal-pergunta'); }
+  function removerPergunta(id){ if(confirm('Remover pergunta?')){ perguntas=perguntas.filter(p=>p.id!==id); renderPerguntas(); } }
+  function renderPerguntas(){ const container=document.getElementById('perguntas-container'); if(!perguntas.length){ container.innerHTML='<div class="alert alert-warning">Nenhuma pergunta.</div>'; return; } container.innerHTML=perguntas.map(p=>`<div class="pergunta-card"><div class="pergunta-header"><div class="modulo-titulo">📝 ${p.texto}</div><div><button onclick="editarPergunta(${p.id})">✏️</button><button onclick="removerPergunta(${p.id})">🗑️</button></div></div><div style="font-size:12px;color:var(--success)">✓ Correta: ${p.correta}</div></div>`).join(''); }
 
   async function renderColabs() {
     const colaboradores = await carregarColaboradores();
     const container = document.getElementById('colab-list');
-    if(!colaboradores.length) { container.innerHTML = '<div class="empty">Nenhum colaborador cadastrado.</div>'; return; }
-    container.innerHTML = colaboradores.map((c) => `
-      <div class="item-card">
-        <div class="item-card-info">
-          <strong>${c.user}</strong>
-          <div class="item-card-meta">${c.email || 'sem email'}</div>
-        </div>
-        <div class="item-card-actions">
-          <button onclick="removerColab('${c.id}')" style="color:var(--danger)">🗑️ Remover</button>
-        </div>
-      </div>
-    `).join('');
+    if(!colaboradores.length) { container.innerHTML = '<div class="empty">Nenhum colaborador.</div>'; return; }
+    container.innerHTML = colaboradores.map((c) => `<div class="item-card"><div class="item-card-info"><strong>${c.user}</strong><div class="item-card-meta">${c.email || 'sem email'}</div></div><div class="item-card-actions"><button onclick="removerColab('${c.id}')" style="color:var(--danger)">🗑️</button></div></div>`).join('');
   }
-  
-  async function removerColab(id) { 
-    if(confirm('Remover colaborador?')) { 
-      await window.deleteDoc(window.doc(window.db, 'colaboradores', id)); 
-      renderColabs(); 
-      atualizarSelectores(); 
-      atualizarDashboard(); 
-    } 
-  }
-  
+  async function removerColab(id) { if(confirm('Remover colaborador?')) { await window.deleteDoc(window.doc(window.db, 'colaboradores', id)); renderColabs(); atualizarSelectores(); atualizarDashboard(); } }
   async function saveUser() {
     const user = document.getElementById('u-nome').value.trim().toLowerCase();
     const email = document.getElementById('u-email').value.trim();
@@ -1070,237 +976,76 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     if(!user || !pass) { alert('Preencha utilizador e password.'); return; }
     await window.addDoc(window.collection(window.db, 'colaboradores'), { user, email, pass, dataCriacao: new Date().toISOString() });
     alert('✅ Colaborador criado!');
-    document.getElementById('u-nome').value = ''; 
-    document.getElementById('u-email').value = ''; 
-    document.getElementById('u-pass').value = '';
-    renderColabs(); 
-    atualizarSelectores(); 
-    atualizarDashboard();
+    document.getElementById('u-nome').value = ''; document.getElementById('u-email').value = ''; document.getElementById('u-pass').value = '';
+    renderColabs(); atualizarSelectores(); atualizarDashboard();
   }
-  
-  function importColaboradores(files) { 
-    if(!files || !files[0]) return; 
-    const reader = new FileReader(); 
-    reader.onload = async function(e) { 
-      const lines = e.target.result.split('\n'); 
-      let imported = 0; 
-      for(let i = 1; i < lines.length; i++){ 
-        const parts = lines[i].split(','); 
-        if(parts.length >= 3){ 
-          const user = parts[0].trim().toLowerCase(); 
-          const pass = parts[1].trim(); 
-          const email = parts[2].trim(); 
-          if(user && pass){ 
-            await window.addDoc(window.collection(window.db, 'colaboradores'), { user, email, pass, dataCriacao: new Date().toISOString() }); 
-            imported++; 
-          } 
-        } 
-      } 
-      alert(`✅ Importados ${imported} colaboradores!`); 
-      renderColabs(); 
-      atualizarSelectores(); 
-      atualizarDashboard(); 
-    }; 
-    reader.readAsText(files[0], 'UTF-8'); 
-  }
-  
-  function downloadModeloCSV(){ 
-    const csv = "utilizador,password,email\njoao.silva,pass123,joao@empresa.pt\nmaria.santos,ssa456,maria@empresa.pt"; 
-    const blob = new Blob([csv], {type:'text/csv'}); 
-    const link = document.createElement('a'); 
-    link.href = URL.createObjectURL(blob); 
-    link.download = 'modelo_colaboradores.csv'; 
-    link.click(); 
-  }
+  function importColaboradores(files) { if(!files||!files[0]) return; const reader=new FileReader(); reader.onload=async function(e) { const lines=e.target.result.split('\n'); let imported=0; for(let i=1;i<lines.length;i++){ const parts=lines[i].split(','); if(parts.length>=3){ const user=parts[0].trim().toLowerCase(); const pass=parts[1].trim(); const email=parts[2].trim(); if(user&&pass){ await window.addDoc(window.collection(window.db, 'colaboradores'), { user, email, pass, dataCriacao: new Date().toISOString() }); imported++; } } } alert(`✅ Importados ${imported} colaboradores!`); renderColabs(); atualizarSelectores(); atualizarDashboard(); }; reader.readAsText(files[0],'UTF-8'); }
+  function downloadModeloCSV(){ const csv="utilizador,password,email\njoao.silva,pass123,joao@empresa.pt\nmaria.santos,ssa456,maria@empresa.pt"; const blob=new Blob([csv],{type:'text/csv'}); const link=document.createElement('a'); link.href=URL.createObjectURL(blob); link.download='modelo_colaboradores.csv'; link.click(); }
 
   async function atualizarSelectores() {
     const cursos = await carregarFormacoes();
     const colaboradores = await carregarColaboradores();
-    document.getElementById('atribuir-curso').innerHTML = '<option value="">Selecione uma formação</option>' + cursos.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
-    document.getElementById('colab-selector-grid').innerHTML = colaboradores.map(c => `<label class="colab-check"><input type="checkbox" value="${c.user}" data-email="${c.email || ''}"> ${c.user}</label>`).join('');
+    document.getElementById('atribuir-curso').innerHTML='<option value="">Selecione</option>'+cursos.map(c=>`<option value="${c.id}">${c.nome}</option>`).join('');
+    document.getElementById('colab-selector-grid').innerHTML=colaboradores.map(c=>`<label class="colab-check"><input type="checkbox" value="${c.user}" data-email="${c.email||''}"> ${c.user}</label>`).join('');
   }
-  
-  function selecionarTodos(){ 
-    document.querySelectorAll('#colab-selector-grid input').forEach(cb => cb.checked = true); 
-  }
-  
-  function deselecionarTodos(){ 
-    document.querySelectorAll('#colab-selector-grid input').forEach(cb => cb.checked = false); 
-  }
-  
+  function selecionarTodos(){ document.querySelectorAll('#colab-selector-grid input').forEach(cb=>cb.checked=true); }
+  function deselecionarTodos(){ document.querySelectorAll('#colab-selector-grid input').forEach(cb=>cb.checked=false); }
   function gerarLinks(){
-    const cursoId = document.getElementById('atribuir-curso').value; 
-    if(!cursoId){ alert('Selecione uma formação'); return; }
-    
-    const selected = Array.from(document.querySelectorAll('#colab-selector-grid input:checked')).map(cb => { 
-      return { user: cb.value, email: cb.dataset.email }; 
-    });
-    
-    if(!selected.length){ alert('Selecione colaboradores'); return; }
-    
-    const baseUrl = window.location.origin + window.location.pathname.replace('admin.html','') + 'formacao_colaborador.html';
-    const links = selected.map(c => { 
-      const tokenData = { user: c.user, cursoId: cursoId, prazo: document.getElementById('atribuir-prazo').value || '31/12/2026', timestamp: Date.now() }; 
-      const token = btoa(JSON.stringify(tokenData)).replace(/=/g,''); 
-      const link = `${baseUrl}?token=${token}`; 
-      localStorage.setItem(`token_${token}`, JSON.stringify(tokenData)); 
-      return { user: c.user, email: c.email, link }; 
-    });
-    
-    document.getElementById('links-list').innerHTML = links.map(l => `
-      <div class="item-card">
-        <div class="item-card-info">
-          <strong>${l.user}</strong>
-          <div style="font-size:11px;word-break:break-all;margin-top:4px;">${l.link}</div>
-        </div>
-        <button class="btn-sm" onclick="copiarLink('${l.link}')">📋 Copiar</button>
-      </div>
-    `).join('');
-    document.getElementById('links-gerados').style.display = 'block';
+    const cursoId=document.getElementById('atribuir-curso').value; if(!cursoId){alert('Selecione uma formação');return;}
+    const selected=Array.from(document.querySelectorAll('#colab-selector-grid input:checked')).map(cb=>{ return { user:cb.value, email:cb.dataset.email }; });
+    if(!selected.length){alert('Selecione colaboradores');return;}
+    const baseUrl=window.location.origin+window.location.pathname.replace('admin.html','')+'formacao_colaborador.html';
+    const links=selected.map(c=>{ const tokenData={ user:c.user, cursoId:cursoId, prazo:document.getElementById('atribuir-prazo').value||'31/03/2026', timestamp:Date.now() }; const token=btoa(JSON.stringify(tokenData)).replace(/=/g,''); const link=`${baseUrl}?token=${token}`; localStorage.setItem(`token_${token}`,JSON.stringify(tokenData)); return { user:c.user, email:c.email, link }; });
+    document.getElementById('links-list').innerHTML=links.map(l=>`<div class="item-card"><div class="item-card-info"><strong>${l.user}</strong><div style="font-size:11px;word-break:break-all;">${l.link}</div></div><button onclick="copiarLink('${l.link}')">📋 Copiar</button></div>`).join('');
+    document.getElementById('links-gerados').style.display='block';
     alert(`✅ ${links.length} link(s) gerados!`);
     return links;
   }
-  
-  function copiarLink(link){ 
-    navigator.clipboard.writeText(link); 
-    alert('🔗 Link copiado!'); 
-  }
-  
-  function enviarEmails(){ 
-    const links = gerarLinks();
-    if(!links || links.length === 0) return; 
-    links.forEach(l => { 
-      if(l.email && l.email.trim()){ 
-        const assunto = encodeURIComponent(`[Birkenstock] Nova formação atribuída`); 
-        const corpo = encodeURIComponent(`Olá ${l.user},\n\nFoi-lhe atribuída uma nova formação na plataforma Birkenstock S&CC.\n\nAceda através do link:\n${l.link}\n\nAtenciosamente,\nEquipa de Formação`); 
-        window.open(`mailto:${l.email}?subject=${assunto}&body=${corpo}`); 
-      } else { 
-        alert(`⚠️ Colaborador ${l.user} sem email. Link: ${l.link}`); 
-      } 
-    }); 
-  }
+  function copiarLink(link){ navigator.clipboard.writeText(link); alert('Link copiado!'); }
+  function enviarEmails(){ const links=gerarLinks(); if(!links) return; links.forEach(l=>{ if(l.email){ const assunto=encodeURIComponent(`[Birkenstock] Nova formação atribuída`); const corpo=encodeURIComponent(`Olá ${l.user},\n\nLink: ${l.link}\n\nAtenciosamente,\nEquipa de Formação`); window.open(`mailto:${l.email}?subject=${assunto}&body=${corpo}`); } else alert(`Colaborador ${l.user} sem email. Link: ${l.link}`); }); }
 
   async function publicarFormacao(){
-    const titulo = document.getElementById('f-titulo').value.trim();
-    if(!titulo){ alert('Título obrigatório'); return; }
-    if(!modulos.length){ alert('Adicione pelo menos um módulo'); return; }
-    if(!perguntas.length){ alert('Adicione pelo menos uma pergunta'); return; }
-    
-    const novaFormacao = { 
-      nome: titulo, 
-      duracao: document.getElementById('f-duracao').value || '30 min', 
-      descricao: document.getElementById('f-descricao').value, 
-      modulos: [...modulos], 
-      perguntas: perguntas.map(p => ({texto: p.texto, opcoes: p.opcoes, correta: p.correta})), 
-      data: new Date().toLocaleDateString('pt-PT'), 
-      dataTimestamp: Date.now() 
-    };
-    
+    const titulo=document.getElementById('f-titulo').value.trim();
+    if(!titulo){alert('Título obrigatório');return;}
+    if(!modulos.length){alert('Adicione módulos');return;}
+    if(!perguntas.length){alert('Adicione perguntas');return;}
+    const novaFormacao = { nome: titulo, duracao: document.getElementById('f-duracao').value || '30 min', descricao: document.getElementById('f-descricao').value, modulos: [...modulos], perguntas: perguntas.map(p=>({texto:p.texto,opcoes:p.opcoes,correta:p.correta})), data: new Date().toLocaleDateString('pt-PT'), dataTimestamp: Date.now() };
     try {
       await window.addDoc(window.collection(window.db, 'formacoes'), novaFormacao);
       alert(`✅ Formação "${titulo}" publicada com sucesso!`);
-      document.getElementById('f-titulo').value = ''; 
-      document.getElementById('f-duracao').value = ''; 
-      document.getElementById('f-descricao').value = '';
-      modulos = []; 
-      perguntas = [];
-      renderModulos(); 
-      renderPerguntas(); 
-      renderFormacoesLista(); 
-      atualizarSelectores(); 
-      atualizarDashboard();
-    } catch(error) { 
-      console.error('Erro:', error); 
-      alert('❌ Erro ao publicar formação.'); 
-    }
+      document.getElementById('f-titulo').value=''; document.getElementById('f-duracao').value=''; document.getElementById('f-descricao').value='';
+      modulos=[]; perguntas=[];
+      renderModulos(); renderPerguntas(); renderFormacoesLista(); atualizarSelectores(); atualizarDashboard();
+    } catch(error) { console.error('Erro:', error); alert('Erro ao publicar formação.'); }
   }
 
   async function renderHistorico() {
     const historico = await carregarHistorico();
-    const tbody = document.getElementById('lista-notas');
-    if(!historico.length){ tbody.innerHTML = '<tr><td colspan="6" class="empty">Nenhum resultado registado</td></tr>'; return; }
-    tbody.innerHTML = historico.map(h => `
-      <tr>
-        <td><strong>${h.nome}</strong></td>
-        <td>${h.email || '-'}</td>
-        <td>${h.curso}</td>
-        <td>${h.data}</td>
-        <td><span class="badge badge-success">${h.nota}</span></td>
-        <td><button class="btn-sm" onclick="alert('Certificado de ${h.nome}')">📄 Ver</button></td>
-      </tr>
-    `).join('');
+    const tbody=document.getElementById('lista-notas');
+    if(!historico.length){ tbody.innerHTML='<tr><td colspan="6" class="empty">Nenhum resultado</td></tr>'; return; }
+    tbody.innerHTML=historico.map(h=>`<tr><td><strong>${h.nome}</strong></td><td>${h.email||'-'}</td><td>${h.curso}</td><td>${h.data}</td><td><span class="badge badge-success">${h.nota}</span></td><td><button class="btn-sm" onclick="alert('Certificado de ${h.nome}')">📄</button></td></tr>`).join('');
   }
-  
-  function exportarHistoricoCSV(){ 
-    alert('📥 Exportação CSV será implementada em breve.'); 
-  }
-  
-  function exportarHistoricoExcel(){ 
-    alert('📊 Exportação Excel será implementada em breve.'); 
-  }
-  
-  async function limparHistorico(){ 
-    if(confirm('Apagar todo o histórico de formações?')){ 
-      const historico = await carregarHistorico();
-      for(const item of historico) {
-        await window.deleteDoc(window.doc(window.db, 'historico', item.id));
-      }
-      renderHistorico(); 
-      atualizarDashboard();
-      alert('✅ Histórico limpo!');
-    } 
-  }
+  function exportarHistoricoCSV(){ alert('Função de exportação será implementada'); }
+  function exportarHistoricoExcel(){ alert('Função de exportação será implementada'); }
+  async function limparHistorico(){ if(confirm('Apagar histórico?')){ const historico=await carregarHistorico(); for(const item of historico){ await window.deleteDoc(window.doc(window.db,'historico',item.id)); } renderHistorico(); atualizarDashboard(); alert('✅ Histórico limpo!'); } }
 
-  function checkPasswordStrength(pass){ 
-    let s = 0; 
-    if(pass.length >= 8) s++; 
-    if(/[A-Z]/.test(pass)) s++; 
-    if(/[0-9]/.test(pass)) s++; 
-    if(/[^a-zA-Z0-9]/.test(pass)) s++; 
-    const d = document.getElementById('password-strength'); 
-    d.className = 'password-strength'; 
-    if(s <= 1) d.classList.add('strength-weak'); 
-    else if(s <= 2) d.classList.add('strength-medium'); 
-    else d.classList.add('strength-strong'); 
-  }
-  
-  function alterarPasswordAdmin(){ 
-    const atual = document.getElementById('admin-pass-atual').value; 
-    const nova = document.getElementById('admin-pass-nova').value; 
-    const conf = document.getElementById('admin-pass-confirm').value; 
-    if(atual !== adminConfig.adminPassword){ alert('❌ Password atual incorreta'); return; } 
-    if(nova !== conf){ alert('❌ Passwords não coincidem'); return; } 
-    if(nova.length < 6){ alert('❌ Mínimo 6 caracteres'); return; } 
-    adminConfig.adminPassword = nova; 
-    localStorage.setItem('admin_config', JSON.stringify(adminConfig)); 
-    alert('✅ Password alterada!'); 
-    document.getElementById('admin-pass-atual').value = ''; 
-    document.getElementById('admin-pass-nova').value = ''; 
-    document.getElementById('admin-pass-confirm').value = ''; 
-  }
+  function checkPasswordStrength(pass){ let s=0; if(pass.length>=8)s++; if(/[A-Z]/.test(pass))s++; if(/[0-9]/.test(pass))s++; if(/[^a-zA-Z0-9]/.test(pass))s++; const d=document.getElementById('password-strength'); d.className='password-strength'; if(s<=1)d.classList.add('strength-weak'); else if(s<=2)d.classList.add('strength-medium'); else d.classList.add('strength-strong'); }
+  function alterarPasswordAdmin(){ const atual=document.getElementById('admin-pass-atual').value; const nova=document.getElementById('admin-pass-nova').value; const conf=document.getElementById('admin-pass-confirm').value; if(atual!==adminConfig.adminPassword){alert('Password atual incorreta');return;} if(nova!==conf){alert('Passwords não coincidem');return;} if(nova.length<6){alert('Mínimo 6 caracteres');return;} adminConfig.adminPassword=nova; localStorage.setItem('admin_config',JSON.stringify(adminConfig)); alert('Password alterada!'); document.getElementById('admin-pass-atual').value=''; document.getElementById('admin-pass-nova').value=''; document.getElementById('admin-pass-confirm').value=''; }
 
-  function fecharModal(id){ 
-    document.getElementById(id).style.display = 'none'; 
-  }
-  
+  function fecharModal(id){ document.getElementById(id).style.display='none'; }
   function switchTab(tabId){
-    document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
     document.getElementById(`sec-${tabId}`).classList.add('active');
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
     document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
-    if(tabId === 'colaboradores') renderColabs();
-    if(tabId === 'historico') renderHistorico();
-    if(tabId === 'atribuir') atualizarSelectores();
-    if(tabId === 'dashboard') atualizarDashboard();
-    if(tabId === 'lista-formacoes') renderFormacoesLista();
-    if(tabId === 'certificado'){
-      document.getElementById('cert-titulo').value = certTemplate.titulo; 
-      document.getElementById('cert-texto').value = certTemplate.texto; 
-      document.getElementById('cert-rodape').value = certTemplate.rodape; 
-    }
+    if(tabId==='colaboradores') renderColabs();
+    if(tabId==='historico') renderHistorico();
+    if(tabId==='atribuir') atualizarSelectores();
+    if(tabId==='dashboard') atualizarDashboard();
+    if(tabId==='lista-formacoes') renderFormacoesLista();
+    if(tabId==='certificado'){ document.getElementById('cert-titulo').value=certTemplate.titulo; document.getElementById('cert-texto').value=certTemplate.texto; document.getElementById('cert-rodape').value=certTemplate.rodape; }
   }
 
-  // Event Listeners
   document.getElementById('btn-save-user').addEventListener('click', saveUser);
   document.getElementById('btn-publicar').addEventListener('click', publicarFormacao);
   document.getElementById('btn-limpar').addEventListener('click', limparHistorico);
@@ -1308,52 +1053,20 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   document.getElementById('btn-gerar-links').addEventListener('click', gerarLinks);
   document.getElementById('btn-salvar-modulo').addEventListener('click', salvarModulo);
   document.getElementById('btn-salvar-pergunta').addEventListener('click', salvarPergunta);
-  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
+  document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>switchTab(t.dataset.tab)));
 
-  // Inicialização
-  renderModulos(); 
-  renderPerguntas(); 
-  renderColabs(); 
-  renderHistorico(); 
-  atualizarSelectores(); 
-  atualizarDashboard(); 
-  renderFormacoesLista();
+  renderModulos(); renderPerguntas(); renderColabs(); renderHistorico(); atualizarSelectores(); atualizarDashboard(); renderFormacoesLista();
   
-  // Inicializar Google Drive API
-  setTimeout(() => {
-    if (typeof gapi !== 'undefined') {
-      initGoogleAPI();
-    } else {
-      console.log('Aguardando API do Google...');
-      setTimeout(() => {
-        if (typeof gapi !== 'undefined') initGoogleAPI();
-      }, 2000);
-    }
-  }, 500);
+  setTimeout(() => { initGoogleAPI(); }, 500);
 
-  // Expor funções globalmente
-  window.abrirModalModulo = abrirModalModulo;
-  window.editarModulo = editarModulo;
-  window.removerModulo = removerModulo;
-  window.abrirModalPergunta = abrirModalPergunta;
-  window.editarPergunta = editarPergunta;
-  window.removerPergunta = removerPergunta;
-  window.removerColab = removerColab;
-  window.uploadFicheiroModulo = uploadFicheiroModulo;
-  window.copiarLink = copiarLink;
-  window.inserirPlaceholder = inserirPlaceholder;
-  window.previewCertificado = previewCertificado;
-  window.salvarTemplateCertificado = salvarTemplateCertificado;
-  window.resetTemplateCertificado = resetTemplateCertificado;
-  window.alterarPasswordAdmin = alterarPasswordAdmin;
-  window.checkPasswordStrength = checkPasswordStrength;
-  window.selecionarTodos = selecionarTodos;
-  window.deselecionarTodos = deselecionarTodos;
-  window.exportarHistoricoCSV = exportarHistoricoCSV;
-  window.exportarHistoricoExcel = exportarHistoricoExcel;
-  window.autenticarGoogleDrive = autenticarGoogleDrive;
-  window.desautenticarGoogleDrive = desautenticarGoogleDrive;
-  
+  window.abrirModalModulo=abrirModalModulo; window.editarModulo=editarModulo; window.removerModulo=removerModulo;
+  window.abrirModalPergunta=abrirModalPergunta; window.editarPergunta=editarPergunta; window.removerPergunta=removerPergunta;
+  window.removerColab=removerColab; window.uploadFicheiroModulo=uploadFicheiroModulo; window.copiarLink=copiarLink;
+  window.inserirPlaceholder=inserirPlaceholder; window.previewCertificado=previewCertificado; window.salvarTemplateCertificado=salvarTemplateCertificado; window.resetTemplateCertificado=resetTemplateCertificado;
+  window.alterarPasswordAdmin=alterarPasswordAdmin; window.checkPasswordStrength=checkPasswordStrength;
+  window.selecionarTodos=selecionarTodos; window.deselecionarTodos=deselecionarTodos;
+  window.exportarHistoricoCSV=exportarHistoricoCSV; window.exportarHistoricoExcel=exportarHistoricoExcel;
+  window.forcarAutenticacaoGoogle=forcarAutenticacaoGoogle; window.fazerBackupDrive=fazerBackupDrive; window.backupHistoricoDrive=backupHistoricoDrive;
   window.editarFormacao = async (id) => {
     const docRef = window.doc(window.db, 'formacoes', id);
     const docSnap = await window.getDoc(docRef);
@@ -1372,7 +1085,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       switchTab('formacao');
     }
   };
-  
   window.cancelarEdicao = () => {
     editandoFormacaoId = null;
     document.getElementById('f-titulo').value = '';
@@ -1385,7 +1097,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     document.getElementById('editando-id').innerHTML = '';
     document.getElementById('btn-cancelar-edicao').style.display = 'none';
   };
-  
   document.getElementById('btn-cancelar-edicao').addEventListener('click', () => window.cancelarEdicao());
 </script>
 </body>
