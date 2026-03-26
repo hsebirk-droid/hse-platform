@@ -605,7 +605,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     modulesContainer.style.display = 'none';
     
     if(!id) {
-      loadingDiv.innerHTML = '❌ Nenhuma formação selecionada.';
+      loadingDiv.innerHTML = '❌ Nenhuma formação selecionada. <a href="dashboard.html" style="color: var(--birkenstock-blue);">Voltar ao dashboard</a>';
       return;
     }
     
@@ -633,7 +633,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
         renderModules();
         updateProgress();
       } else {
-        loadingDiv.innerHTML = '❌ Formação não encontrada.';
+        loadingDiv.innerHTML = '❌ Formação não encontrada. <a href="dashboard.html" style="color: var(--birkenstock-blue);">Voltar ao dashboard</a>';
       }
     } catch(error) {
       console.error('Erro ao carregar formação:', error);
@@ -684,7 +684,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
           <div class="s-title">${module.titulo || 'Módulo ' + (idx + 1)}</div>
           <div class="s-meta">${module.tipo || 'Conteúdo'} · ${module.duracao || '10 min'}</div>
         </div>
-        <div class="s-status">${completedModules[module.id] ? '✅' : '🔒'}</div>
+        <div class="s-status">${completedModules[module.id] ? '✅' : '▶'}</div>
       `;
       block.appendChild(header);
       
@@ -695,39 +695,82 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
       let contentDiv = document.createElement('div');
       let fileHtml = '';
       
-      if(module.tipo === 'vídeo' && module.url) {
-        fileHtml = `<div class="video-wrap"><iframe src="${module.url}" title="${module.titulo}" allowfullscreen></iframe></div>`;
+      if(module.tipo === 'video' && module.conteudo && module.conteudo.url) {
+        fileHtml = `<div class="video-wrap"><iframe src="${module.conteudo.url}" title="${module.titulo}" allowfullscreen></iframe></div>`;
+        // Simular progresso do vídeo
+        setTimeout(() => {
+          let progress = 0;
+          const interval = setInterval(() => {
+            progress += 2;
+            if(progress >= 100) {
+              clearInterval(interval);
+              document.getElementById('btn-confirm-' + module.id).disabled = false;
+            }
+            document.getElementById('fill-' + module.id).style.width = Math.min(progress, 100) + '%';
+            document.getElementById('pct-' + module.id).textContent = Math.min(progress, 100) + '%';
+          }, 100);
+        }, 500);
       } 
-      else if(module.tipo === 'pdf' && module.url) {
+      else if(module.tipo === 'pdf' && module.conteudo && module.conteudo.url) {
         const pdfContainerId = 'pdf-' + module.id;
-        fileHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>📄 ${module.titulo}</span><a href="${module.url}" download class="file-download">⬇️ Descarregar PDF</a></div><div class="pdf-content" id="${pdfContainerId}"><div style="padding:20px; text-align:center;">A carregar PDF...</div></div></div>`;
+        fileHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>📄 ${module.titulo}</span><a href="${module.conteudo.url}" download class="file-download">⬇️ Descarregar PDF</a></div><div class="pdf-content" id="${pdfContainerId}"><div style="padding:20px; text-align:center;">A carregar PDF...</div></div></div>`;
         
         setTimeout(() => {
           const container = document.getElementById(pdfContainerId);
           if(container) {
-            renderPDF(module.url, pdfContainerId);
+            renderPDF(module.conteudo.url, pdfContainerId);
             document.getElementById('btn-confirm-' + module.id).disabled = false;
           }
-        }, 100);
+        }, 500);
       }
-      else if(module.tipo === 'powerpoint' && module.url) {
-        fileHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>🎯 ${module.titulo}</span><a href="${module.url}" download class="file-download">⬇️ Descarregar PowerPoint</a></div><div class="pdf-content" style="text-align:center; padding:60px;"><div style="font-size:64px;">📊</div><p>PowerPoint: Clique em descarregar para ver a apresentação.</p></div></div>`;
+      else if(module.tipo === 'texto' && module.conteudo && module.conteudo.texto) {
+        fileHtml = `<div class="text-content">${module.conteudo.texto}</div>`;
         document.getElementById('btn-confirm-' + module.id).disabled = false;
+        document.getElementById('fill-' + module.id).style.width = '100%';
+        document.getElementById('pct-' + module.id).textContent = '100%';
       }
-      else if(module.tipo === 'texto' && module.conteudo) {
-        fileHtml = `<div class="text-content">${module.conteudo}</div>`;
+      else if(module.tipo === 'ficheiro' && module.conteudo && module.conteudo.fileData) {
+        const fileData = module.conteudo.fileData;
+        const fileName = module.conteudo.fileName || 'documento';
+        if(fileName.toLowerCase().endsWith('.pdf')) {
+          fileHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>📄 ${fileName}</span><a href="${fileData}" download class="file-download">⬇️ Descarregar PDF</a></div><div class="pdf-content" id="pdf-${module.id}"><div style="padding:20px;">A carregar...</div></div></div>`;
+          setTimeout(() => {
+            renderPDF(fileData, 'pdf-' + module.id);
+            document.getElementById('btn-confirm-' + module.id).disabled = false;
+          }, 500);
+        } else {
+          fileHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>📎 ${fileName}</span><a href="${fileData}" download class="file-download">⬇️ Descarregar ficheiro</a></div><div class="pdf-content" style="text-align:center; padding:60px;"><div style="font-size:64px;">📄</div><p>Clique no botão para descarregar.</p></div></div>`;
+          document.getElementById('btn-confirm-' + module.id).disabled = false;
+        }
       }
       
       contentDiv.innerHTML = fileHtml;
       body.appendChild(contentDiv);
       
+      // Adicionar tracker
+      const trackerDiv = document.createElement('div');
+      trackerDiv.className = 'content-tracker';
+      trackerDiv.innerHTML = `
+        <span>📊 Progresso</span>
+        <div style="flex:1"><div class="track-prog"><div class="track-fill" id="fill-${module.id}" style="width:0%"></div></div></div>
+        <span id="pct-${module.id}" style="font-size:0.78rem;font-weight:600">0%</span>
+      `;
+      body.insertBefore(trackerDiv, contentDiv);
+      
       const confirmDiv = document.createElement('div');
       confirmDiv.className = 'confirm-viewed';
       confirmDiv.innerHTML = `
-        <p><strong>Marcou como visualizado?</strong><br>Confirme para desbloquear o próximo módulo.</p>
-        <button class="btn-confirm" id="btn-confirm-${module.id}" onclick="confirmModule('${module.id}')">✅ Marcar como visualizado</button>
+        <p><strong>Confirmar conclusão</strong><br>Confirme para desbloquear o próximo módulo.</p>
+        <button class="btn-confirm" id="btn-confirm-${module.id}" disabled onclick="confirmModule('${module.id}')">✓ Confirmar e avançar</button>
       `;
       body.appendChild(confirmDiv);
+      
+      const confirmedDiv = document.createElement('div');
+      confirmedDiv.className = 'confirmed-label';
+      confirmedDiv.id = 'confirmed-' + module.id;
+      confirmedDiv.style.display = 'none';
+      confirmedDiv.innerHTML = '✅ Módulo concluído';
+      body.appendChild(confirmedDiv);
       
       block.appendChild(body);
       container.appendChild(block);
@@ -738,17 +781,25 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   
   function confirmModule(moduleId) {
     completedModules[moduleId] = true;
-    document.getElementById('block-' + moduleId).classList.add('completed');
-    document.getElementById('btn-confirm-' + moduleId).disabled = true;
-    document.getElementById('btn-confirm-' + moduleId).textContent = '✅ Visualizado';
-    toast('✅ Módulo marcado como visualizado!');
+    const block = document.getElementById('block-' + moduleId);
+    block.classList.add('completed');
+    document.getElementById('btn-confirm-' + moduleId).style.display = 'none';
+    document.getElementById('confirmed-' + moduleId).style.display = 'flex';
+    toast('✅ Módulo concluído!');
     updateProgress();
     
     const idx = modules.findIndex(m => m.id === moduleId);
     if(idx < modules.length - 1) {
-      document.getElementById('block-' + modules[idx + 1].id).classList.remove('locked');
+      const nextBlock = document.getElementById('block-' + modules[idx + 1].id);
+      if(nextBlock) nextBlock.classList.remove('locked');
+      toast('📚 Próximo módulo desbloqueado!');
     } else {
-      document.getElementById('block-quiz').classList.remove('locked');
+      const quizBlock = document.getElementById('block-quiz');
+      if(quizBlock) {
+        quizBlock.classList.remove('locked');
+        document.getElementById('status-quiz').textContent = '📝';
+        toast('📝 Avaliação desbloqueada!');
+      }
     }
   }
   
@@ -862,6 +913,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
           data: fmtDate(new Date()),
           dataTimestamp: Date.now()
         });
+        toast('✅ Resultado guardado!');
       } catch(e) { console.error('Erro ao guardar histórico:', e); }
     } else {
       document.getElementById('result-ring').classList.add('fail');
@@ -949,7 +1001,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   window.confirmModule = confirmModule;
   window.toast = toast;
   
-  // Verificar autenticação
   window.addEventListener('load', function() {
     const usuarioAtivo = localStorage.getItem('usuarioAtivo');
     if(!usuarioAtivo) {
@@ -959,7 +1010,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     nomeUser = usuarioAtivo;
     document.getElementById('user-name-display').textContent = 'Olá, ' + nomeUser;
     
-    // Carregar formação
     const cursoIdCarregado = lerTokenUrl();
     if(cursoIdCarregado) {
       carregarFormacao(cursoIdCarregado);
