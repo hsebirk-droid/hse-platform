@@ -7,8 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<!-- Google API para Google Drive -->
-<script src="https://apis.google.com/js/api.js"></script>
 <style>
 :root {
   --birkenstock-blue: #00338D;
@@ -62,60 +60,10 @@ header .logo-text small {
   color: rgba(255,255,255,.7);
   padding: 7px 16px;
   cursor: pointer;
-  transition: all 0.2s;
 }
 .btn-sair:hover { border-color: rgba(255,255,255,.7); color: #fff; }
 
-/* Barra Google Drive */
-.google-drive-bar {
-  background: var(--birkenstock-blue);
-  padding: 12px 24px;
-  margin: 0 24px 20px 24px;
-  border-radius: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-.google-drive-bar .title {
-  color: white;
-  font-size: 14px;
-  font-weight: 600;
-}
-.google-drive-bar .status {
-  color: rgba(255,255,255,0.8);
-  font-size: 13px;
-}
-.google-drive-bar .btn-auth {
-  background: var(--birkenstock-gold);
-  color: var(--birkenstock-blue);
-  border: none;
-  padding: 6px 20px;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.google-drive-bar .btn-auth:hover {
-  transform: scale(1.02);
-  background: #d4b06c;
-}
-.google-drive-bar .btn-backup {
-  background: var(--success);
-  color: white;
-  border: none;
-  padding: 6px 20px;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.google-drive-bar .btn-backup:hover {
-  background: #15803d;
-}
-
-.container { max-width: 1400px; margin: 0 auto; padding: 0 24px 32px 24px; }
+.container { max-width: 1400px; margin: 0 auto; padding: 32px 24px; }
 
 .dashboard-grid {
   display: grid;
@@ -131,9 +79,7 @@ header .logo-text small {
   align-items: center;
   gap: 16px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  transition: transform 0.2s;
 }
-.dash-card:hover { transform: translateY(-2px); }
 .dash-icon {
   width: 48px;
   height: 48px;
@@ -166,19 +112,18 @@ header .logo-text small {
   cursor: pointer;
   border-radius: 8px;
   white-space: nowrap;
-  transition: all 0.2s;
 }
 .tab.active { background: var(--birkenstock-blue); color: white; }
 .tab:hover:not(.active) { background: var(--bg); color: var(--birkenstock-blue); }
 
-.sec { background: var(--white); border-radius: 12px; margin-bottom: 28px; display: none; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.sec { background: var(--white); border-radius: 12px; margin-bottom: 28px; display: none; }
 .sec.active { display: block; }
 .sec-head { background: var(--birkenstock-blue); padding: 16px 24px; border-radius: 12px 12px 0 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-.sec-head h2 { color: #fff; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.sec-head h2 { color: #fff; font-size: 15px; font-weight: 700; text-transform: uppercase; }
 .sec-body { padding: 24px; }
 
 .fg { margin-bottom: 16px; }
-.fg label { display: block; font-size: 11px; font-weight: 700; color: var(--birkenstock-blue); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+.fg label { display: block; font-size: 11px; font-weight: 700; color: var(--birkenstock-blue); margin-bottom: 5px; text-transform: uppercase; }
 .fg input, .fg select, .fg textarea {
   width: 100%;
   background: var(--bg);
@@ -187,21 +132,17 @@ header .logo-text small {
   padding: 12px 14px;
   font-size: 14px;
   outline: none;
-  transition: all 0.2s;
 }
-.fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--birkenstock-blue); }
+.fg input:focus { border-color: var(--birkenstock-blue); }
 .frow { display: flex; gap: 16px; flex-wrap: wrap; }
 .frow .fg { flex: 1; min-width: 200px; }
 
-.btn { background: var(--birkenstock-blue); color: #fff; border: none; border-radius: 8px; padding: 12px 20px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; width: 100%; }
-.btn:hover { background: var(--birkenstock-blue-dark); transform: translateY(-1px); }
+.btn { background: var(--birkenstock-blue); color: #fff; border: none; border-radius: 8px; padding: 12px 20px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; }
+.btn:hover { background: var(--birkenstock-blue-dark); }
 .btn-sm { width: auto; padding: 8px 16px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
 .btn-success { background: var(--success); }
-.btn-success:hover { background: #15803d; }
 .btn-danger { background: var(--danger); }
-.btn-danger:hover { background: #b91c1c; }
 .btn-warning { background: var(--warning); }
-.btn-warning:hover { background: #d97706; }
 
 .upload-area {
   border: 2px dashed var(--border);
@@ -211,23 +152,19 @@ header .logo-text small {
   background: var(--bg);
   cursor: pointer;
   margin-top: 8px;
-  transition: all 0.2s;
 }
 .upload-area:hover { border-color: var(--birkenstock-blue); background: #eef2ff; }
 
 .item-list { margin-top: 16px; border-top: 1px solid var(--border); padding-top: 16px; max-height: 500px; overflow-y: auto; }
-.item-card { background: var(--bg); border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; transition: all 0.2s; }
-.item-card:hover { background: #eef2ff; }
+.item-card { background: var(--bg); border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
 .item-card-info { flex: 1; }
 .item-card-title { font-weight: 700; font-size: 14px; }
-.item-card-meta { font-size: 11px; color: var(--birkenstock-gray); margin-top: 4px; }
+.item-card-meta { font-size: 11px; color: var(--birkenstock-gray); }
 .item-card-actions { display: flex; gap: 8px; }
-.item-card-actions button { background: none; border: none; cursor: pointer; font-size: 14px; padding: 4px 8px; border-radius: 4px; transition: all 0.2s; }
 
 .colab-selector { background: var(--bg); padding: 16px; border-radius: 8px; margin-bottom: 16px; }
 .colab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin-top: 12px; max-height: 300px; overflow-y: auto; }
-.colab-check { display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 6px; background: white; cursor: pointer; transition: all 0.2s; }
-.colab-check:hover { background: var(--info-bg); }
+.colab-check { display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 6px; background: white; cursor: pointer; }
 
 .modulo-card, .pergunta-card {
   background: var(--bg);
@@ -302,14 +239,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   font-weight: 600;
 }
 .badge-success { background: var(--success-bg); color: var(--success); }
-
-@media (max-width: 768px) {
-  .container { padding: 0 16px 20px 16px; }
-  .sec-body { padding: 16px; }
-  .tabs { padding: 8px; }
-  .tab { padding: 8px 12px; font-size: 12px; }
-  .google-drive-bar { margin: 0 16px 16px 16px; }
-}
 </style>
 </head>
 <body>
@@ -318,16 +247,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   <div class="logo-text">BIRKENSTOCK<small>S&CC PORTUGAL</small></div>
   <button class="btn-sair" onclick="location.href='index.html'">Sair</button>
 </header>
-
-<!-- Barra Google Drive com Backup -->
-<div class="google-drive-bar">
-  <div class="title">📁 Google Drive</div>
-  <div class="status" id="google-drive-status">⚠️ Não autenticado</div>
-  <div>
-    <button class="btn-auth" id="btn-google-auth" onclick="forcarAutenticacaoGoogle()">🔐 Autenticar</button>
-    <button class="btn-backup" id="btn-backup" onclick="fazerBackupDrive()" style="margin-left: 10px;">💾 Backup para Drive</button>
-  </div>
-</div>
 
 <div class="container">
   <div class="dashboard-grid" id="dashboard-grid"></div>
@@ -461,7 +380,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   </div>
 
   <div class="sec" id="sec-historico">
-    <div class="sec-head"><h2>📊 Histórico de Formações</h2><div><button class="btn-sm" onclick="exportarHistoricoCSV()">📥 CSV</button><button class="btn-sm" onclick="exportarHistoricoExcel()">📊 Excel</button><button class="btn-sm btn-success" onclick="backupHistoricoDrive()">💾 Backup Drive</button></div></div>
+    <div class="sec-head"><h2>📊 Histórico de Formações</h2><div><button class="btn-sm" onclick="exportarHistoricoCSV()">📥 CSV</button><button class="btn-sm" onclick="exportarHistoricoExcel()">📊 Excel</button></div></div>
     <div class="sec-body">
       <div style="overflow-x:auto;">
         <table>
@@ -469,18 +388,18 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
           <tbody id="lista-notas"></tbody>
         </table>
       </div>
-      <button id="btn-limpar" class="btn-sm btn-danger" style="margin-top:16px;">🗑️ Limpar Histórico</button>
+      <button id="btn-limpar" class="btn-sm btn-danger">🗑️ Limpar</button>
     </div>
   </div>
 </div>
 
 <div id="modal-modulo" class="modal"><div class="modal-content"><div class="modal-header"><h3 id="modal-modulo-titulo">Módulo</h3><span class="modal-close" onclick="fecharModal('modal-modulo')">&times;</span></div>
-  <div class="fg"><label>Título *</label><input type="text" id="modulo-titulo"></div>
+  <div class="fg"><label>Título</label><input type="text" id="modulo-titulo"></div>
   <div class="fg"><label>Duração</label><input type="text" id="modulo-duracao"></div>
   <div id="modulo-conteudo-video" style="display:none;"><div class="fg"><label>URL Vídeo</label><input type="text" id="modulo-video-url"></div></div>
   <div id="modulo-conteudo-texto" style="display:none;"><div class="fg"><label>Conteúdo HTML</label><textarea id="modulo-texto-conteudo" rows="6"></textarea></div></div>
-  <div id="modulo-conteudo-file" style="display:none;"><div class="upload-area" onclick="document.getElementById('file-input-modulo').click()">📁 Selecionar ficheiro (será guardado no Google Drive)</div><input type="file" id="file-input-modulo" style="display:none" onchange="uploadFicheiroModulo(this.files)"><div id="file-preview-modulo"></div></div>
-  <button class="btn" id="btn-salvar-modulo">Salvar Módulo</button>
+  <div id="modulo-conteudo-file" style="display:none;"><div class="fg"><label>URL do Ficheiro (Google Drive, etc)</label><input type="text" id="modulo-file-url" placeholder="https://drive.google.com/..."></div></div>
+  <button class="btn" id="btn-salvar-modulo">Salvar</button>
 </div></div>
 
 <div id="modal-pergunta" class="modal"><div class="modal-content"><div class="modal-header"><h3>Pergunta</h3><span class="modal-close" onclick="fecharModal('modal-pergunta')">&times;</span></div>
@@ -496,7 +415,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
   import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
-  import { getStorage } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-storage.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAwywvboQgWqkrZlbwrUPdaUq-gLnWM64E",
@@ -509,10 +427,8 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
-  const storage = getStorage(app);
 
   window.db = db;
-  window.storage = storage;
   window.collection = collection;
   window.addDoc = addDoc;
   window.getDocs = getDocs;
@@ -525,319 +441,13 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
 </script>
 
 <script>
-  // ==================== CONFIGURAÇÃO GOOGLE DRIVE ====================
-  const GOOGLE_API_KEY = "AIzaSyBtmUuPZNAvT6_9axKHvI4UbbV-JSINNYA";
-  const GOOGLE_CLIENT_ID = "850671249674-gacp4320iurln55u9cn8g248utk14kp0.apps.googleusercontent.com";
-  
-  let googleAuthInstance = null;
-  let googleIsSignedIn = false;
-  let accessToken = null;
-  
   let adminConfig = JSON.parse(localStorage.getItem('admin_config') || '{"adminPassword":"SSA2024admin"}');
-  let modulos = [], perguntas = [], editandoModuloId = null, editandoPerguntaId = null, moduloTipoAtual = 'video', ficheiroTemp = null;
+  let modulos = [], perguntas = [], editandoModuloId = null, editandoPerguntaId = null, moduloTipoAtual = 'video';
   let editandoFormacaoId = null;
 
   const defaultCert = { titulo: "Certificado de Formação", texto: "Certifica-se que {{nome}} concluiu {{formacao}} com {{nota}}.\nEmitido em {{data}}.", rodape: "Direção de Formação" };
   let certTemplate = JSON.parse(localStorage.getItem('cert_template') || JSON.stringify(defaultCert));
 
-  // ==================== FUNÇÕES GOOGLE DRIVE ====================
-  
-  function initGoogleAPI() {
-    if (typeof gapi === 'undefined') {
-      console.log('Aguardando API do Google carregar...');
-      setTimeout(initGoogleAPI, 1000);
-      return;
-    }
-    
-    gapi.load('client:auth2', () => {
-      gapi.client.init({
-        apiKey: GOOGLE_API_KEY,
-        clientId: GOOGLE_CLIENT_ID,
-        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-        scope: 'https://www.googleapis.com/auth/drive.file'
-      }).then(() => {
-        console.log('✅ Google Drive API inicializada');
-        googleAuthInstance = gapi.auth2.getAuthInstance();
-        googleIsSignedIn = googleAuthInstance.isSignedIn.get();
-        
-        if (googleIsSignedIn) {
-          const user = googleAuthInstance.currentUser.get();
-          const authResponse = user.getAuthResponse();
-          accessToken = authResponse.access_token;
-          document.getElementById('google-drive-status').innerHTML = `✅ Autenticado como: ${user.getBasicProfile().getEmail()}`;
-          document.getElementById('google-drive-status').style.color = '#90EE90';
-        } else {
-          document.getElementById('google-drive-status').innerHTML = '⚠️ Não autenticado';
-        }
-        
-        googleAuthInstance.isSignedIn.listen(estado => {
-          googleIsSignedIn = estado;
-          if (estado && googleAuthInstance.currentUser.get()) {
-            const user = googleAuthInstance.currentUser.get();
-            const authResponse = user.getAuthResponse();
-            accessToken = authResponse.access_token;
-            document.getElementById('google-drive-status').innerHTML = `✅ Autenticado como: ${user.getBasicProfile().getEmail()}`;
-            document.getElementById('google-drive-status').style.color = '#90EE90';
-          } else {
-            accessToken = null;
-            document.getElementById('google-drive-status').innerHTML = '⚠️ Não autenticado';
-            document.getElementById('google-drive-status').style.color = 'rgba(255,255,255,0.8)';
-          }
-        });
-      }).catch(error => {
-        console.error('Erro ao inicializar Google API:', error);
-      });
-    });
-  }
-  
-  function forcarAutenticacaoGoogle() {
-    if (!googleAuthInstance) {
-      alert('A carregar API do Google... Aguarde 5 segundos e tente novamente.');
-      return;
-    }
-    
-    googleAuthInstance.signIn().then(() => {
-      const user = googleAuthInstance.currentUser.get();
-      const authResponse = user.getAuthResponse();
-      accessToken = authResponse.access_token;
-      alert('✅ Autenticado com sucesso no Google Drive!');
-      document.getElementById('google-drive-status').innerHTML = `✅ Autenticado como: ${user.getBasicProfile().getEmail()}`;
-      document.getElementById('google-drive-status').style.color = '#90EE90';
-    }).catch(error => {
-      console.error('Erro na autenticação:', error);
-      alert('❌ Erro ao autenticar: ' + (error.error || error.message || 'Tente novamente mais tarde'));
-    });
-  }
-  
-  async function uploadParaGoogleDrive(file, folderName = 'formacoes_ficheiros') {
-    return new Promise((resolve, reject) => {
-      if (!accessToken) {
-        reject('Necessário autenticar no Google Drive primeiro');
-        return;
-      }
-      
-      const metadata = {
-        name: file.name,
-        mimeType: file.type,
-        parents: ['root']
-      };
-      
-      const form = new FormData();
-      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-      form.append('file', file);
-      
-      fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-        method: 'POST',
-        headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
-        body: form
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.id) {
-          const fileUrl = `https://drive.google.com/uc?export=view&id=${data.id}`;
-          resolve({
-            id: data.id,
-            name: file.name,
-            type: file.type,
-            size: file.size,
-            url: fileUrl,
-            viewUrl: `https://drive.google.com/file/d/${data.id}/view`,
-            downloadUrl: `https://drive.google.com/uc?export=download&id=${data.id}`,
-            embedUrl: `https://drive.google.com/file/d/${data.id}/preview`,
-            storage: 'googledrive'
-          });
-        } else {
-          reject('Erro no upload: ' + JSON.stringify(data));
-        }
-      })
-      .catch(error => reject(error));
-    });
-  }
-  
-  async function uploadJSONParaDrive(data, nomeArquivo, pasta = 'backups') {
-    return new Promise((resolve, reject) => {
-      if (!accessToken) {
-        reject('Necessário autenticar no Google Drive primeiro');
-        return;
-      }
-      
-      const jsonString = JSON.stringify(data, null, 2);
-      const blob = new Blob([jsonString], { type: 'application/json' });
-      const file = new File([blob], nomeArquivo, { type: 'application/json' });
-      
-      const metadata = {
-        name: nomeArquivo,
-        mimeType: 'application/json',
-        parents: ['root']
-      };
-      
-      const form = new FormData();
-      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-      form.append('file', file);
-      
-      fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-        method: 'POST',
-        headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
-        body: form
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.id) {
-          resolve({ id: data.id, url: `https://drive.google.com/file/d/${data.id}/view` });
-        } else {
-          reject('Erro no upload: ' + JSON.stringify(data));
-        }
-      })
-      .catch(error => reject(error));
-    });
-  }
-  
-  async function uploadCSVParaDrive(csvContent, nomeArquivo) {
-    return new Promise((resolve, reject) => {
-      if (!accessToken) {
-        reject('Necessário autenticar no Google Drive primeiro');
-        return;
-      }
-      
-      const blob = new Blob([csvContent], { type: 'text/csv' });
-      const file = new File([blob], nomeArquivo, { type: 'text/csv' });
-      
-      const metadata = {
-        name: nomeArquivo,
-        mimeType: 'text/csv',
-        parents: ['root']
-      };
-      
-      const form = new FormData();
-      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-      form.append('file', file);
-      
-      fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-        method: 'POST',
-        headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
-        body: form
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.id) {
-          resolve({ id: data.id, url: `https://drive.google.com/file/d/${data.id}/view` });
-        } else {
-          reject('Erro no upload: ' + JSON.stringify(data));
-        }
-      })
-      .catch(error => reject(error));
-    });
-  }
-  
-  async function uploadFicheiroModulo(files) {
-    if(!files || !files[0]) return;
-    const file = files[0];
-    const maxSize = 10 * 1024 * 1024;
-    
-    if (file.size > maxSize) {
-      alert(`⚠️ O ficheiro tem ${Math.round(file.size/1024/1024)}MB. Limite 10MB.`);
-      return;
-    }
-    
-    const preview = document.getElementById('file-preview-modulo');
-    preview.innerHTML = `📤 A enviar "${file.name}" para o Google Drive...`;
-    preview.style.color = 'var(--birkenstock-blue)';
-    
-    try {
-      if (!accessToken) {
-        throw new Error('Necessário autenticar no Google Drive primeiro');
-      }
-      
-      const driveFile = await uploadParaGoogleDrive(file);
-      ficheiroTemp = driveFile;
-      
-      preview.innerHTML = `✅ "${file.name}" guardado no Google Drive! (${Math.round(file.size/1024)} KB)`;
-      preview.style.color = 'var(--success)';
-      
-      const linkDiv = document.createElement('div');
-      linkDiv.style.marginTop = '8px';
-      linkDiv.style.fontSize = '11px';
-      linkDiv.innerHTML = `<a href="${driveFile.viewUrl}" target="_blank">🔗 Ver no Google Drive</a>`;
-      preview.appendChild(linkDiv);
-      
-    } catch(error) {
-      preview.innerHTML = `❌ ${error.message}`;
-      preview.style.color = 'var(--danger)';
-    }
-  }
-  
-  async function fazerBackupDrive() {
-    if (!accessToken) {
-      alert('⚠️ Necessário autenticar no Google Drive primeiro! Clique em "Autenticar"');
-      return;
-    }
-    
-    const backupBtn = document.getElementById('btn-backup');
-    backupBtn.disabled = true;
-    backupBtn.textContent = '📤 A fazer backup...';
-    
-    try {
-      const dataAtual = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-      
-      // Backup das formações
-      const cursos = await carregarFormacoes();
-      await uploadJSONParaDrive(cursos, `backup_formacoes_${dataAtual}.json`);
-      
-      // Backup dos colaboradores
-      const colaboradores = await carregarColaboradores();
-      await uploadJSONParaDrive(colaboradores, `backup_colaboradores_${dataAtual}.json`);
-      
-      // Backup do histórico
-      const historico = await carregarHistorico();
-      await uploadJSONParaDrive(historico, `backup_historico_${dataAtual}.json`);
-      
-      // Backup do template do certificado
-      await uploadJSONParaDrive(certTemplate, `backup_certificado_${dataAtual}.json`);
-      
-      alert('✅ Backup completo guardado no Google Drive!\n\nForam guardados:\n- Formações\n- Colaboradores\n- Histórico\n- Template do Certificado');
-      
-    } catch(error) {
-      console.error('Erro no backup:', error);
-      alert('❌ Erro ao fazer backup: ' + error.message);
-    } finally {
-      backupBtn.disabled = false;
-      backupBtn.textContent = '💾 Backup para Drive';
-    }
-  }
-  
-  async function backupHistoricoDrive() {
-    if (!accessToken) {
-      alert('⚠️ Necessário autenticar no Google Drive primeiro!');
-      return;
-    }
-    
-    const btn = event.target;
-    btn.disabled = true;
-    btn.textContent = '📤 A enviar...';
-    
-    try {
-      const historico = await carregarHistorico();
-      const csvContent = gerarCSVHistorico(historico);
-      const dataAtual = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-      const result = await uploadCSVParaDrive(csvContent, `historico_formacoes_${dataAtual}.csv`);
-      alert(`✅ Histórico exportado para o Google Drive!\n\nLink: ${result.url}`);
-    } catch(error) {
-      alert('❌ Erro ao exportar: ' + error.message);
-    } finally {
-      btn.disabled = false;
-      btn.textContent = '💾 Backup Drive';
-    }
-  }
-  
-  function gerarCSVHistorico(historico) {
-    const headers = ['Colaborador', 'Email', 'Formação', 'Data', 'Nota'];
-    const rows = historico.map(h => [h.nome, h.email || '', h.curso, h.data, h.nota]);
-    const csvContent = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-    return csvContent;
-  }
-
-  // ==================== FUNÇÕES PRINCIPAIS ====================
-  
   async function carregarFormacoes() {
     const q = window.query(window.collection(window.db, 'formacoes'), window.orderBy('dataTimestamp', 'desc'));
     const querySnapshot = await window.getDocs(q);
@@ -908,7 +518,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     const preview = document.getElementById('cert-preview');
     const content = document.getElementById('cert-preview-content');
     let texto = certTemplate.texto;
-    Object.entries({nome:"Exemplo", formacao:"Formação Teste", data:new Date().toLocaleDateString('pt-PT'), nota:"85%", validade:"2027", certificado_id:"CERT-001"}).forEach(([k,v]) => texto = texto.replace(new RegExp(`{{${k}}}`, 'g'), v));
+    Object.entries({nome:"Exemplo", formacao:"Formação Teste", data:new Date().toLocaleDateString(), nota:"85%", validade:"2027", certificado_id:"CERT-001"}).forEach(([k,v]) => texto = texto.replace(new RegExp(`{{${k}}}`, 'g'), v));
     content.innerHTML = `<div style="text-align:center;padding:20px;border:2px solid var(--birkenstock-gold);border-radius:16px;"><h2>${certTemplate.titulo}</h2><div>${texto.replace(/\n/g,'<br>')}</div><div style="margin-top:20px;">${certTemplate.rodape}</div></div>`;
     preview.style.display = 'block';
   }
@@ -916,7 +526,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   function salvarTemplateCertificado() {
     certTemplate = { titulo: document.getElementById('cert-titulo').value, texto: document.getElementById('cert-texto').value, rodape: document.getElementById('cert-rodape').value };
     localStorage.setItem('cert_template', JSON.stringify(certTemplate));
-    alert('Template salvo!');
+    alert('✅ Template salvo!');
   }
   
   function resetTemplateCertificado() {
@@ -924,43 +534,83 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     document.getElementById('cert-titulo').value = certTemplate.titulo;
     document.getElementById('cert-texto').value = certTemplate.texto;
     document.getElementById('cert-rodape').value = certTemplate.rodape;
-    alert('Template restaurado!');
+    alert('✅ Template restaurado!');
   }
 
   function abrirModalModulo(tipo) {
-    moduloTipoAtual = tipo; editandoModuloId = null; ficheiroTemp = null;
-    document.getElementById('modal-modulo-titulo').textContent = tipo==='video'?'Vídeo':tipo==='text'?'Texto':'Ficheiro';
+    moduloTipoAtual = tipo; editandoModuloId = null;
+    document.getElementById('modal-modulo-titulo').textContent = tipo==='video'?'Vídeo':tipo==='text'?'Texto':'Ficheiro/URL';
     document.getElementById('modulo-titulo').value = ''; document.getElementById('modulo-duracao').value = '';
     document.getElementById('modulo-conteudo-video').style.display = tipo==='video'?'block':'none';
     document.getElementById('modulo-conteudo-texto').style.display = tipo==='text'?'block':'none';
     document.getElementById('modulo-conteudo-file').style.display = tipo==='file'?'block':'none';
-    document.getElementById('file-preview-modulo').innerHTML = '';
+    document.getElementById('modulo-video-url').value = '';
+    document.getElementById('modulo-texto-conteudo').value = '';
+    document.getElementById('modulo-file-url').value = '';
     document.getElementById('modal-modulo').style.display = 'flex';
   }
   
-  function editarModulo(id) { const m = modulos.find(m=>m.id===id); if(!m) return; editandoModuloId=id; moduloTipoAtual=m.tipo; document.getElementById('modulo-titulo').value=m.titulo; document.getElementById('modulo-duracao').value=m.duracao; document.getElementById('modulo-conteudo-video').style.display=m.tipo==='video'?'block':'none'; document.getElementById('modulo-conteudo-texto').style.display=m.tipo==='text'?'block':'none'; document.getElementById('modulo-conteudo-file').style.display=m.tipo==='file'?'block':'none'; if(m.tipo==='video') document.getElementById('modulo-video-url').value=m.conteudo.url||''; if(m.tipo==='text') document.getElementById('modulo-texto-conteudo').value=m.conteudo.texto||''; if(m.tipo==='file' && m.conteudo.fileName) { ficheiroTemp=m.conteudo; document.getElementById('file-preview-modulo').innerHTML=`📎 ${m.conteudo.fileName}`; } document.getElementById('modal-modulo').style.display='flex'; }
+  function editarModulo(id) { 
+    const m = modulos.find(m=>m.id===id); 
+    if(!m) return; 
+    editandoModuloId=id; 
+    moduloTipoAtual=m.tipo; 
+    document.getElementById('modulo-titulo').value=m.titulo; 
+    document.getElementById('modulo-duracao').value=m.duracao; 
+    document.getElementById('modulo-conteudo-video').style.display=m.tipo==='video'?'block':'none';
+    document.getElementById('modulo-conteudo-texto').style.display=m.tipo==='text'?'block':'none';
+    document.getElementById('modulo-conteudo-file').style.display=m.tipo==='file'?'block':'none';
+    if(m.tipo==='video') document.getElementById('modulo-video-url').value=m.conteudo.url||'';
+    if(m.tipo==='text') document.getElementById('modulo-texto-conteudo').value=m.conteudo.texto||'';
+    if(m.tipo==='file') document.getElementById('modulo-file-url').value=m.conteudo.url||'';
+    document.getElementById('modal-modulo').style.display='flex'; 
+  }
   
   function salvarModulo() {
-    const titulo=document.getElementById('modulo-titulo').value.trim(); if(!titulo){alert('Título obrigatório');return;}
+    const titulo=document.getElementById('modulo-titulo').value.trim(); 
+    if(!titulo){ alert('Título obrigatório'); return; }
+    
     let conteudo={};
-    if(moduloTipoAtual==='video'){ const url=document.getElementById('modulo-video-url').value.trim(); if(!url){alert('URL obrigatório');return;} conteudo={url}; }
-    else if(moduloTipoAtual==='text'){ const texto=document.getElementById('modulo-texto-conteudo').value; if(!texto){alert('Conteúdo obrigatório');return;} conteudo={texto}; }
-    else{ if(!ficheiroTemp){alert('Selecione um ficheiro');return;} conteudo={fileId:ficheiroTemp.id,fileName:ficheiroTemp.name,fileData:ficheiroTemp.data}; }
+    if(moduloTipoAtual==='video'){ 
+      const url=document.getElementById('modulo-video-url').value.trim(); 
+      if(!url){ alert('URL obrigatório'); return; } 
+      conteudo={url}; 
+    }
+    else if(moduloTipoAtual==='text'){ 
+      const texto=document.getElementById('modulo-texto-conteudo').value; 
+      if(!texto){ alert('Conteúdo obrigatório'); return; } 
+      conteudo={texto}; 
+    }
+    else{ 
+      const url=document.getElementById('modulo-file-url').value.trim(); 
+      if(!url){ alert('URL do ficheiro obrigatório'); return; } 
+      conteudo={url}; 
+    }
+    
     const duracao=document.getElementById('modulo-duracao').value.trim()||'15 min';
-    if(editandoModuloId){ const idx=modulos.findIndex(m=>m.id===editandoModuloId); if(idx!==-1) modulos[idx]={...modulos[idx],titulo,tipo:moduloTipoAtual,conteudo,duracao}; }
-    else modulos.push({id:Date.now(),titulo,tipo:moduloTipoAtual,conteudo,duracao});
-    renderModulos(); fecharModal('modal-modulo');
+    if(editandoModuloId){ 
+      const idx=modulos.findIndex(m=>m.id===editandoModuloId); 
+      if(idx!==-1) modulos[idx]={...modulos[idx],titulo,tipo:moduloTipoAtual,conteudo,duracao}; 
+    } else {
+      modulos.push({id:Date.now(),titulo,tipo:moduloTipoAtual,conteudo,duracao});
+    }
+    renderModulos(); 
+    fecharModal('modal-modulo');
   }
   
   function removerModulo(id) { if(confirm('Remover módulo?')){ modulos=modulos.filter(m=>m.id!==id); renderModulos(); } }
   
-  function renderModulos() { const container=document.getElementById('modulos-container'); if(!modulos.length){ container.innerHTML='<div class="alert alert-warning">Nenhum módulo.</div>'; return; } container.innerHTML=modulos.map(m=>`<div class="modulo-card"><div class="modulo-header"><div class="modulo-titulo">📌 ${m.titulo}</div><div class="modulo-tipo">${m.tipo==='video'?'🎬 Vídeo':m.tipo==='text'?'📄 Texto':'📁 Ficheiro'} · ${m.duracao}</div><div><button onclick="editarModulo(${m.id})">✏️</button><button onclick="removerModulo(${m.id})">🗑️</button></div></div></div>`).join(''); }
+  function renderModulos() { 
+    const container=document.getElementById('modulos-container'); 
+    if(!modulos.length){ container.innerHTML='<div class="alert alert-warning">Nenhum módulo adicionado.</div>'; return; } 
+    container.innerHTML=modulos.map(m=>`<div class="modulo-card"><div class="modulo-header"><div class="modulo-titulo">📌 ${m.titulo}</div><div class="modulo-tipo">${m.tipo==='video'?'🎬 Vídeo':m.tipo==='text'?'📄 Texto':'📁 Ficheiro'} · ${m.duracao}</div><div><button onclick="editarModulo(${m.id})">✏️</button><button onclick="removerModulo(${m.id})">🗑️</button></div></div></div>`).join(''); 
+  }
 
   function abrirModalPergunta(){ editandoPerguntaId=null; document.getElementById('pergunta-texto').value=''; document.getElementById('pergunta-opcao-a').value=''; document.getElementById('pergunta-opcao-b').value=''; document.getElementById('pergunta-opcao-c').value=''; document.getElementById('pergunta-opcao-d').value=''; document.getElementById('pergunta-correta').value='A'; document.getElementById('modal-pergunta').style.display='flex'; }
   function editarPergunta(id){ const p=perguntas.find(p=>p.id===id); if(!p) return; editandoPerguntaId=id; document.getElementById('pergunta-texto').value=p.texto; document.getElementById('pergunta-opcao-a').value=p.opcoes[0]; document.getElementById('pergunta-opcao-b').value=p.opcoes[1]; document.getElementById('pergunta-opcao-c').value=p.opcoes[2]; document.getElementById('pergunta-opcao-d').value=p.opcoes[3]; document.getElementById('pergunta-correta').value=p.correta; document.getElementById('modal-pergunta').style.display='flex'; }
   function salvarPergunta(){ const texto=document.getElementById('pergunta-texto').value.trim(); if(!texto){alert('Texto obrigatório');return;} const opcoes=[document.getElementById('pergunta-opcao-a').value.trim(),document.getElementById('pergunta-opcao-b').value.trim(),document.getElementById('pergunta-opcao-c').value.trim(),document.getElementById('pergunta-opcao-d').value.trim()]; if(opcoes.some(o=>!o)){alert('Todas opções obrigatórias');return;} const correta=document.getElementById('pergunta-correta').value; if(editandoPerguntaId){ const idx=perguntas.findIndex(p=>p.id===editandoPerguntaId); if(idx!==-1) perguntas[idx]={...perguntas[idx],texto,opcoes,correta}; }else perguntas.push({id:Date.now(),texto,opcoes,correta}); renderPerguntas(); fecharModal('modal-pergunta'); }
   function removerPergunta(id){ if(confirm('Remover pergunta?')){ perguntas=perguntas.filter(p=>p.id!==id); renderPerguntas(); } }
-  function renderPerguntas(){ const container=document.getElementById('perguntas-container'); if(!perguntas.length){ container.innerHTML='<div class="alert alert-warning">Nenhuma pergunta.</div>'; return; } container.innerHTML=perguntas.map(p=>`<div class="pergunta-card"><div class="pergunta-header"><div class="modulo-titulo">📝 ${p.texto}</div><div><button onclick="editarPergunta(${p.id})">✏️</button><button onclick="removerPergunta(${p.id})">🗑️</button></div></div><div style="font-size:12px;color:var(--success)">✓ Correta: ${p.correta}</div></div>`).join(''); }
+  function renderPerguntas(){ const container=document.getElementById('perguntas-container'); if(!perguntas.length){ container.innerHTML='<div class="alert alert-warning">Nenhuma pergunta adicionada.</div>'; return; } container.innerHTML=perguntas.map(p=>`<div class="pergunta-card"><div class="pergunta-header"><div class="modulo-titulo">📝 ${p.texto}</div><div><button onclick="editarPergunta(${p.id})">✏️</button><button onclick="removerPergunta(${p.id})">🗑️</button></div></div><div style="font-size:12px;color:var(--success)">✓ Correta: ${p.correta}</div></div>`).join(''); }
 
   async function renderColabs() {
     const colaboradores = await carregarColaboradores();
@@ -1027,7 +677,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   }
   function exportarHistoricoCSV(){ alert('Função de exportação será implementada'); }
   function exportarHistoricoExcel(){ alert('Função de exportação será implementada'); }
-  async function limparHistorico(){ if(confirm('Apagar histórico?')){ const historico=await carregarHistorico(); for(const item of historico){ await window.deleteDoc(window.doc(window.db,'historico',item.id)); } renderHistorico(); atualizarDashboard(); alert('✅ Histórico limpo!'); } }
+  function limparHistorico(){ if(confirm('Apagar histórico?')){ localStorage.removeItem('historicoNotas'); renderHistorico(); atualizarDashboard(); } }
 
   function checkPasswordStrength(pass){ let s=0; if(pass.length>=8)s++; if(/[A-Z]/.test(pass))s++; if(/[0-9]/.test(pass))s++; if(/[^a-zA-Z0-9]/.test(pass))s++; const d=document.getElementById('password-strength'); d.className='password-strength'; if(s<=1)d.classList.add('strength-weak'); else if(s<=2)d.classList.add('strength-medium'); else d.classList.add('strength-strong'); }
   function alterarPasswordAdmin(){ const atual=document.getElementById('admin-pass-atual').value; const nova=document.getElementById('admin-pass-nova').value; const conf=document.getElementById('admin-pass-confirm').value; if(atual!==adminConfig.adminPassword){alert('Password atual incorreta');return;} if(nova!==conf){alert('Passwords não coincidem');return;} if(nova.length<6){alert('Mínimo 6 caracteres');return;} adminConfig.adminPassword=nova; localStorage.setItem('admin_config',JSON.stringify(adminConfig)); alert('Password alterada!'); document.getElementById('admin-pass-atual').value=''; document.getElementById('admin-pass-nova').value=''; document.getElementById('admin-pass-confirm').value=''; }
@@ -1056,17 +706,14 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>switchTab(t.dataset.tab)));
 
   renderModulos(); renderPerguntas(); renderColabs(); renderHistorico(); atualizarSelectores(); atualizarDashboard(); renderFormacoesLista();
-  
-  setTimeout(() => { initGoogleAPI(); }, 500);
 
   window.abrirModalModulo=abrirModalModulo; window.editarModulo=editarModulo; window.removerModulo=removerModulo;
   window.abrirModalPergunta=abrirModalPergunta; window.editarPergunta=editarPergunta; window.removerPergunta=removerPergunta;
-  window.removerColab=removerColab; window.uploadFicheiroModulo=uploadFicheiroModulo; window.copiarLink=copiarLink;
+  window.removerColab=removerColab; window.copiarLink=copiarLink;
   window.inserirPlaceholder=inserirPlaceholder; window.previewCertificado=previewCertificado; window.salvarTemplateCertificado=salvarTemplateCertificado; window.resetTemplateCertificado=resetTemplateCertificado;
   window.alterarPasswordAdmin=alterarPasswordAdmin; window.checkPasswordStrength=checkPasswordStrength;
   window.selecionarTodos=selecionarTodos; window.deselecionarTodos=deselecionarTodos;
   window.exportarHistoricoCSV=exportarHistoricoCSV; window.exportarHistoricoExcel=exportarHistoricoExcel;
-  window.forcarAutenticacaoGoogle=forcarAutenticacaoGoogle; window.fazerBackupDrive=fazerBackupDrive; window.backupHistoricoDrive=backupHistoricoDrive;
   window.editarFormacao = async (id) => {
     const docRef = window.doc(window.db, 'formacoes', id);
     const docSnap = await window.getDoc(docRef);
