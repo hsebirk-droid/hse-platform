@@ -172,6 +172,11 @@ header .logo-text small {
 .empty-state-icon { font-size: 64px; margin-bottom: 16px; }
 .empty-state h3 { color: var(--birkenstock-blue); margin-bottom: 8px; }
 .empty-state p { color: var(--birkenstock-gray); }
+.loading {
+  text-align: center;
+  padding: 60px;
+  color: var(--birkenstock-gray);
+}
 </style>
 </head>
 <body>
@@ -195,96 +200,106 @@ header .logo-text small {
 </div>
 
 <div class="main">
-  <div class="grid" id="cursos-grid"></div>
+  <div id="loading" class="loading">📚 A carregar formações...</div>
+  <div class="grid" id="cursos-grid" style="display:none;"></div>
 </div>
 
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAwywvboQgWqkrZlbwrUPdaUq-gLnWM64E",
+    authDomain: "plataforma-ssa-3130e.firebaseapp.com",
+    projectId: "plataforma-ssa-3130e",
+    storageBucket: "plataforma-ssa-3130e.firebasestorage.app",
+    messagingSenderId: "850671249674",
+    appId: "1:850671249674:web:53a115408f8006745c32f3"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.db = db;
+  window.collection = collection;
+  window.getDocs = getDocs;
+  window.query = query;
+  window.orderBy = orderBy;
+</script>
+
 <script>
-  function carregarFormacoes() {
-    const grid = document.getElementById('cursos-grid');
+  const loadingDiv = document.getElementById('loading');
+  const gridDiv = document.getElementById('cursos-grid');
+
+  async function carregarFormacoes() {
+    loadingDiv.style.display = 'block';
+    gridDiv.style.display = 'none';
+    
     const nomeUser = localStorage.getItem('usuarioAtivo') || 'Colaborador';
     document.getElementById('user-info').textContent = 'Olá, ' + nomeUser;
     
-    let cursos = [];
     try {
-      cursos = JSON.parse(localStorage.getItem('listaCursos') || '[]');
-      // Validar integridade dos cursos
-      if(!Array.isArray(cursos)) cursos = [];
-    } catch(e) {
-      console.error('Erro ao carregar cursos:', e);
-      cursos = [];
-    }
-    
-    if(cursos.length === 0) {
-      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
-        <div class="empty-state-icon">📚</div>
-        <h3>Nenhuma formação disponível</h3>
-        <p>No momento não há formações atribuídas. Aguarde novas instruções do administrador.</p>
-      </div>`;
-      return;
-    }
-    
-    grid.innerHTML = cursos.map((curso, idx) => {
-      // Validar dados do curso
-      if(!curso || !curso.nome) return '';
+      const q = window.query(window.collection(window.db, 'formacoes'), window.orderBy('dataTimestamp', 'desc'));
+      const querySnapshot = await window.getDocs(q);
       
-      const nomeCurso = curso.nome || 'Sem título';
-      const descricao = curso.descricao || 'Formação obrigatória de segurança, saúde e ambiente.';
-      const duracao = curso.duracao || '30 minutos';
-      const categoria = curso.cat || 'HSE';
+      const cursos = [];
+      querySnapshot.forEach((doc) => {
+        cursos.push({ id: doc.id, ...doc.data() });
+      });
       
-      return `
-        <div class="card" onclick="entrarFormacao(${idx})">
-          <div class="card-img">📋</div>
-          <div class="card-body">
-            <div class="cat">${categoria}</div>
-            <div class="card-title">${nomeCurso}</div>
-            <div class="card-desc">${descricao}</div>
+      loadingDiv.style.display = 'none';
+      
+      if(cursos.length === 0) {
+        gridDiv.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+          <div class="empty-state-icon">📚</div>
+          <h3>Nenhuma formação disponível</h3>
+          <p>No momento não há formações atribuídas. Aguarde novas instruções do administrador.</p>
+        </div>`;
+        gridDiv.style.display = 'grid';
+        return;
+      }
+      
+      gridDiv.innerHTML = cursos.map((curso, idx) => {
+        const nomeCurso = curso.nome || 'Sem título';
+        const descricao = curso.descricao || 'Formação obrigatória de segurança, saúde e ambiente.';
+        const duracao = curso.duracao || '30 minutos';
+        const categoria = curso.cat || 'HSE';
+        
+        return `
+          <div class="card" onclick="entrarFormacao('${curso.id}')">
+            <div class="card-img">📋</div>
+            <div class="card-body">
+              <div class="cat">${categoria}</div>
+              <div class="card-title">${nomeCurso}</div>
+              <div class="card-desc">${descricao}</div>
+            </div>
+            <div class="card-footer">
+              <span>⏱️ ${duracao}</span>
+              <span>✅ Disponível</span>
+            </div>
+            <button class="btn-enter">Entrar no Módulo</button>
           </div>
-          <div class="card-footer">
-            <span>⏱️ ${duracao}</span>
-            <span>✅ Disponível</span>
-          </div>
-          <button class="btn-enter">Entrar no Módulo</button>
-        </div>
-      `;
-    }).join('');
+        `;
+      }).join('');
+      gridDiv.style.display = 'grid';
+      
+    } catch(error) {
+      console.error('Erro ao carregar formações:', error);
+      loadingDiv.innerHTML = '❌ Erro ao carregar formações. Tente novamente mais tarde.';
+      loadingDiv.style.color = 'var(--danger)';
+    }
   }
   
-  function entrarFormacao(idx) {
-    let cursos = [];
-    try {
-      cursos = JSON.parse(localStorage.getItem('listaCursos') || '[]');
-    } catch(e) {}
-    
-    if(idx < 0 || idx >= cursos.length) {
-      alert('Erro ao aceder à formação. Por favor, tente novamente.');
-      return;
-    }
-    
-    const curso = cursos[idx];
-    
-    if(!curso || !curso.nome) {
-      alert('Formação inválida.');
-      return;
-    }
-    
-    localStorage.setItem('cursoAtualNome', curso.nome);
-    localStorage.setItem('cursoAtualDuracao', curso.duracao || '30 minutos');
-    localStorage.setItem('cursoAtualDesc', curso.descricao || '');
-    localStorage.setItem('cursoAtualModulos', JSON.stringify(curso.modulos || []));
-    localStorage.setItem('cursoAtualPerguntas', JSON.stringify(curso.perguntas || []));
-    
+  function entrarFormacao(cursoId) {
+    localStorage.setItem('cursoAtualId', cursoId);
     window.location.href = 'formacao_colaborador.html';
   }
   
   function fazerLogout() {
     if(confirm('Tem a certeza que deseja sair?')) {
       localStorage.removeItem('usuarioAtivo');
-      localStorage.removeItem('cursoAtualNome');
-      localStorage.removeItem('cursoAtualDuracao');
-      localStorage.removeItem('cursoAtualDesc');
-      localStorage.removeItem('cursoAtualModulos');
-      localStorage.removeItem('cursoAtualPerguntas');
+      localStorage.removeItem('cursoAtualId');
       window.location.href = 'login.html';
     }
   }
