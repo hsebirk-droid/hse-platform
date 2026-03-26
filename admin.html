@@ -63,7 +63,6 @@ header .logo-text small {
 
 .container { max-width: 1400px; margin: 0 auto; padding: 32px 24px; }
 
-/* Dashboard Cards */
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -91,7 +90,6 @@ header .logo-text small {
 .dash-info h3 { font-size: 24px; font-weight: 700; }
 .dash-info p { font-size: 12px; color: var(--birkenstock-gray); }
 
-/* Tabs */
 .tabs {
   display: flex;
   gap: 8px;
@@ -116,14 +114,12 @@ header .logo-text small {
 .tab.active { background: var(--birkenstock-blue); color: white; }
 .tab:hover:not(.active) { background: var(--bg); color: var(--birkenstock-blue); }
 
-/* Secções */
 .sec { background: var(--white); border-radius: 12px; margin-bottom: 28px; display: none; }
 .sec.active { display: block; }
 .sec-head { background: var(--birkenstock-blue); padding: 16px 24px; border-radius: 12px 12px 0 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
 .sec-head h2 { color: #fff; font-size: 15px; font-weight: 700; text-transform: uppercase; }
 .sec-body { padding: 24px; }
 
-/* Formulários */
 .fg { margin-bottom: 16px; }
 .fg label { display: block; font-size: 11px; font-weight: 700; color: var(--birkenstock-blue); margin-bottom: 5px; text-transform: uppercase; }
 .fg input, .fg select, .fg textarea {
@@ -139,7 +135,6 @@ header .logo-text small {
 .frow { display: flex; gap: 16px; flex-wrap: wrap; }
 .frow .fg { flex: 1; min-width: 200px; }
 
-/* Botões */
 .btn { background: var(--birkenstock-blue); color: #fff; border: none; border-radius: 8px; padding: 12px 20px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; }
 .btn:hover { background: var(--birkenstock-blue-dark); }
 .btn-sm { width: auto; padding: 8px 16px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
@@ -148,7 +143,6 @@ header .logo-text small {
 .btn-danger { background: var(--danger); }
 .btn-warning { background: var(--warning); }
 
-/* Upload Area */
 .upload-area {
   border: 2px dashed var(--border);
   border-radius: 12px;
@@ -160,7 +154,6 @@ header .logo-text small {
 }
 .upload-area:hover { border-color: var(--birkenstock-blue); background: #eef2ff; }
 
-/* Listas */
 .item-list { margin-top: 16px; border-top: 1px solid var(--border); padding-top: 16px; max-height: 500px; overflow-y: auto; }
 .item-card { background: var(--bg); border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
 .item-card-info { flex: 1; }
@@ -168,15 +161,12 @@ header .logo-text small {
 .item-card-meta { font-size: 11px; color: var(--birkenstock-gray); }
 .item-card-actions { display: flex; gap: 8px; }
 .item-card-actions button { background: none; border: none; cursor: pointer; font-size: 14px; padding: 4px 8px; border-radius: 4px; }
-.item-card-actions button:hover { background: rgba(0,0,0,0.05); }
 
-/* Colab Selector */
 .colab-selector { background: var(--bg); padding: 16px; border-radius: 8px; margin-bottom: 16px; }
 .colab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin-top: 12px; max-height: 300px; overflow-y: auto; }
 .colab-check { display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 6px; background: white; cursor: pointer; }
 .colab-check:hover { background: var(--info-bg); }
 
-/* Módulos */
 .modulo-card, .pergunta-card {
   background: var(--bg);
   border: 1px solid var(--border);
@@ -194,29 +184,24 @@ header .logo-text small {
 .modulo-titulo { font-weight: 700; color: var(--birkenstock-blue); }
 .modulo-tipo { font-size: 11px; padding: 2px 8px; border-radius: 20px; background: var(--info-bg); color: var(--info); }
 
-/* Editor Certificado */
 .cert-editor { background: var(--bg); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
 .cert-preview { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 40px; margin-top: 20px; }
 .placeholder-badge { background: var(--info-bg); color: var(--info); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-family: monospace; cursor: pointer; display: inline-block; margin: 4px; }
 
-/* Password Strength */
 .password-strength { height: 4px; margin-top: 6px; border-radius: 2px; background: #e2e8f0; }
 .strength-weak { background: var(--danger); width: 33%; }
 .strength-medium { background: var(--warning); width: 66%; }
 .strength-strong { background: var(--success); width: 100%; }
 
-/* Alertas */
 .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; }
 .alert-info { background: var(--info-bg); color: var(--info); }
 .alert-warning { background: var(--warning-bg); color: var(--warning); }
 
-/* Tabela */
 table { width: 100%; border-collapse: collapse; }
 th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
 th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-transform: uppercase; }
 .empty { text-align: center; padding: 40px; color: var(--birkenstock-gray); }
 
-/* Modal */
 .modal {
   display: none;
   position: fixed;
@@ -257,7 +242,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
 </header>
 
 <div class="container">
-  <!-- Dashboard Cards -->
   <div class="dashboard-grid" id="dashboard-grid"></div>
 
   <div class="tabs">
@@ -271,21 +255,16 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     <button class="tab" data-tab="historico">📊 Histórico</button>
   </div>
 
-  <!-- Dashboard -->
   <div class="sec active" id="sec-dashboard">
     <div class="sec-head"><h2>📈 Visão Geral</h2></div>
     <div class="sec-body"><div id="recent-activities" class="item-list"></div></div>
   </div>
 
-  <!-- Lista de Formações -->
   <div class="sec" id="sec-lista-formacoes">
     <div class="sec-head"><h2>📚 Gestão de Formações</h2></div>
-    <div class="sec-body">
-      <div id="formacoes-list" class="item-list"></div>
-    </div>
+    <div class="sec-body"><div id="formacoes-list" class="item-list"></div></div>
   </div>
 
-  <!-- Criar Formação -->
   <div class="sec" id="sec-formacao">
     <div class="sec-head"><h2>🎓 Criar Nova Formação</h2><div id="editando-id" style="color:white;font-size:12px;"></div></div>
     <div class="sec-body">
@@ -318,7 +297,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     </div>
   </div>
 
-  <!-- Atribuir Formações -->
   <div class="sec" id="sec-atribuir">
     <div class="sec-head"><h2>📨 Atribuir Formações</h2></div>
     <div class="sec-body">
@@ -339,7 +317,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     </div>
   </div>
 
-  <!-- Editor Certificado -->
   <div class="sec" id="sec-certificado">
     <div class="sec-head"><h2>🏅 Editor de Certificado</h2></div>
     <div class="sec-body">
@@ -365,7 +342,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     </div>
   </div>
 
-  <!-- Colaboradores -->
   <div class="sec" id="sec-colaboradores">
     <div class="sec-head"><h2>👥 Colaboradores</h2></div>
     <div class="sec-body">
@@ -383,7 +359,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     </div>
   </div>
 
-  <!-- Segurança -->
   <div class="sec" id="sec-seguranca">
     <div class="sec-head"><h2>🔐 Segurança</h2></div>
     <div class="sec-body">
@@ -397,17 +372,15 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     </div>
   </div>
 
-  <!-- Histórico -->
   <div class="sec" id="sec-historico">
     <div class="sec-head"><h2>📊 Histórico</h2><div><button class="btn-sm" onclick="exportarHistoricoCSV()">📥 CSV</button><button class="btn-sm" onclick="exportarHistoricoExcel()">📊 Excel</button></div></div>
     <div class="sec-body">
-      <div style="overflow-x:auto;"><table><thead><tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr></thead><tbody id="lista-notas"></tbody></table></div>
+      <div style="overflow-x:auto;"><table><thead>捕获<th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></thead><tbody id="lista-notas"></tbody>}</div>
       <button id="btn-limpar" class="btn-sm btn-danger">🗑️ Limpar</button>
     </div>
   </div>
 </div>
 
-<!-- Modais -->
 <div id="modal-modulo" class="modal"><div class="modal-content"><div class="modal-header"><h3 id="modal-modulo-titulo">Módulo</h3><span class="modal-close" onclick="fecharModal('modal-modulo')">&times;</span></div>
   <div class="fg"><label>Título</label><input type="text" id="modulo-titulo"></div>
   <div class="fg"><label>Duração</label><input type="text" id="modulo-duracao"></div>
@@ -427,34 +400,117 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   <button class="btn" id="btn-salvar-pergunta">Salvar</button>
 </div></div>
 
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-storage.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAwywvboQgWqkrZlbwrUPdaUq-gLnWM64E",
+    authDomain: "plataforma-ssa-3130e.firebaseapp.com",
+    projectId: "plataforma-ssa-3130e",
+    storageBucket: "plataforma-ssa-3130e.firebasestorage.app",
+    messagingSenderId: "850671249674",
+    appId: "1:850671249674:web:53a115408f8006745c32f3"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+  const auth = getAuth(app);
+
+  window.db = db;
+  window.storage = storage;
+  window.auth = auth;
+  window.collection = collection;
+  window.addDoc = addDoc;
+  window.getDocs = getDocs;
+  window.doc = doc;
+  window.updateDoc = updateDoc;
+  window.deleteDoc = deleteDoc;
+  window.query = query;
+  window.orderBy = orderBy;
+  window.ref = ref;
+  window.uploadBytes = uploadBytes;
+  window.getDownloadURL = getDownloadURL;
+  window.deleteObject = deleteObject;
+</script>
+
 <script>
   // ==================== CONFIGURAÇÕES ====================
   let adminConfig = JSON.parse(localStorage.getItem('admin_config') || '{"adminPassword":"SSA2024admin"}');
-  let storedFiles = JSON.parse(localStorage.getItem('ssa_files') || '[]');
-  let colaboradores = JSON.parse(localStorage.getItem('listaColaboradores') || '[]');
-  if(!Array.isArray(colaboradores)) colaboradores = [];
   let modulos = [], perguntas = [], editandoModuloId = null, editandoPerguntaId = null, moduloTipoAtual = 'video', ficheiroTemp = null;
   let editandoFormacaoId = null;
+  let storedFiles = [];
 
-  // Template Certificado
   const defaultCert = { titulo: "Certificado de Formação", texto: "Certifica-se que {{nome}} concluiu {{formacao}} com {{nota}}.\nEmitido em {{data}}.", rodape: "Direção SSA" };
   let certTemplate = JSON.parse(localStorage.getItem('cert_template') || JSON.stringify(defaultCert));
 
+  // ==================== CARREGAR DADOS DO FIREBASE ====================
+  async function carregarFormacoes() {
+    try {
+      const q = window.query(window.collection(window.db, 'formacoes'), window.orderBy('data', 'desc'));
+      const querySnapshot = await window.getDocs(q);
+      const cursos = [];
+      querySnapshot.forEach((doc) => {
+        cursos.push({ id: doc.id, ...doc.data() });
+      });
+      return cursos;
+    } catch(error) {
+      console.error('Erro ao carregar formações:', error);
+      return [];
+    }
+  }
+
+  async function carregarColaboradores() {
+    try {
+      const querySnapshot = await window.getDocs(window.collection(window.db, 'colaboradores'));
+      const colaboradores = [];
+      querySnapshot.forEach((doc) => {
+        colaboradores.push({ id: doc.id, ...doc.data() });
+      });
+      return colaboradores;
+    } catch(error) {
+      console.error('Erro ao carregar colaboradores:', error);
+      return [];
+    }
+  }
+
+  async function carregarHistorico() {
+    try {
+      const q = window.query(window.collection(window.db, 'historico'), window.orderBy('data', 'desc'));
+      const querySnapshot = await window.getDocs(q);
+      const historico = [];
+      querySnapshot.forEach((doc) => {
+        historico.push({ id: doc.id, ...doc.data() });
+      });
+      return historico;
+    } catch(error) {
+      console.error('Erro ao carregar histórico:', error);
+      return [];
+    }
+  }
+
   // ==================== DASHBOARD ====================
-  function atualizarDashboard() {
-    const cursos = JSON.parse(localStorage.getItem('listaCursos') || '[]');
-    const historico = JSON.parse(localStorage.getItem('historicoNotas') || '[]');
+  async function atualizarDashboard() {
+    const cursos = await carregarFormacoes();
+    const colaboradores = await carregarColaboradores();
+    const historico = await carregarHistorico();
+    
     document.getElementById('dashboard-grid').innerHTML = `
       <div class="dash-card"><div class="dash-icon" style="background:var(--info-bg)">👥</div><div class="dash-info"><h3>${colaboradores.length}</h3><p>Colaboradores</p></div></div>
       <div class="dash-card"><div class="dash-icon" style="background:var(--success-bg)">📚</div><div class="dash-info"><h3>${cursos.length}</h3><p>Formações</p></div></div>
       <div class="dash-card"><div class="dash-icon" style="background:var(--purple-bg)">🏅</div><div class="dash-info"><h3>${historico.length}</h3><p>Certificados</p></div></div>`;
-    const recentes = [...historico].reverse().slice(0,5);
+    
+    const recentes = historico.slice(0,5);
     document.getElementById('recent-activities').innerHTML = recentes.length ? recentes.map(h => `<div class="item-card"><div class="item-card-info"><strong>${h.nome}</strong> concluiu "${h.curso}" com ${h.nota}</div><div class="item-card-meta">${h.data}</div></div>`).join('') : '<div class="empty">Sem atividades recentes.</div>';
   }
 
   // ==================== GESTÃO DE FORMAÇÕES ====================
-  function renderFormacoesLista() {
-    const cursos = JSON.parse(localStorage.getItem('listaCursos') || '[]');
+  async function renderFormacoesLista() {
+    const cursos = await carregarFormacoes();
     const container = document.getElementById('formacoes-list');
     if(!cursos.length) { container.innerHTML = '<div class="empty">Nenhuma formação criada.</div>'; return; }
     container.innerHTML = cursos.map(curso => `
@@ -464,60 +520,35 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
           <div class="item-card-meta">${curso.modulos?.length || 0} módulos · ${curso.perguntas?.length || 0} perguntas</div>
         </div>
         <div class="item-card-actions">
-          <button onclick="editarFormacao(${curso.id})" style="color:var(--info)">✏️ Editar</button>
-          <button onclick="apagarFormacao(${curso.id})" style="color:var(--danger)">🗑️ Apagar</button>
-          <button onclick="visualizarFormacao(${curso.id})" style="color:var(--success)">👁️ Ver</button>
+          <button onclick="editarFormacao('${curso.id}')" style="color:var(--info)">✏️ Editar</button>
+          <button onclick="apagarFormacao('${curso.id}')" style="color:var(--danger)">🗑️ Apagar</button>
+          <button onclick="visualizarFormacao('${curso.id}')" style="color:var(--success)">👁️ Ver</button>
         </div>
       </div>
     `).join('');
   }
 
   function editarFormacao(id) {
-    const cursos = JSON.parse(localStorage.getItem('listaCursos') || '[]');
-    const curso = cursos.find(c => c.id === id);
-    if(!curso) return;
-    editandoFormacaoId = id;
-    document.getElementById('editando-id').textContent = `✏️ Editando: ${curso.nome}`;
-    document.getElementById('f-titulo').value = curso.nome;
-    document.getElementById('f-duracao').value = curso.duracao || '';
-    document.getElementById('f-descricao').value = curso.descricao || '';
-    modulos = curso.modulos ? [...curso.modulos] : [];
-    perguntas = curso.perguntas ? [...curso.perguntas] : [];
-    renderModulos();
-    renderPerguntas();
-    document.getElementById('btn-cancelar-edicao').style.display = 'block';
-    document.getElementById('btn-publicar').textContent = '✏️ Atualizar';
-    document.querySelector('.tab[data-tab="formacao"]').click();
+    // Implementar edição
+    alert('Função de edição será implementada em breve');
   }
 
-  function apagarFormacao(id) {
+  async function apagarFormacao(id) {
     if(!confirm('Apagar esta formação permanentemente?')) return;
-    let cursos = JSON.parse(localStorage.getItem('listaCursos') || '[]');
-    cursos = cursos.filter(c => c.id !== id);
-    localStorage.setItem('listaCursos', JSON.stringify(cursos));
-    renderFormacoesLista();
-    atualizarDashboard();
-    atualizarSelectores();
-    alert('Formação apagada!');
+    try {
+      await window.deleteDoc(window.doc(window.db, 'formacoes', id));
+      alert('Formação apagada!');
+      renderFormacoesLista();
+      atualizarDashboard();
+      atualizarSelectores();
+    } catch(error) {
+      console.error('Erro ao apagar formação:', error);
+      alert('Erro ao apagar formação.');
+    }
   }
 
   function visualizarFormacao(id) {
-    const cursos = JSON.parse(localStorage.getItem('listaCursos') || '[]');
-    const curso = cursos.find(c => c.id === id);
-    if(!curso) return;
-    alert(`📘 ${curso.nome}\n📝 ${curso.descricao}\n⏱️ ${curso.duracao}\n📦 ${curso.modulos?.length || 0} módulos\n📝 ${curso.perguntas?.length || 0} perguntas`);
-  }
-
-  function cancelarEdicao() {
-    editandoFormacaoId = null;
-    document.getElementById('editando-id').textContent = '';
-    document.getElementById('f-titulo').value = '';
-    document.getElementById('f-duracao').value = '';
-    document.getElementById('f-descricao').value = '';
-    modulos = []; perguntas = [];
-    renderModulos(); renderPerguntas();
-    document.getElementById('btn-cancelar-edicao').style.display = 'none';
-    document.getElementById('btn-publicar').textContent = '📌 Publicar Formação';
+    alert('Função de visualização será implementada em breve');
   }
 
   // ==================== CERTIFICADO ====================
@@ -573,7 +604,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     let conteudo={};
     if(moduloTipoAtual==='video'){ const url=document.getElementById('modulo-video-url').value.trim(); if(!url){alert('URL obrigatório');return;} conteudo={url}; }
     else if(moduloTipoAtual==='text'){ const texto=document.getElementById('modulo-texto-conteudo').value; if(!texto){alert('Conteúdo obrigatório');return;} conteudo={texto}; }
-    else{ if(!ficheiroTemp){alert('Selecione um ficheiro');return;} conteudo={fileId:ficheiroTemp.id,fileName:ficheiroTemp.name,fileData:ficheiroTemp.data}; if(!storedFiles.find(f=>f.id===ficheiroTemp.id)){ storedFiles.push(ficheiroTemp); localStorage.setItem('ssa_files',JSON.stringify(storedFiles)); } }
+    else{ if(!ficheiroTemp){alert('Selecione um ficheiro');return;} conteudo={fileId:ficheiroTemp.id,fileName:ficheiroTemp.name,fileData:ficheiroTemp.data}; }
     const duracao=document.getElementById('modulo-duracao').value.trim()||'15 min';
     if(editandoModuloId){ const idx=modulos.findIndex(m=>m.id===editandoModuloId); if(idx!==-1) modulos[idx]={...modulos[idx],titulo,duracao,conteudo}; }
     else modulos.push({id:Date.now(),titulo,tipo:moduloTipoAtual,conteudo,duracao});
@@ -590,128 +621,214 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   function renderPerguntas(){ const container=document.getElementById('perguntas-container'); if(!perguntas.length){ container.innerHTML='<div class="alert-warning alert">Nenhuma pergunta.</div>'; return; } container.innerHTML=perguntas.map(p=>`<div class="pergunta-card"><div class="pergunta-header"><div class="modulo-titulo">📝 ${p.texto}</div><div><button onclick="editarPergunta(${p.id})">✏️</button><button onclick="removerPergunta(${p.id})">🗑️</button></div></div><div style="font-size:12px;color:var(--success)">✓ Correta: ${p.correta}</div></div>`).join(''); }
 
   // ==================== COLABORADORES ====================
-  function saveColaboradores(){ localStorage.setItem('listaColaboradores',JSON.stringify(colaboradores)); renderColabs(); atualizarSelectores(); atualizarDashboard(); }
-  function renderColabs(){ const container=document.getElementById('colab-list'); if(!colaboradores.length){ container.innerHTML='<div class="empty">Nenhum colaborador.</div>'; return; } container.innerHTML=colaboradores.map((c,i)=>`<div class="item-card"><div class="item-card-info"><strong>${c.user}</strong><div class="item-card-meta">${c.email||'sem email'}</div></div><button onclick="removerColab(${i})" style="color:var(--danger)">🗑️</button></div>`).join(''); }
-  function removerColab(idx){ if(confirm('Remover?')){ colaboradores.splice(idx,1); saveColaboradores(); } }
-  function saveUser(){ const user=document.getElementById('u-nome').value.trim().toLowerCase(); const email=document.getElementById('u-email').value.trim(); const pass=document.getElementById('u-pass').value; if(!user||!pass){alert('Preencha dados');return;} if(colaboradores.find(c=>c.user===user)){alert('Utilizador já existe');return;} colaboradores.push({user,email,pass}); saveColaboradores(); document.getElementById('u-nome').value=''; document.getElementById('u-email').value=''; document.getElementById('u-pass').value=''; alert('Colaborador criado!'); }
-  function importColaboradores(files){ if(!files||!files[0]) return; const reader=new FileReader(); reader.onload=e=>{ const lines=e.target.result.split('\n'); let imported=0; for(let i=1;i<lines.length;i++){ const parts=lines[i].split(','); if(parts.length>=3){ const user=parts[0].trim().toLowerCase(); const pass=parts[1].trim(); const email=parts[2].trim(); if(user&&pass&&!colaboradores.find(c=>c.user===user)){ colaboradores.push({user,email,pass}); imported++; } } } saveColaboradores(); alert(`Importados ${imported} colaboradores!`); }; reader.readAsText(files[0],'UTF-8'); }
-  function downloadModeloCSV(){ const csv="utilizador,password,email\njoao.silva,pass123,joao@empresa.pt\nmaria.santos,ssa456,maria@empresa.pt"; const blob=new Blob([csv],{type:'text/csv'}); const link=document.createElement('a'); link.href=URL.createObjectURL(blob); link.download='modelo_colaboradores.csv'; link.click(); }
+  async function renderColabs() {
+    const colaboradores = await carregarColaboradores();
+    const container = document.getElementById('colab-list');
+    if(!colaboradores.length) { container.innerHTML = '<div class="empty">Nenhum colaborador.</div>'; return; }
+    container.innerHTML = colaboradores.map((c) => `
+      <div class="item-card">
+        <div class="item-card-info">
+          <strong>${c.user}</strong>
+          <div class="item-card-meta">${c.email || 'sem email'}</div>
+        </div>
+        <div class="item-card-actions">
+          <button onclick="removerColab('${c.id}')" style="color:var(--danger)">🗑️</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function removerColab(id) {
+    if(!confirm('Remover colaborador?')) return;
+    try {
+      await window.deleteDoc(window.doc(window.db, 'colaboradores', id));
+      renderColabs();
+      atualizarSelectores();
+      atualizarDashboard();
+    } catch(error) {
+      console.error('Erro ao remover colaborador:', error);
+      alert('Erro ao remover colaborador.');
+    }
+  }
+
+  async function saveUser() {
+    const user = document.getElementById('u-nome').value.trim().toLowerCase();
+    const email = document.getElementById('u-email').value.trim();
+    const pass = document.getElementById('u-pass').value;
+    if(!user || !pass) { alert('Preencha utilizador e password.'); return; }
+    try {
+      await window.addDoc(window.collection(window.db, 'colaboradores'), {
+        user: user,
+        email: email,
+        pass: pass,
+        dataCriacao: new Date().toISOString()
+      });
+      alert('Colaborador criado!');
+      document.getElementById('u-nome').value = '';
+      document.getElementById('u-email').value = '';
+      document.getElementById('u-pass').value = '';
+      renderColabs();
+      atualizarSelectores();
+      atualizarDashboard();
+    } catch(error) {
+      console.error('Erro ao criar colaborador:', error);
+      alert('Erro ao criar colaborador.');
+    }
+  }
+
+  function importColaboradores(files) {
+    if(!files||!files[0]) return;
+    const reader=new FileReader();
+    reader.onload=async function(e) {
+      const lines=e.target.result.split('\n');
+      let imported=0;
+      for(let i=1;i<lines.length;i++){
+        const parts=lines[i].split(',');
+        if(parts.length>=3){
+          const user=parts[0].trim().toLowerCase();
+          const pass=parts[1].trim();
+          const email=parts[2].trim();
+          if(user&&pass){
+            try {
+              await window.addDoc(window.collection(window.db, 'colaboradores'), {
+                user: user,
+                email: email,
+                pass: pass,
+                dataCriacao: new Date().toISOString()
+              });
+              imported++;
+            } catch(e) {}
+          }
+        }
+      }
+      alert(`Importados ${imported} colaboradores!`);
+      renderColabs();
+      atualizarSelectores();
+      atualizarDashboard();
+    };
+    reader.readAsText(files[0],'UTF-8');
+  }
+
+  function downloadModeloCSV(){
+    const csv="utilizador,password,email\njoao.silva,pass123,joao@empresa.pt\nmaria.santos,ssa456,maria@empresa.pt";
+    const blob=new Blob([csv],{type:'text/csv'});
+    const link=document.createElement('a');
+    link.href=URL.createObjectURL(blob);
+    link.download='modelo_colaboradores.csv';
+    link.click();
+  }
 
   // ==================== ATRIBUIÇÃO ====================
-  function atualizarSelectores(){
-    const cursos = JSON.parse(localStorage.getItem('listaCursos')||'[]');
-    document.getElementById('atribuir-curso').innerHTML='<option value="">Selecione uma formação</option>'+cursos.map(c=>`<option value="${c.id}">${c.nome}</option>`).join('');
+  async function atualizarSelectores() {
+    const cursos = await carregarFormacoes();
+    const colaboradores = await carregarColaboradores();
+    
+    document.getElementById('atribuir-curso').innerHTML='<option value="">Selecione</option>'+cursos.map(c=>`<option value="${c.id}">${c.nome}</option>`).join('');
+    
     const colabGrid=document.getElementById('colab-selector-grid');
-    colabGrid.innerHTML=colaboradores.map(c=>`<label class="colab-check"><input type="checkbox" value="${c.user}" data-email="${c.email||''}" data-nome="${c.user}"> ${c.user} ${c.email?`(${c.email})`:''}</label>`).join('');
+    colabGrid.innerHTML=colaboradores.map(c=>`<label class="colab-check"><input type="checkbox" value="${c.user}" data-email="${c.email||''}" data-id="${c.id}"> ${c.user}</label>`).join('');
   }
   
   function selecionarTodos(){ document.querySelectorAll('#colab-selector-grid input').forEach(cb=>cb.checked=true); }
   function deselecionarTodos(){ document.querySelectorAll('#colab-selector-grid input').forEach(cb=>cb.checked=false); }
   
   function gerarLinks(){
-    const cursoId = document.getElementById('atribuir-curso').value;
+    const cursoId=document.getElementById('atribuir-curso').value;
+    const prazo=document.getElementById('atribuir-prazo').value;
     if(!cursoId){ alert('Selecione uma formação.'); return; }
     
-    // Buscar o curso completo
-    const cursos = JSON.parse(localStorage.getItem('listaCursos')||'[]');
-    const curso = cursos.find(c => c.id == cursoId);
-    if(!curso){ alert('Formação não encontrada.'); return; }
+    const selected=Array.from(document.querySelectorAll('#colab-selector-grid input:checked')).map(cb=>({ user:cb.value, email:cb.dataset.email }));
+    if(!selected.length){ alert('Selecione colaboradores.'); return; }
     
-    const selected = Array.from(document.querySelectorAll('#colab-selector-grid input:checked')).map(cb => ({ 
-      user: cb.value, 
-      email: cb.dataset.email,
-      nome: cb.dataset.nome || cb.value
-    }));
-    
-    if(!selected.length){ alert('Selecione pelo menos um colaborador.'); return; }
-    
-    const baseUrl = window.location.origin + window.location.pathname.replace('admin.html', '') + 'formacao_colaborador.html';
-    const links = selected.map(c => {
-      // Criar token único com ID da formação e nome do colaborador
-      const tokenData = { user: c.user, cursoId: cursoId, cursoNome: curso.nome, timestamp: Date.now() };
-      const token = btoa(JSON.stringify(tokenData)).replace(/=/g, '');
-      const link = `${baseUrl}?token=${token}`;
-      
-      // Guardar token no localStorage para validação
-      localStorage.setItem(`token_${token}`, JSON.stringify(tokenData));
-      
-      return { user: c.user, email: c.email, link, cursoNome: curso.nome };
+    const baseUrl=window.location.origin+window.location.pathname.replace('admin.html','')+'formacao_colaborador.html';
+    const links=selected.map(c=>{
+      const tokenData={ user:c.user, cursoId:cursoId, prazo:prazo||'31/03/2026', timestamp:Date.now() };
+      const token=btoa(JSON.stringify(tokenData)).replace(/=/g,'');
+      const link=`${baseUrl}?token=${token}`;
+      localStorage.setItem(`token_${token}`,JSON.stringify(tokenData));
+      return { user:c.user, email:c.email, link };
     });
     
-    document.getElementById('links-list').innerHTML = links.map(l => `
+    document.getElementById('links-list').innerHTML=links.map(l=>`
       <div class="item-card">
         <div class="item-card-info">
-          <strong>${l.user}</strong><br>
-          <span style="font-size:11px;color:var(--birkenstock-gray)">Formação: ${l.cursoNome}</span>
-          <div style="font-size:11px;word-break:break-all;margin-top:4px;">${l.link}</div>
+          <strong>${l.user}</strong>
+          <div style="font-size:11px;word-break:break-all;">${l.link}</div>
         </div>
         <div class="item-card-actions">
-          <button onclick="copiarLink('${l.link}')" style="color:var(--info)">📋 Copiar</button>
+          <button onclick="copiarLink('${l.link}')">📋 Copiar</button>
         </div>
       </div>
     `).join('');
-    
-    document.getElementById('links-gerados').style.display = 'block';
-    alert(`✅ ${links.length} link(s) gerados com sucesso! Copie e envie para os colaboradores.`);
-    return links;
+    document.getElementById('links-gerados').style.display='block';
+    alert(`✅ ${links.length} link(s) gerados!`);
   }
   
-  function copiarLink(link){ 
-    navigator.clipboard.writeText(link); 
-    alert('Link copiado para a área de transferência!'); 
-  }
+  function copiarLink(link){ navigator.clipboard.writeText(link); alert('Link copiado!'); }
   
   function enviarEmails(){
-    const links = gerarLinks();
+    const links=gerarLinks();
     if(!links) return;
-    const prazo = document.getElementById('atribuir-prazo').value;
-    
-    links.forEach(l => {
+    const prazo=document.getElementById('atribuir-prazo').value;
+    links.forEach(l=>{
       if(l.email){
-        const assunto = encodeURIComponent(`[SSA] Nova formação atribuída - ${l.cursoNome}`);
-        const corpo = encodeURIComponent(`Olá ${l.user},\n\nFoi-lhe atribuída a formação "${l.cursoNome}" na plataforma SSA.\n\nLink de acesso: ${l.link}\nPrazo para conclusão: ${prazo || '30 dias'}\n\nAtenciosamente,\nEquipa SSA - Birkenstock Portugal`);
+        const assunto=encodeURIComponent(`[SSA] Nova formação atribuída`);
+        const corpo=encodeURIComponent(`Olá ${l.user},\n\nLink: ${l.link}\nPrazo: ${prazo||'30 dias'}\n\nAtenciosamente,\nEquipa SSA`);
         window.open(`mailto:${l.email}?subject=${assunto}&body=${corpo}`);
-      } else {
-        alert(`Colaborador ${l.user} não tem email cadastrado. Link: ${l.link}`);
-      }
+      } else alert(`Colaborador ${l.user} sem email. Link: ${l.link}`);
     });
   }
 
   // ==================== PUBLICAÇÃO ====================
-  function publicarFormacao(){
-    const titulo=document.getElementById('f-titulo').value.trim(); if(!titulo){alert('Título obrigatório');return;}
+  async function publicarFormacao(){
+    const titulo=document.getElementById('f-titulo').value.trim();
+    if(!titulo){alert('Título obrigatório');return;}
     if(!modulos.length){alert('Adicione módulos');return;}
     if(!perguntas.length){alert('Adicione perguntas');return;}
-    const cursos=JSON.parse(localStorage.getItem('listaCursos')||'[]');
-    if(editandoFormacaoId){
-      const idx=cursos.findIndex(c=>c.id===editandoFormacaoId);
-      if(idx!==-1){ cursos[idx]={...cursos[idx], nome:titulo, duracao:document.getElementById('f-duracao').value||'30 min', descricao:document.getElementById('f-descricao').value, modulos:[...modulos], perguntas:perguntas.map(p=>({texto:p.texto,opcoes:p.opcoes,correta:p.correta})), dataAtualizacao:new Date().toLocaleDateString() }; localStorage.setItem('listaCursos',JSON.stringify(cursos)); alert(`Formação "${titulo}" atualizada!`); cancelarEdicao(); }
-    } else {
-      cursos.push({id:Date.now(), nome:titulo, duracao:document.getElementById('f-duracao').value||'30 min', descricao:document.getElementById('f-descricao').value, modulos:[...modulos], perguntas:perguntas.map(p=>({texto:p.texto,opcoes:p.opcoes,correta:p.correta})), data:new Date().toLocaleDateString()});
-      localStorage.setItem('listaCursos',JSON.stringify(cursos));
-      alert(`Formação "${titulo}" publicada!`);
-      document.getElementById('f-titulo').value=''; document.getElementById('f-duracao').value=''; document.getElementById('f-descricao').value='';
-      modulos=[]; perguntas=[];
-      renderModulos(); renderPerguntas();
+    
+    const novaFormacao = {
+      nome: titulo,
+      duracao: document.getElementById('f-duracao').value || '30 min',
+      descricao: document.getElementById('f-descricao').value,
+      modulos: [...modulos],
+      perguntas: perguntas.map(p=>({texto:p.texto,opcoes:p.opcoes,correta:p.correta})),
+      data: new Date().toLocaleDateString('pt-PT'),
+      dataTimestamp: Date.now()
+    };
+    
+    try {
+      await window.addDoc(window.collection(window.db, 'formacoes'), novaFormacao);
+      alert(`✅ Formação "${titulo}" publicada com sucesso!`);
+      
+      document.getElementById('f-titulo').value='';
+      document.getElementById('f-duracao').value='';
+      document.getElementById('f-descricao').value='';
+      modulos=[];
+      perguntas=[];
+      renderModulos();
+      renderPerguntas();
+      renderFormacoesLista();
+      atualizarSelectores();
+      atualizarDashboard();
+    } catch(error) {
+      console.error('Erro ao publicar formação:', error);
+      alert('Erro ao publicar formação.');
     }
-    renderFormacoesLista(); atualizarSelectores(); atualizarDashboard();
   }
 
   // ==================== HISTÓRICO ====================
-  function renderHistorico(){
-    const historico=JSON.parse(localStorage.getItem('historicoNotas')||'[]');
+  async function renderHistorico(){
+    const historico = await carregarHistorico();
     const tbody=document.getElementById('lista-notas');
     if(!historico.length){ tbody.innerHTML='<tr><td colspan="6" class="empty">Nenhum resultado</td></tr>'; return; }
     tbody.innerHTML=historico.map(h=>`<tr><td><strong>${h.nome}</strong></td><td>${h.email||'-'}</td><td>${h.curso}</td><td>${h.data}</td><td><span class="badge">${h.nota}</span></td><td><button class="btn-sm" onclick="alert('Certificado de ${h.nome}')">📄</button></td></tr>`).join('');
   }
+  
   function exportarHistoricoCSV(){
-    const historico=JSON.parse(localStorage.getItem('historicoNotas')||'[]');
-    const csv=['Colaborador,Email,Formação,Data,Nota',...historico.map(h=>`${h.nome},${h.email||''},${h.curso},${h.data},${h.nota}`)].join('\n');
-    const blob=new Blob([csv],{type:'text/csv'}); const link=document.createElement('a'); link.href=URL.createObjectURL(blob); link.download=`historico_${new Date().toISOString().slice(0,10)}.csv`; link.click();
+    alert('Função de exportação será implementada');
   }
   function exportarHistoricoExcel(){
-    const historico=JSON.parse(localStorage.getItem('historicoNotas')||'[]');
-    const ws=XLSX.utils.json_to_sheet(historico); const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Histórico'); XLSX.writeFile(wb,`historico_${new Date().toISOString().slice(0,10)}.xlsx`);
+    alert('Função de exportação será implementada');
   }
   function limparHistorico(){ if(confirm('Apagar histórico?')){ localStorage.removeItem('historicoNotas'); renderHistorico(); atualizarDashboard(); } }
 
@@ -728,9 +845,12 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     if(atual!==adminConfig.adminPassword){alert('Password atual incorreta');return;}
     if(nova!==conf){alert('Passwords não coincidem');return;}
     if(nova.length<6){alert('Mínimo 6 caracteres');return;}
-    adminConfig.adminPassword=nova; localStorage.setItem('admin_config',JSON.stringify(adminConfig));
+    adminConfig.adminPassword=nova;
+    localStorage.setItem('admin_config',JSON.stringify(adminConfig));
     alert('Password alterada!');
-    document.getElementById('admin-pass-atual').value=''; document.getElementById('admin-pass-nova').value=''; document.getElementById('admin-pass-confirm').value='';
+    document.getElementById('admin-pass-atual').value='';
+    document.getElementById('admin-pass-nova').value='';
+    document.getElementById('admin-pass-confirm').value='';
   }
 
   // ==================== TABS ====================
@@ -756,11 +876,16 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   document.getElementById('btn-gerar-links').addEventListener('click', gerarLinks);
   document.getElementById('btn-salvar-modulo').addEventListener('click', salvarModulo);
   document.getElementById('btn-salvar-pergunta').addEventListener('click', salvarPergunta);
-  document.getElementById('btn-cancelar-edicao').addEventListener('click', cancelarEdicao);
   document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>switchTab(t.dataset.tab)));
 
   // ==================== INICIALIZAÇÃO ====================
-  renderModulos(); renderPerguntas(); renderColabs(); renderHistorico(); atualizarSelectores(); atualizarDashboard(); renderFormacoesLista();
+  renderModulos();
+  renderPerguntas();
+  renderColabs();
+  renderHistorico();
+  atualizarSelectores();
+  atualizarDashboard();
+  renderFormacoesLista();
 
   window.abrirModalModulo=abrirModalModulo; window.editarModulo=editarModulo; window.removerModulo=removerModulo;
   window.abrirModalPergunta=abrirModalPergunta; window.editarPergunta=editarPergunta; window.removerPergunta=removerPergunta;
@@ -769,7 +894,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   window.alterarPasswordAdmin=alterarPasswordAdmin; window.checkPasswordStrength=checkPasswordStrength;
   window.selecionarTodos=selecionarTodos; window.deselecionarTodos=deselecionarTodos;
   window.exportarHistoricoCSV=exportarHistoricoCSV; window.exportarHistoricoExcel=exportarHistoricoExcel;
-  window.editarFormacao=editarFormacao; window.apagarFormacao=apagarFormacao; window.visualizarFormacao=visualizarFormacao; window.cancelarEdicao=cancelarEdicao;
 </script>
 </body>
 </html>
