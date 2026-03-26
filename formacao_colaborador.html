@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Birkenstock S&CC — Formação HSE</title>
+<title>Birkenstock S&CC — Formação</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
@@ -145,6 +145,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   align-items: center;
   gap: 16px;
   cursor: pointer;
+  transition: background 0.2s;
 }
 .section-header:hover { background: #fafaf8; }
 .s-num {
@@ -194,17 +195,9 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   flex-wrap: wrap;
   gap: 10px;
 }
-.pdf-controls {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
-}
 .pdf-content { padding: 0; min-height: 500px; max-height: 650px; overflow: auto; background: #f5f5f5; }
-.pdf-iframe { width: 100%; height: 600px; border: none; }
 .pdf-page-container { text-align: center; background: white; margin: 10px; padding: 10px; }
 .pdf-page-container canvas { max-width: 100%; height: auto; }
-.file-viewer { width: 100%; height: 600px; border: none; }
 .file-download {
   display: inline-block;
   background: var(--birkenstock-blue);
@@ -291,6 +284,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   padding: 12px 16px;
   cursor: pointer;
   font-size: 0.88rem;
+  transition: all 0.2s;
 }
 .option-item:hover { border-color: var(--birkenstock-gold); background: rgba(197,160,89,0.1); }
 .option-item.selected { border-color: var(--birkenstock-blue); background: rgba(0,51,141,0.05); }
@@ -440,7 +434,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
 
 <div class="hero">
   <div class="hero-inner">
-    <div class="hero-tag" id="hero-tag">🛡️ Segurança, Saúde & Ambiente</div>
+    <div class="hero-tag" id="hero-tag">📘 Formação Profissional</div>
     <h1 id="hero-title">Carregando formação...</h1>
     <p id="hero-desc">A carregar conteúdo...</p>
     <div class="hero-meta">
@@ -682,7 +676,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
         <div class="s-num">${idx + 1}</div>
         <div class="s-info">
           <div class="s-title">${module.titulo || 'Módulo ' + (idx + 1)}</div>
-          <div class="s-meta">${module.tipo || 'Conteúdo'} · ${module.duracao || '10 min'}</div>
+          <div class="s-meta">${module.tipo === 'video' ? '🎬 Vídeo' : module.tipo === 'text' ? '📄 Texto' : '📁 Conteúdo'} · ${module.duracao || '10 min'}</div>
         </div>
         <div class="s-status">${completedModules[module.id] ? '✅' : '▶'}</div>
       `;
@@ -695,6 +689,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
       let contentDiv = document.createElement('div');
       let fileHtml = '';
       
+      // CORREÇÃO PRINCIPAL: Verificar todos os tipos corretamente
       if(module.tipo === 'video' && module.conteudo && module.conteudo.url) {
         fileHtml = `<div class="video-wrap"><iframe src="${module.conteudo.url}" title="${module.titulo}" allowfullscreen></iframe></div>`;
         // Simular progresso do vídeo
@@ -704,44 +699,64 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
             progress += 2;
             if(progress >= 100) {
               clearInterval(interval);
-              document.getElementById('btn-confirm-' + module.id).disabled = false;
+              const confirmBtn = document.getElementById('btn-confirm-' + module.id);
+              if(confirmBtn) confirmBtn.disabled = false;
             }
-            document.getElementById('fill-' + module.id).style.width = Math.min(progress, 100) + '%';
-            document.getElementById('pct-' + module.id).textContent = Math.min(progress, 100) + '%';
+            const fillEl = document.getElementById('fill-' + module.id);
+            const pctEl = document.getElementById('pct-' + module.id);
+            if(fillEl) fillEl.style.width = Math.min(progress, 100) + '%';
+            if(pctEl) pctEl.textContent = Math.min(progress, 100) + '%';
           }, 100);
         }, 500);
       } 
-      else if(module.tipo === 'pdf' && module.conteudo && module.conteudo.url) {
-        const pdfContainerId = 'pdf-' + module.id;
-        fileHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>📄 ${module.titulo}</span><a href="${module.conteudo.url}" download class="file-download">⬇️ Descarregar PDF</a></div><div class="pdf-content" id="${pdfContainerId}"><div style="padding:20px; text-align:center;">A carregar PDF...</div></div></div>`;
-        
-        setTimeout(() => {
-          const container = document.getElementById(pdfContainerId);
-          if(container) {
-            renderPDF(module.conteudo.url, pdfContainerId);
-            document.getElementById('btn-confirm-' + module.id).disabled = false;
+      else if(module.tipo === 'file' && module.conteudo) {
+        // Verificar se é URL externa
+        if(module.conteudo.url) {
+          const url = module.conteudo.url;
+          if(url.toLowerCase().endsWith('.pdf')) {
+            const pdfContainerId = 'pdf-' + module.id;
+            fileHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>📄 ${module.titulo}</span><a href="${url}" download class="file-download">⬇️ Descarregar PDF</a></div><div class="pdf-content" id="${pdfContainerId}"><div style="padding:20px; text-align:center;">A carregar PDF...</div></div></div>`;
+            setTimeout(() => {
+              renderPDF(url, pdfContainerId);
+              const confirmBtn = document.getElementById('btn-confirm-' + module.id);
+              if(confirmBtn) confirmBtn.disabled = false;
+            }, 500);
+          } else {
+            fileHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>📎 ${module.titulo}</span><a href="${url}" target="_blank" class="file-download">🔗 Abrir link</a></div><div class="pdf-content" style="text-align:center; padding:60px;"><div style="font-size:64px;">📄</div><p>Clique no botão para acessar o conteúdo.</p></div></div>`;
+            const confirmBtn = document.getElementById('btn-confirm-' + module.id);
+            if(confirmBtn) confirmBtn.disabled = false;
           }
-        }, 500);
-      }
-      else if(module.tipo === 'texto' && module.conteudo && module.conteudo.texto) {
-        fileHtml = `<div class="text-content">${module.conteudo.texto}</div>`;
-        document.getElementById('btn-confirm-' + module.id).disabled = false;
-        document.getElementById('fill-' + module.id).style.width = '100%';
-        document.getElementById('pct-' + module.id).textContent = '100%';
-      }
-      else if(module.tipo === 'ficheiro' && module.conteudo && module.conteudo.fileData) {
-        const fileData = module.conteudo.fileData;
-        const fileName = module.conteudo.fileName || 'documento';
-        if(fileName.toLowerCase().endsWith('.pdf')) {
-          fileHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>📄 ${fileName}</span><a href="${fileData}" download class="file-download">⬇️ Descarregar PDF</a></div><div class="pdf-content" id="pdf-${module.id}"><div style="padding:20px;">A carregar...</div></div></div>`;
-          setTimeout(() => {
-            renderPDF(fileData, 'pdf-' + module.id);
-            document.getElementById('btn-confirm-' + module.id).disabled = false;
-          }, 500);
-        } else {
-          fileHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>📎 ${fileName}</span><a href="${fileData}" download class="file-download">⬇️ Descarregar ficheiro</a></div><div class="pdf-content" style="text-align:center; padding:60px;"><div style="font-size:64px;">📄</div><p>Clique no botão para descarregar.</p></div></div>`;
-          document.getElementById('btn-confirm-' + module.id).disabled = false;
+        } 
+        else if(module.conteudo.fileData) {
+          const fileData = module.conteudo.fileData;
+          const fileName = module.conteudo.fileName || 'documento';
+          if(fileName.toLowerCase().endsWith('.pdf')) {
+            fileHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>📄 ${fileName}</span><a href="${fileData}" download class="file-download">⬇️ Descarregar PDF</a></div><div class="pdf-content" id="pdf-${module.id}"><div style="padding:20px;">A carregar...</div></div></div>`;
+            setTimeout(() => {
+              renderPDF(fileData, 'pdf-' + module.id);
+              const confirmBtn = document.getElementById('btn-confirm-' + module.id);
+              if(confirmBtn) confirmBtn.disabled = false;
+            }, 500);
+          } else {
+            fileHtml = `<div class="pdf-viewer"><div class="pdf-toolbar"><span>📎 ${fileName}</span><a href="${fileData}" download class="file-download">⬇️ Descarregar ficheiro</a></div><div class="pdf-content" style="text-align:center; padding:60px;"><div style="font-size:64px;">📄</div><p>Clique no botão para descarregar.</p></div></div>`;
+            const confirmBtn = document.getElementById('btn-confirm-' + module.id);
+            if(confirmBtn) confirmBtn.disabled = false;
+          }
         }
+      } 
+      else if(module.tipo === 'text' && module.conteudo && module.conteudo.texto) {
+        fileHtml = `<div class="text-content">${module.conteudo.texto}</div>`;
+        const confirmBtn = document.getElementById('btn-confirm-' + module.id);
+        if(confirmBtn) confirmBtn.disabled = false;
+        const fillEl = document.getElementById('fill-' + module.id);
+        const pctEl = document.getElementById('pct-' + module.id);
+        if(fillEl) fillEl.style.width = '100%';
+        if(pctEl) pctEl.textContent = '100%';
+      }
+      else {
+        fileHtml = `<div class="text-content"><p>Conteúdo não disponível ou formato não suportado.</p></div>`;
+        const confirmBtn = document.getElementById('btn-confirm-' + module.id);
+        if(confirmBtn) confirmBtn.disabled = false;
       }
       
       contentDiv.innerHTML = fileHtml;
@@ -783,8 +798,10 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     completedModules[moduleId] = true;
     const block = document.getElementById('block-' + moduleId);
     block.classList.add('completed');
-    document.getElementById('btn-confirm-' + moduleId).style.display = 'none';
-    document.getElementById('confirmed-' + moduleId).style.display = 'flex';
+    const confirmBtn = document.getElementById('btn-confirm-' + moduleId);
+    if(confirmBtn) confirmBtn.style.display = 'none';
+    const confirmedDiv = document.getElementById('confirmed-' + moduleId);
+    if(confirmedDiv) confirmedDiv.style.display = 'flex';
     toast('✅ Módulo concluído!');
     updateProgress();
     
@@ -797,7 +814,8 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
       const quizBlock = document.getElementById('block-quiz');
       if(quizBlock) {
         quizBlock.classList.remove('locked');
-        document.getElementById('status-quiz').textContent = '📝';
+        const statusQuiz = document.getElementById('status-quiz');
+        if(statusQuiz) statusQuiz.textContent = '📝';
         toast('📝 Avaliação desbloqueada!');
       }
     }
@@ -846,9 +864,9 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     
     if(perguntas.length === 0) {
       perguntas = [
-        { texto: "Qual é o EPI obrigatório em zonas com ruído acima de 85 dB?", opcoes: ["Luvas", "Proteção auricular", "Óculos", "Nenhum"], correta: "B" },
-        { texto: "Em caso de acidente, qual a primeira ação?", opcoes: ["Continuar", "Evacuar e alertar", "Limpar", "Aguardar"], correta: "B" },
-        { texto: "Sinal de fundo amarelo com triângulo negro significa?", opcoes: ["Obrigação", "Saída", "Aviso/Perigo", "Proibido"], correta: "C" }
+        { texto: "Qual é a melhor forma de aprender um novo conceito?", opcoes: ["Praticar diariamente", "Apenas ler", "Decorar", "Ignorar"], correta: "A" },
+        { texto: "O que é importante para o desenvolvimento profissional?", opcoes: ["Formação contínua", "Estagnação", "Falta de interesse", "Desmotivação"], correta: "A" },
+        { texto: "Como aplicar os conhecimentos adquiridos?", opcoes: ["Na prática diária", "Esquecer", "Guardar", "Não aplicar"], correta: "A" }
       ];
     }
     
@@ -877,8 +895,10 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     document.querySelectorAll(`#opts-${qIdx} .option-item`)[optIdx].classList.add('selected');
     window.respostas[qIdx] = String.fromCharCode(65+optIdx);
     const answered = Object.keys(window.respostas).length;
-    document.getElementById('quiz-answered').textContent = `${answered} de ${window.totalPerguntas} respondidas`;
-    document.getElementById('btn-submit').disabled = answered < window.totalPerguntas;
+    const answeredSpan = document.getElementById('quiz-answered');
+    const submitBtn = document.getElementById('btn-submit');
+    if(answeredSpan) answeredSpan.textContent = `${answered} de ${window.totalPerguntas} respondidas`;
+    if(submitBtn) submitBtn.disabled = answered < window.totalPerguntas;
   }
   
   async function submitQuiz() {
@@ -949,10 +969,10 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
       <div class="cert-screen" id="cert-screen" style="display:block">
         <div class="cert-card">
           <div class="cert-issued">Certificado Oficial · Birkenstock S&CC Portugal</div>
-          <div class="cert-emblem">🛡️</div>
+          <div class="cert-emblem">🎓</div>
           <div class="cert-certify">Certifica-se que</div>
           <div class="cert-name">${nomeUser}</div>
-          <div class="cert-course-title">concluiu com sucesso a formação obrigatória em<br><strong>${cursoData.nome}</strong></div>
+          <div class="cert-course-title">concluiu com sucesso a formação<br><strong>${cursoData.nome}</strong></div>
           <div class="cert-row">
             <div class="cert-col">
               <div class="cert-col-label">Nota final</div>
@@ -976,19 +996,24 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
       </div>
     `;
     document.getElementById('modules-container').insertAdjacentHTML('beforeend', certHtml);
-    setTimeout(() => document.getElementById('cert-screen').scrollIntoView({ behavior: 'smooth' }), 200);
+    setTimeout(() => {
+      const certScreen = document.getElementById('cert-screen');
+      if(certScreen) certScreen.scrollIntoView({ behavior: 'smooth' });
+    }, 200);
     toast('🏅 Certificado gerado!');
   }
   
   function toggleSection(id) {
     if(id === 'quiz') {
       const block = document.getElementById('block-quiz');
-      if(block.classList.contains('locked')) return;
-      document.getElementById('body-quiz').classList.toggle('open');
+      if(block && block.classList.contains('locked')) return;
+      const bodyQuiz = document.getElementById('body-quiz');
+      if(bodyQuiz) bodyQuiz.classList.toggle('open');
     } else {
       const block = document.getElementById('block-' + id);
-      if(block.classList.contains('locked')) return;
-      document.getElementById('body-' + id).classList.toggle('open');
+      if(block && block.classList.contains('locked')) return;
+      const body = document.getElementById('body-' + id);
+      if(body) body.classList.toggle('open');
     }
   }
   
