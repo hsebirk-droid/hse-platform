@@ -345,9 +345,14 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     <div class="sec-head"><h2>🏅 Editor de Certificado</h2></div>
     <div class="sec-body">
       <div class="cert-editor">
-        <div class="fg"><label>Título</label><input type="text" id="cert-titulo" placeholder="Certificado de Formação"></div>
-        <div class="fg"><label>Texto Principal</label><textarea id="cert-texto" rows="4" placeholder="Certifica-se que {{nome}} concluiu {{formacao}} com {{nota}}"></textarea></div>
-        <div class="fg"><label>Rodapé</label><textarea id="cert-rodape" rows="2" placeholder="Direção de Formação"></textarea></div>
+        <div class="fg">
+          <label>🖼️ Imagem de Fundo (URL)</label>
+          <input type="text" id="cert-fundo-imagem" placeholder="https://... ou imagens/fundo_certificado.png" value="imagens/fundo_certificado.png">
+          <small>Cole o link da imagem que será usada como fundo do certificado</small>
+        </div>
+        <div class="fg"><label>📝 Título</label><input type="text" id="cert-titulo" placeholder="Certificado de Formação"></div>
+        <div class="fg"><label>📄 Texto Principal</label><textarea id="cert-texto" rows="4" placeholder="Certifica-se que {{nome}} concluiu {{formacao}} com {{nota}}"></textarea></div>
+        <div class="fg"><label>📌 Rodapé</label><textarea id="cert-rodape" rows="2" placeholder="Direção de Formação"></textarea></div>
         <div class="cert-placeholders">
           <span class="placeholder-badge" onclick="inserirPlaceholder('{{nome}}')">{{nome}}</span>
           <span class="placeholder-badge" onclick="inserirPlaceholder('{{formacao}}')">{{formacao}}</span>
@@ -400,12 +405,12 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     <div class="sec-head"><h2>📊 Histórico</h2><div><button class="btn-sm" onclick="exportarHistoricoCSV()">📥 CSV</button><button class="btn-sm" onclick="exportarHistoricoExcel()">📊 Excel</button></div></div>
     <div class="sec-body">
       <div style="overflow-x:auto;">
-         <table>
+        <table>
           <thead>
-             <tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr>
+            <tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr>
           </thead>
           <tbody id="lista-notas"></tbody>
-         </table>
+        </table>
       </div>
       <button id="btn-limpar" class="btn-sm btn-danger">🗑️ Limpar</button>
     </div>
@@ -471,7 +476,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   let editandoFormacaoId = null;
   let linksGerados = [];
 
-  const defaultCert = { titulo: "Certificado de Formação", texto: "Certifica-se que {{nome}} concluiu {{formacao}} com {{nota}}.\nEmitido em {{data}}.", rodape: "Direção de Formação" };
+  const defaultCert = { fundoImagem: "imagens/fundo_certificado.png", titulo: "Certificado de Formação", texto: "Certifica-se que {{nome}} concluiu {{formacao}} com {{nota}}.\nEmitido em {{data}}.", rodape: "Direção de Formação" };
   let certTemplate = JSON.parse(localStorage.getItem('cert_template') || JSON.stringify(defaultCert));
 
   // ==================== FUNÇÕES PRINCIPAIS ====================
@@ -545,24 +550,55 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   function previewCertificado() {
     const preview = document.getElementById('cert-preview');
     const content = document.getElementById('cert-preview-content');
-    let texto = certTemplate.texto;
-    Object.entries({nome:"Exemplo", formacao:"Formação Teste", data:new Date().toLocaleDateString(), nota:"85%", validade:"2027", certificado_id:"CERT-001"}).forEach(([k,v]) => texto = texto.replace(new RegExp(`{{${k}}}`, 'g'), v));
-    content.innerHTML = `<div style="text-align:center;padding:20px;border:2px solid var(--birkenstock-gold);border-radius:16px;"><h2>${certTemplate.titulo}</h2><div>${texto.replace(/\n/g,'<br>')}</div><div style="margin-top:20px;">${certTemplate.rodape}</div></div>`;
+    const fundoImagem = document.getElementById('cert-fundo-imagem').value || '';
+    let texto = document.getElementById('cert-texto').value;
+    const titulo = document.getElementById('cert-titulo').value;
+    const rodape = document.getElementById('cert-rodape').value;
+    
+    const dadosExemplo = { nome: "João Silva", formacao: "Formação Teste", data: new Date().toLocaleDateString('pt-PT'), nota: "85%", validade: "2027", certificado_id: "CERT-001" };
+    Object.entries(dadosExemplo).forEach(([k,v]) => { texto = texto.replace(new RegExp(`{{${k}}}`, 'g'), v); });
+    
+    const fundoStyle = fundoImagem ? `background-image: url('${fundoImagem}'); background-size: cover; background-position: center;` : '';
+    
+    content.innerHTML = `
+      <div style="text-align:center;padding:20px;border:2px solid var(--birkenstock-gold);border-radius:16px;${fundoStyle} min-height:300px;">
+        <h2 style="color:var(--birkenstock-blue);">${titulo}</h2>
+        <div style="margin:20px 0;">${texto.replace(/\n/g,'<br>')}</div>
+        <div style="margin-top:20px; font-size:12px;">${rodape}</div>
+      </div>
+    `;
     preview.style.display = 'block';
   }
   
   function salvarTemplateCertificado() {
-    certTemplate = { titulo: document.getElementById('cert-titulo').value, texto: document.getElementById('cert-texto').value, rodape: document.getElementById('cert-rodape').value };
+    certTemplate = { 
+      fundoImagem: document.getElementById('cert-fundo-imagem').value,
+      titulo: document.getElementById('cert-titulo').value, 
+      texto: document.getElementById('cert-texto').value, 
+      rodape: document.getElementById('cert-rodape').value 
+    };
     localStorage.setItem('cert_template', JSON.stringify(certTemplate));
     alert('✅ Template salvo!');
   }
   
   function resetTemplateCertificado() {
     certTemplate = JSON.parse(JSON.stringify(defaultCert));
+    document.getElementById('cert-fundo-imagem').value = certTemplate.fundoImagem;
     document.getElementById('cert-titulo').value = certTemplate.titulo;
     document.getElementById('cert-texto').value = certTemplate.texto;
     document.getElementById('cert-rodape').value = certTemplate.rodape;
     alert('✅ Template restaurado!');
+  }
+  
+  function carregarTemplateCertificado() {
+    const saved = localStorage.getItem('cert_template');
+    if (saved) {
+      const template = JSON.parse(saved);
+      document.getElementById('cert-fundo-imagem').value = template.fundoImagem || '';
+      document.getElementById('cert-titulo').value = template.titulo || '';
+      document.getElementById('cert-texto').value = template.texto || '';
+      document.getElementById('cert-rodape').value = template.rodape || '';
+    }
   }
 
   // ==================== MÓDULOS ====================
@@ -809,16 +845,19 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   async function renderHistorico() {
     const historico = await carregarHistorico();
     const tbody = document.getElementById('lista-notas');
-    if(!historico.length){ tbody.innerHTML = '}<td colspan="6" class="empty">Nenhum resultado registado</td>'; return; }
+    if(!historico.length){ 
+      tbody.innerHTML = '<tr><td colspan="6" class="empty">Nenhum resultado registado</td></tr>';
+      return; 
+    }
     tbody.innerHTML = historico.map(h => `
-       <tr>
-         <td><strong>${h.nome}</strong></td>
-         <td>${h.email || '-'}</td>
-         <td>${h.curso}</td>
-         <td>${h.data}</td>
-         <td><span class="badge badge-success">${h.nota}</span></td>
-         <td><button class="btn-sm" onclick="alert('Certificado de ${h.nome}')">📄 Ver</button></td>
-       </tr>
+      <tr>
+        <td><strong>${h.nome}</strong></td>
+        <td>${h.email || '-'}</td>
+        <td>${h.curso}</td>
+        <td>${h.data}</td>
+        <td><span class="badge badge-success">${h.nota}</span></td>
+        <td><button class="btn-sm" onclick="alert('Certificado de ${h.nome}')">📄 Ver</button></td>
+      </tr>
     `).join('');
   }
   
@@ -881,6 +920,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     if(tabId === 'atribuir') atualizarSelectores();
     if(tabId === 'dashboard') atualizarDashboard();
     if(tabId === 'lista-formacoes') renderFormacoesLista();
+    if(tabId === 'certificado') carregarTemplateCertificado();
   }
 
   // ==================== EDIÇÃO DE FORMAÇÃO ====================
@@ -934,6 +974,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   atualizarSelectores(); 
   atualizarDashboard(); 
   renderFormacoesLista();
+  carregarTemplateCertificado();
 
   // ==================== EXPOR FUNÇÕES GLOBAIS ====================
   window.abrirModalModulo = abrirModalModulo;
