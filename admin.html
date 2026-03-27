@@ -662,12 +662,55 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     const modal = document.getElementById('preview-modal');
     const previewDiv = document.getElementById('preview-conteudo');
     
-    let fundoImagem = certConfig.fundoImagem || 'imagens/fundo_certificado.png';
+    // PEGA O LINK DIRETAMENTE DO CAMPO
+    let fundoImagem = document.getElementById('cert-fundo-imagem').value.trim();
     
-    // Se o caminho não começar com http, adiciona o domínio
-    if (!fundoImagem.startsWith('http') && !fundoImagem.startsWith('data:')) {
-      fundoImagem = window.location.origin + window.location.pathname.replace('admin.html', '') + fundoImagem;
+    // SE ESTIVER VAZIO, USA O PADRÃO
+    if (!fundoImagem) {
+        fundoImagem = 'https://hsebirk-droid.github.io/hse-platform/imagens/fundo_certificado.png';
     }
+    
+    // SE NÃO COMEÇAR COM HTTP, ADICIONA O DOMÍNIO
+    if (!fundoImagem.startsWith('http') && !fundoImagem.startsWith('data:')) {
+        fundoImagem = 'https://hsebirk-droid.github.io/hse-platform/' + fundoImagem;
+    }
+    
+    console.log("🔍 Imagem a carregar:", fundoImagem);
+    
+    const dataAtual = new Date().toLocaleDateString('pt-PT');
+    const certId = 'CERT-2026-1234';
+    const nota = '85%';
+    const nome = 'João Silva';
+    const formacao = 'Formação Exemplo';
+    
+    previewDiv.innerHTML = `
+        <div style="background-image: url('${fundoImagem}'); background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 500px; position: relative; border-radius: 12px; overflow: hidden; border: 1px solid #ddd;">
+            <div style="position: relative; z-index: 2; height: 100%; min-height: 500px;">
+                <div style="position: absolute; top: ${certConfig.nomeTop}%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 80%;">
+                    <div style="font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 900; color: ${certConfig.corNome};">${nome}</div>
+                    <div style="font-size: 1rem; color: #616365; margin-top: 10px;">concluiu com sucesso a formação</div>
+                    <div style="font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 700; color: ${certConfig.corFormacao}; margin-top: 10px;">${formacao}</div>
+                </div>
+                <div style="position: absolute; bottom: ${certConfig.notaBottom}%; left: ${certConfig.notaLeft}%; text-align: center;">
+                    <div style="font-size: 0.7rem; color: #616365;">NOTA FINAL</div>
+                    <div style="font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: ${certConfig.corValores};">${nota}</div>
+                </div>
+                <div style="position: absolute; bottom: ${certConfig.dataBottom}%; left: 50%; transform: translateX(-50%); text-align: center;">
+                    <div style="font-size: 0.7rem; color: #616365;">DATA</div>
+                    <div style="font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 600; color: ${certConfig.corValores};">${dataAtual}</div>
+                </div>
+                <div style="position: absolute; bottom: ${certConfig.idBottom}%; right: ${certConfig.idRight}%; text-align: center;">
+                    <div style="font-size: 0.7rem; color: #616365;">CERTIFICADO ID</div>
+                    <div style="font-family: monospace; font-size: 0.8rem; font-weight: 600; color: ${certConfig.corValores};">${certId}</div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 16px; padding: 12px; background: #f0f0f0; border-radius: 8px; font-size: 12px; text-align: center; word-break: break-all;">
+            🔍 <strong>Link da imagem:</strong> ${fundoImagem}
+        </div>
+    `;
+    modal.style.display = 'flex';
+}
     
     const dataAtual = new Date().toLocaleDateString('pt-PT');
     const certId = 'CERT-2026-1234';
