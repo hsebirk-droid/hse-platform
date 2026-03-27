@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teste Simples</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    padding: 40px;
+    background: #F7F5F0;
+  }
+  .teste {
+    width: 800px;
+    height: 500px;
+    background-image: url('https://hsebirk-droid.github.io/hse-platform/imagens/fundo_certificado.png');
+    background-size: cover;
+    background-position: center;
+    border: 2px solid red;
+    margin: 20px auto;
+    position: relative;
+  }
+  .texto {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255,255,255,0.8);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+  }
+  .info {
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px;
+    background: #eef2ff;
+    border-radius: 8px;
+  }
+</style>
+</head>
+<body>
+<div class="teste">
+  <div class="texto">
+    <h2>Teste de Fundo</h2>
+    <p>Se você vir uma imagem de fundo dentro da caixa vermelha, está funcionando!</p>
+  </div>
+</div>
+<div class="info">
+  🔍 Se a caixa vermelha estiver com a imagem de fundo, o problema é no código do certificado.<br>
+  🔍 Se a caixa vermelha estiver vazia (branca), o problema é na imagem.
+</div>
+</body>
+</html>
