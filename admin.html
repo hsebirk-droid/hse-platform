@@ -144,7 +144,7 @@ header .logo-text small {
 
 .btn { background: var(--birkenstock-blue); color: #fff; border: none; border-radius: 8px; padding: 12px 20px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; width: 100%; }
 .btn:hover { background: var(--birkenstock-blue-dark); transform: translateY(-1px); }
-.btn-sm { width: auto; padding: 8px 16px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
+.btn-sm { width: auto; padding: 8px 16px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
 .btn-success { background: var(--success); }
 .btn-success:hover { background: #15803d; }
 .btn-danger { background: var(--danger); }
@@ -302,25 +302,29 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       </div>
       <div class="fg"><label>Descrição</label><textarea id="f-descricao" rows="2" placeholder="Descreva o conteúdo da formação..."></textarea></div>
       
-      <!-- Módulos - Versão Melhorada -->
+      <!-- Módulos - Versão Corrigida -->
       <div style="margin-top: 24px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
           <h3 style="font-size: 1.1rem; color: var(--birkenstock-blue); display: flex; align-items: center; gap: 8px;">
             <i class="fas fa-layer-group"></i> Módulos da Formação
           </h3>
           <div style="display: flex; gap: 10px;">
-            <button class="btn-sm btn" onclick="abrirModalModulo('video')" style="background: var(--birkenstock-blue);">
+            <button type="button" class="btn-sm btn" onclick="abrirModalModulo('video')" style="background: var(--birkenstock-blue); cursor: pointer;">
               <i class="fas fa-video"></i> Vídeo
             </button>
-            <button class="btn-sm btn" onclick="abrirModalModulo('text')" style="background: var(--info);">
+            <button type="button" class="btn-sm btn" onclick="abrirModalModulo('text')" style="background: var(--info); cursor: pointer;">
               <i class="fas fa-file-alt"></i> Texto
             </button>
-            <button class="btn-sm btn" onclick="abrirModalModulo('file')" style="background: var(--success);">
+            <button type="button" class="btn-sm btn" onclick="abrirModalModulo('file')" style="background: var(--success); cursor: pointer;">
               <i class="fas fa-link"></i> Ficheiro/URL
             </button>
           </div>
         </div>
-        <div id="modulos-container" style="background: var(--birkenstock-beige); border-radius: 12px; padding: 16px; min-height: 150px;"></div>
+        <div id="modulos-container" style="background: var(--birkenstock-beige); border-radius: 12px; padding: 16px; min-height: 150px;">
+          <div class="alert alert-info" style="background: var(--info-bg); color: var(--info); padding: 20px; text-align: center; border-radius: 8px;">
+            <i class="fas fa-info-circle"></i> Nenhum módulo adicionado. Clique nos botões acima para adicionar.
+          </div>
+        </div>
         <div style="margin-top: 12px; text-align: center;">
           <small style="color: var(--birkenstock-gray);">
             <i class="fas fa-info-circle"></i> Clique nos botões acima para adicionar módulos à formação
@@ -334,11 +338,15 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
           <h3 style="font-size: 1.1rem; color: var(--birkenstock-blue); display: flex; align-items: center; gap: 8px;">
             <i class="fas fa-question-circle"></i> Perguntas da Avaliação
           </h3>
-          <button class="btn-sm btn" onclick="abrirModalPergunta()" style="background: var(--warning);">
+          <button class="btn-sm btn" onclick="abrirModalPergunta()" style="background: var(--warning); cursor: pointer;">
             <i class="fas fa-plus"></i> Adicionar Pergunta
           </button>
         </div>
-        <div id="perguntas-container" style="background: var(--birkenstock-beige); border-radius: 12px; padding: 16px;"></div>
+        <div id="perguntas-container" style="background: var(--birkenstock-beige); border-radius: 12px; padding: 16px;">
+          <div class="alert alert-info" style="background: var(--info-bg); color: var(--info); padding: 20px; text-align: center; border-radius: 8px;">
+            <i class="fas fa-info-circle"></i> Nenhuma pergunta adicionada. Clique em "Adicionar Pergunta" para criar a avaliação.
+          </div>
+        </div>
       </div>
       
       <div class="frow" style="margin-top: 24px;">
@@ -430,9 +438,9 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     <div class="sec-head"><h2>📊 Histórico de Formações</h2><div><button class="btn-sm" onclick="exportarHistoricoCSV()"><i class="fas fa-file-csv"></i> CSV</button><button class="btn-sm" onclick="exportarHistoricoExcel()"><i class="fas fa-file-excel"></i> Excel</button></div></div>
     <div class="sec-body">
       <div style="overflow-x:auto;">
-        <table>
+         <table>
           <thead>
-            <tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr>
+             <tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr>
           </thead>
           <tbody id="lista-notas"></tbody>
         </table>
@@ -638,8 +646,9 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   }
 
   // ==================== FUNÇÕES DE MÓDULOS (CORRIGIDAS) ====================
-  
+
   function abrirModalModulo(tipo) {
+    console.log("Abrir modal para tipo:", tipo);
     moduloTipoAtual = tipo;
     editandoModuloId = null;
     
@@ -648,7 +657,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     document.getElementById('modulo-video-url').value = '';
     document.getElementById('modulo-texto-conteudo').value = '';
     document.getElementById('modulo-file-url').value = '';
-    document.getElementById('file-preview-modulo').innerHTML = '';
     
     document.getElementById('modulo-conteudo-video').style.display = tipo === 'video' ? 'block' : 'none';
     document.getElementById('modulo-conteudo-texto').style.display = tipo === 'text' ? 'block' : 'none';
@@ -692,6 +700,8 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   }
   
   function salvarModulo() {
+    console.log("Salvando módulo...");
+    
     const titulo = document.getElementById('modulo-titulo').value.trim();
     if (!titulo) {
       alert('❌ Título do módulo é obrigatório!');
@@ -746,6 +756,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       modulos.push(novoModulo);
     }
     
+    console.log("Módulos atualizados:", modulos);
     renderModulos();
     fecharModal('modal-modulo');
     alert(`✅ Módulo "${titulo}" adicionado com sucesso!`);
@@ -762,7 +773,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   function renderModulos() {
     const container = document.getElementById('modulos-container');
     
-    if (!modulos.length) {
+    if (!modulos || modulos.length === 0) {
       container.innerHTML = `
         <div class="alert alert-info" style="background: var(--info-bg); color: var(--info); padding: 20px; text-align: center; border-radius: 8px;">
           <i class="fas fa-info-circle"></i> Nenhum módulo adicionado. Clique nos botões acima para adicionar.
@@ -772,22 +783,25 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     }
     
     container.innerHTML = modulos.map((m, index) => `
-      <div class="modulo-card" style="background: var(--bg); border-radius: 8px; margin-bottom: 12px; padding: 16px;">
+      <div class="modulo-card" style="background: var(--bg); border-radius: 12px; margin-bottom: 12px; padding: 16px; border: 1px solid var(--border);">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-          <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
             <span style="background: var(--birkenstock-blue); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">${index + 1}</span>
-            <div>
+            <div style="flex: 1;">
               <div style="font-weight: 700; font-size: 1rem;">${escapeHtml(m.titulo)}</div>
-              <div style="font-size: 0.75rem; color: var(--birkenstock-gray);">
+              <div style="font-size: 0.75rem; color: var(--birkenstock-gray); margin-top: 4px;">
                 ${m.tipo === 'video' ? '🎬 Vídeo' : m.tipo === 'text' ? '📄 Texto' : '📁 Ficheiro'} · ${m.duracao}
+              </div>
+              <div style="font-size: 0.7rem; color: var(--birkenstock-gray); margin-top: 4px; word-break: break-all;">
+                ${m.tipo === 'video' ? (m.conteudo.url || '') : m.tipo === 'text' ? (m.conteudo.texto ? m.conteudo.texto.substring(0, 50) + (m.conteudo.texto.length > 50 ? '...' : '') : '') : (m.conteudo.url || '')}
               </div>
             </div>
           </div>
           <div style="display: flex; gap: 8px;">
-            <button onclick="editarModulo(${m.id})" style="background: var(--info); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">
+            <button type="button" onclick="editarModulo(${m.id})" style="background: var(--info); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">
               ✏️ Editar
             </button>
-            <button onclick="removerModulo(${m.id})" style="background: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">
+            <button type="button" onclick="removerModulo(${m.id})" style="background: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">
               🗑️ Remover
             </button>
           </div>
@@ -874,7 +888,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       return;
     }
     container.innerHTML = perguntas.map((p, index) => `
-      <div class="pergunta-card" style="background: var(--bg); border-radius: 8px; margin-bottom: 12px; padding: 16px;">
+      <div class="pergunta-card" style="background: var(--bg); border-radius: 12px; margin-bottom: 12px; padding: 16px; border: 1px solid var(--border);">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
           <div style="flex: 1;">
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
@@ -892,8 +906,8 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
             </div>
           </div>
           <div style="display: flex; gap: 8px;">
-            <button onclick="editarPergunta(${p.id})" style="background: var(--info); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">✏️</button>
-            <button onclick="removerPergunta(${p.id})" style="background: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">🗑️</button>
+            <button type="button" onclick="editarPergunta(${p.id})" style="background: var(--info); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">✏️</button>
+            <button type="button" onclick="removerPergunta(${p.id})" style="background: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">🗑️</button>
           </div>
         </div>
       </div>
@@ -1098,7 +1112,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   async function renderHistorico() {
     const historico = await carregarHistorico();
     const tbody = document.getElementById('lista-notas');
-    if(!historico.length){ tbody.innerHTML = '<tr><td colspan="6" class="empty">Nenhum resultado registado</td></tr>'; return; }
+    if(!historico.length){ tbody.innerHTML = '}<tr><td colspan="6" class="empty">Nenhum resultado registado</td></tr>'; return; }
     tbody.innerHTML = historico.map(h => `
       <tr>
         <td><strong>${h.nome}</strong></td>
