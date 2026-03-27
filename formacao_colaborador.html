@@ -28,7 +28,6 @@
   --font-body: 'DM Sans', sans-serif;
   --radius: 16px;
   --shadow: 0 4px 20px rgba(0,0,0,0.08);
-  --shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -194,21 +193,15 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   margin-bottom: 28px;
   overflow: hidden;
   box-shadow: var(--shadow);
-  transition: all 0.3s ease;
 }
-.section-block.locked { opacity: 0.6; pointer-events: none; filter: grayscale(0.1); }
-.section-block.completed { 
-  border-left: 4px solid var(--birkenstock-gold);
-  border-right: 4px solid var(--birkenstock-gold);
-  opacity: 0.8;
-}
+.section-block.locked { opacity: 0.6; pointer-events: none; }
+.section-block.completed { border-left: 4px solid var(--birkenstock-gold); border-right: 4px solid var(--birkenstock-gold); }
 .section-header {
   padding: 28px 32px;
   display: flex;
   align-items: center;
   gap: 24px;
   cursor: pointer;
-  transition: background 0.2s;
 }
 .section-header:hover { background: #fafaf8; }
 .s-num {
@@ -232,9 +225,9 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
 .section-body { 
   padding: 0 32px 32px; 
   border-top: 1px solid var(--birkenstock-border); 
-  display: block; 
-  animation: fadeIn 0.3s ease;
+  display: none; 
 }
+.section-body.open { display: block; animation: fadeIn 0.3s ease; }
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
@@ -309,9 +302,8 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
 }
-.btn-confirm:hover:not(:disabled) { background: var(--birkenstock-blue-dark); transform: translateY(-2px); }
+.btn-confirm:hover:not(:disabled) { background: var(--birkenstock-blue-dark); }
 .btn-confirm:disabled { background: var(--birkenstock-gray); cursor: not-allowed; }
 .confirmed-label { 
   display: flex; 
@@ -544,14 +536,43 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   function lerTokenUrl() {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
-    if(token && token !== 'null') {
+    console.log("Token recebido:", token);
+    
+    if(token && token !== 'null' && token !== 'undefined') {
       try {
-        const tokenData = JSON.parse(atob(token));
-        if(tokenData.user) { localStorage.setItem('usuarioAtivo', tokenData.user); nomeUser = tokenData.user; }
-        if(tokenData.prazo) { prazoFormacao = tokenData.prazo; document.getElementById('prazo-data').textContent = prazoFormacao; }
-        if(tokenData.cursoId) return tokenData.cursoId;
-      } catch(e) {}
+        // Corrigir token para base64 padrão
+        let tokenDecodificado = token.replace(/-/g, '+').replace(/_/g, '/');
+        // Adicionar padding se necessário
+        while (tokenDecodificado.length % 4) {
+          tokenDecodificado += '=';
+        }
+        const tokenData = JSON.parse(atob(tokenDecodificado));
+        console.log("Token decodificado:", tokenData);
+        
+        if(tokenData.user) {
+          localStorage.setItem('usuarioAtivo', tokenData.user);
+          nomeUser = tokenData.user;
+          document.getElementById('user-name-display').innerHTML = `<i class="fas fa-user"></i> ${nomeUser}`;
+        }
+        if(tokenData.prazo) {
+          prazoFormacao = tokenData.prazo;
+          document.getElementById('prazo-data').textContent = prazoFormacao;
+        }
+        if(tokenData.cursoId) {
+          return tokenData.cursoId;
+        }
+      } catch(e) {
+        console.error('Erro ao decodificar token:', e);
+        // Tentar decodificar diretamente
+        try {
+          const tokenData = JSON.parse(atob(token));
+          if(tokenData.cursoId) return tokenData.cursoId;
+        } catch(e2) {
+          console.error('Erro na segunda tentativa:', e2);
+        }
+      }
     }
+    
     document.getElementById('prazo-data').textContent = prazoFormacao;
     return localStorage.getItem('cursoAtualId');
   }
@@ -561,36 +582,49 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     const modulesContainer = document.getElementById('modules-container');
     loadingDiv.style.display = 'block';
     modulesContainer.style.display = 'none';
-    if(!id) { loadingDiv.innerHTML = '❌ Nenhuma formação selecionada.'; return; }
+    
+    if(!id) { 
+      loadingDiv.innerHTML = '❌ Nenhuma formação selecionada. <a href="dashboard.html" style="color: var(--birkenstock-blue);">Voltar</a>';
+      return; 
+    }
+    
     try {
-      const docSnap = await window.getDoc(window.doc(window.db, 'formacoes', id));
+      const docRef = window.doc(window.db, 'formacoes', id);
+      const docSnap = await window.getDoc(docRef);
+      
       if(docSnap.exists()) {
         const data = docSnap.data();
         cursoData = { nome: data.nome, duracao: data.duracao, descricao: data.descricao };
         modules = data.modulos || [];
         perguntas = data.perguntas || [];
+        
         document.getElementById('user-name-display').innerHTML = `<i class="fas fa-user"></i> ${nomeUser}`;
         document.getElementById('hero-title').textContent = cursoData.nome;
         document.getElementById('hero-desc').textContent = cursoData.descricao;
         document.getElementById('meta-duration').textContent = cursoData.duracao;
         document.getElementById('meta-modules').textContent = modules.length + ' módulos';
+        
         loadingDiv.style.display = 'none';
         modulesContainer.style.display = 'block';
+        
         renderModules();
         updateProgress();
         
-        // Abrir automaticamente o primeiro módulo não concluído
+        // Abrir primeiro módulo não concluído
         setTimeout(() => {
           const firstUnlocked = document.querySelector('.section-block:not(.locked)');
-          if (firstUnlocked) {
+          if (firstUnlocked && !firstUnlocked.id.includes('quiz')) {
             const id = firstUnlocked.id.replace('block-', '');
-            if (id !== 'quiz') {
-              openSection(id);
-            }
+            openSection(id);
           }
         }, 500);
-      } else { loadingDiv.innerHTML = '❌ Formação não encontrada.'; }
-    } catch(error) { loadingDiv.innerHTML = '❌ Erro: ' + error.message; }
+      } else { 
+        loadingDiv.innerHTML = '❌ Formação não encontrada. <a href="dashboard.html" style="color: var(--birkenstock-blue);">Voltar</a>';
+      }
+    } catch(error) { 
+      console.error('Erro:', error);
+      loadingDiv.innerHTML = '❌ Erro ao carregar formação: ' + error.message; 
+    }
   }
 
   function updateProgress() {
@@ -599,6 +633,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     const pct = Math.round((done / total) * 100);
     document.getElementById('prog-fill').style.width = pct + '%';
     document.getElementById('progress-text').textContent = pct + '%';
+    
     const dotsContainer = document.getElementById('steps-dots');
     dotsContainer.innerHTML = '';
     modules.forEach((m, idx) => {
@@ -607,11 +642,14 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
       if(completedModules[m.id]) dot.classList.add('done');
       dotsContainer.appendChild(dot);
     });
-    if(quizPassed) { const dot = document.createElement('div'); dot.className = 'step-dot done'; dotsContainer.appendChild(dot); }
+    if(quizPassed) { 
+      const dot = document.createElement('div'); 
+      dot.className = 'step-dot done'; 
+      dotsContainer.appendChild(dot); 
+    }
   }
 
   function openSection(moduleId) {
-    // Fechar a seção atual se estiver aberta
     if (currentOpenSection && currentOpenSection !== moduleId) {
       const currentBody = document.getElementById(`body-${currentOpenSection}`);
       if (currentBody) currentBody.classList.remove('open');
@@ -620,7 +658,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     if (body) {
       body.classList.add('open');
       currentOpenSection = moduleId;
-      // Scroll para o módulo
       document.getElementById(`block-${moduleId}`).scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
@@ -662,7 +699,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
       `;
       container.appendChild(block);
       
-      // Carregar conteúdo
       setTimeout(() => {
         const url = module.conteudo?.url || '';
         const contentDiv = document.getElementById(`content-${module.id}`);
@@ -720,24 +756,20 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     toast('✅ Módulo concluído!', 'success');
     updateProgress();
     
-    // Fechar o módulo atual
+    // Fechar módulo atual
     const currentBody = document.getElementById(`body-${moduleId}`);
     if (currentBody) currentBody.classList.remove('open');
     
     const idx = modules.findIndex(m => m.id === moduleId);
     if (idx < modules.length - 1) {
-      // Abrir automaticamente o próximo módulo
       const nextModuleId = modules[idx+1].id;
       const nextBlock = document.getElementById(`block-${nextModuleId}`);
       if (nextBlock) {
         nextBlock.classList.remove('locked');
-        setTimeout(() => {
-          openSection(nextModuleId);
-        }, 500);
+        setTimeout(() => openSection(nextModuleId), 500);
       }
-      toast('📚 Próximo módulo desbloqueado e aberto!', 'info');
+      toast('📚 Próximo módulo desbloqueado!', 'info');
     } else {
-      // Último módulo - abrir automaticamente a avaliação
       const quizBlock = document.getElementById('block-quiz');
       if (quizBlock) {
         quizBlock.classList.remove('locked');
@@ -778,12 +810,12 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
           <div class="quiz-intro">
             <i class="fas fa-clipboard-list"></i>
             <strong>Avaliação de conhecimentos</strong>
-            <p style="margin-top: 8px;">Responde a todas as perguntas. Precisas de pelo menos 70% para ser aprovado e receber o certificado.</p>
+            <p style="margin-top: 8px;">Responde a todas as perguntas. Precisas de pelo menos 70% para ser aprovado.</p>
           </div>
           <div id="quiz-questions"></div>
           <div class="quiz-footer">
             <span id="quiz-answered"><i class="far fa-circle-check"></i> 0 respondidas</span>
-            <button class="btn-submit" id="btn-submit" disabled onclick="submitQuiz()"><i class="fas fa-paper-plane"></i> Submeter avaliação</button>
+            <button class="btn-submit" id="btn-submit" disabled onclick="submitQuiz()"><i class="fas fa-paper-plane"></i> Submeter</button>
           </div>
         </div>
         <div class="result-screen" id="result-screen">
@@ -804,15 +836,20 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     if(!perguntas.length) {
       perguntas = [{ texto: "O que é importante para o desenvolvimento profissional?", opcoes: ["Formação contínua", "Estagnação", "Falta de interesse", "Desmotivação"], correta: "A" }];
     }
-    document.getElementById('quiz-questions').innerHTML = perguntas.map((q, idx) => `
+    
+    const questionsDiv = document.getElementById('quiz-questions');
+    questionsDiv.innerHTML = perguntas.map((q, idx) => `
       <div class="question">
-        <div class="question-text">${q.texto}</div>
+        <div class="question-text">${escapeHtml(q.texto)}</div>
         <div class="options" id="opts-${idx}">
-          ${q.opcoes.map((opt, i) => `<div class="option-item" onclick="selectOpt(${idx}, ${i})"><div class="option-letter">${String.fromCharCode(65+i)}</div>${opt}</div>`).join('')}
+          ${q.opcoes.map((opt, i) => `<div class="option-item" onclick="selectOpt(${idx}, ${i})"><div class="option-letter">${String.fromCharCode(65+i)}</div>${escapeHtml(opt)}</div>`).join('')}
         </div>
       </div>
     `).join('');
-    window.perguntas = perguntas; window.respostas = {}; window.totalPerguntas = perguntas.length;
+    
+    window.perguntas = perguntas;
+    window.respostas = {};
+    window.totalPerguntas = perguntas.length;
   }
 
   function selectOpt(qIdx, optIdx) { 
@@ -848,17 +885,23 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
       document.getElementById('btn-see-cert').style.display = 'inline-block';
       updateProgress();
       localStorage.setItem('cursoConcluido', cursoId);
-      await window.addDoc(window.collection(window.db, 'historico'), { nome: nomeUser, curso: cursoData.nome, nota: pct + '%', data: fmtDate(new Date()), dataTimestamp: Date.now() });
+      await window.addDoc(window.collection(window.db, 'historico'), { 
+        nome: nomeUser, 
+        curso: cursoData.nome, 
+        nota: pct + '%', 
+        data: fmtDate(new Date()), 
+        dataTimestamp: Date.now() 
+      });
       toast('✅ Certificado gerado!', 'success');
     } else {
       document.getElementById('result-ring').classList.add('fail');
       document.getElementById('result-title').innerHTML = '❌ Não aprovado';
-      document.getElementById('result-msg').innerHTML = `Obtiveste ${pct}% (${score}/${window.totalPerguntas} corretas).<br>Precisas de pelo menos 70%. Podes tentar novamente.`;
+      document.getElementById('result-msg').innerHTML = `Obtiveste ${pct}% (${score}/${window.totalPerguntas} corretas).<br>Precisas de pelo menos 70%.`;
       document.getElementById('btn-retry').style.display = 'inline-block';
       toast('⚠️ Não atingiu a nota mínima. Tente novamente!', 'error');
     }
     
-    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submeter avaliação';
+    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submeter';
     submitBtn.disabled = false;
   }
 
@@ -877,7 +920,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     const now = new Date();
     const certId = 'CERT-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
     const nota = document.getElementById('score-num').textContent;
-    const imagemFundo = 'https://hsebirk-droid.github.io/hse-platform/imagens/fundo_certificado.png';
+    const imagemFundo = 'imagens/fundo_certificado.png';
     const certHtml = `
       <div class="cert-screen" id="cert-screen" style="display:block">
         <div class="cert-card" style="background-image: url('${imagemFundo}'); background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 500px; position: relative; margin-top: 24px; border-radius: 16px; overflow: hidden;">
@@ -969,12 +1012,19 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   window.openSection = openSection;
 
   window.addEventListener('load', function() {
-    if(!localStorage.getItem('usuarioAtivo')) { window.location.href = 'login.html'; return; }
+    if(!localStorage.getItem('usuarioAtivo')) { 
+      window.location.href = 'login.html';
+      return; 
+    }
     nomeUser = localStorage.getItem('usuarioAtivo');
     document.getElementById('user-name-display').innerHTML = `<i class="fas fa-user"></i> ${nomeUser}`;
     const cursoIdCarregado = lerTokenUrl();
-    if(cursoIdCarregado) { cursoId = cursoIdCarregado; carregarFormacao(cursoIdCarregado); }
-    else document.getElementById('loading').innerHTML = '❌ Nenhuma formação selecionada.';
+    if(cursoIdCarregado) { 
+      cursoId = cursoIdCarregado; 
+      carregarFormacao(cursoIdCarregado); 
+    } else {
+      document.getElementById('loading').innerHTML = '❌ Nenhuma formação selecionada. <a href="dashboard.html" style="color: var(--birkenstock-blue);">Voltar</a>';
+    }
   });
 </script>
 </body>
