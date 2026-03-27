@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Birkenstock S&CC — Formação</title>
+<title>Birkenstock S&CC — Formação LMS</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
@@ -12,25 +12,30 @@
   --birkenstock-blue-dark: #00277A;
   --birkenstock-gold: #C5A059;
   --birkenstock-gray: #616365;
+  --birkenstock-gray-light: #9CA3AF;
   --birkenstock-beige: #F7F5F0;
   --birkenstock-white: #FFFFFF;
   --birkenstock-black: #1A1A1A;
   --birkenstock-border: #E2DDD6;
-  --success: #16a34a;
-  --success-bg: #dcfce7;
-  --warning: #e76f51;
-  --warning-light: #fde8e1;
-  --info: #2196f3;
-  --info-light: #e3f2fd;
+  --success: #10B981;
+  --success-bg: #D1FAE5;
+  --warning: #F59E0B;
+  --warning-light: #FEF3C7;
+  --danger: #EF4444;
+  --danger-bg: #FEE2E2;
+  --info: #3B82F6;
+  --info-light: #DBEAFE;
   --font-head: 'Fraunces', serif;
   --font-body: 'DM Sans', sans-serif;
   --radius: 14px;
   --shadow: 0 2px 20px rgba(0,0,0,0.07);
+  --shadow-lg: 0 10px 40px rgba(0,0,0,0.1);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 body { background: var(--birkenstock-beige); font-family: var(--font-body); color: var(--birkenstock-black); min-height: 100vh; }
 
+/* Header */
 .top-bar {
   background: var(--birkenstock-blue);
   padding: 14px 32px;
@@ -40,6 +45,9 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   flex-wrap: wrap;
   gap: 12px;
   border-bottom: 2px solid var(--birkenstock-gold);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 .top-bar .logo {
   font-family: var(--font-head);
@@ -69,7 +77,21 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   font-size: 0.78rem;
   color: white;
 }
+.btn-exit {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: all 0.2s;
+}
+.btn-exit:hover {
+  background: rgba(255,255,255,0.3);
+}
 
+/* Hero Section */
 .hero {
   background: linear-gradient(135deg, var(--birkenstock-blue) 0%, var(--birkenstock-blue-dark) 100%);
   padding: 48px 32px 56px;
@@ -78,11 +100,10 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   overflow: hidden;
 }
 .hero::after {
-  content: 'BIRKENSTOCK';
+  content: '🎓';
   position: absolute;
   right: -20px;
   top: -30px;
-  font-family: var(--font-head);
   font-size: 8rem;
   font-weight: 900;
   color: rgba(255,255,255,0.03);
@@ -106,12 +127,13 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
 .hero-meta { display: flex; gap: 24px; margin-top: 24px; flex-wrap: wrap; }
 .hero-meta-item { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; opacity: .85; }
 
+/* Progress Bar */
 .progress-strip {
   background: var(--birkenstock-white);
   border-bottom: 1px solid var(--birkenstock-border);
   padding: 16px 32px;
   position: sticky;
-  top: 0;
+  top: 70px;
   z-index: 50;
   box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
@@ -125,8 +147,10 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
 .step-dot.done { background: var(--birkenstock-blue); }
 .step-dot.active { background: var(--birkenstock-gold); }
 
+/* Main Content */
 .main { max-width: 760px; margin: 0 auto; padding: 32px 32px 80px; }
 
+/* Course Modules */
 .section-block {
   background: var(--birkenstock-white);
   border-radius: var(--radius);
@@ -134,10 +158,10 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   margin-bottom: 20px;
   overflow: hidden;
   box-shadow: var(--shadow);
+  transition: all 0.3s;
 }
-.section-block.locked { opacity: .5; pointer-events: none; }
+.section-block.locked { opacity: .6; pointer-events: none; filter: grayscale(0.1); }
 .section-block.completed { border-color: var(--birkenstock-gold); }
-
 .section-header {
   padding: 20px 24px;
   display: flex;
@@ -148,41 +172,39 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
 }
 .section-header:hover { background: #fafaf8; }
 .s-num {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: #f0ece5;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-head);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 700;
   flex-shrink: 0;
 }
 .section-block.completed .s-num { background: var(--birkenstock-blue); color: white; }
 .s-info { flex: 1; }
 .s-title { font-family: var(--font-head); font-size: 1rem; font-weight: 700; color: var(--birkenstock-blue); }
-.s-meta { font-size: 0.78rem; color: var(--birkenstock-gray); margin-top: 2px; }
-.s-status { font-size: 1.1rem; }
+.s-meta { font-size: 0.75rem; color: var(--birkenstock-gray); margin-top: 4px; display: flex; align-items: center; gap: 12px; }
+.s-status { font-size: 1.2rem; }
 .section-body { padding: 0 24px 24px; border-top: 1px solid var(--birkenstock-border); display: none; }
 .section-body.open { display: block; }
 
-/* Embed de vídeo */
+/* Content Embeds */
 .video-wrap {
   background: #111;
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
   aspect-ratio: 16/9;
   margin: 20px 0;
 }
 .video-wrap iframe { width: 100%; height: 100%; border: none; }
-
-/* Visualizador de documentos */
 .doc-viewer {
   background: #fafaf8;
   border: 1px solid var(--birkenstock-border);
-  border-radius: 10px;
+  border-radius: 12px;
   margin: 20px 0;
   overflow: hidden;
 }
@@ -191,10 +213,8 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   padding: 12px 16px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
   border-bottom: 1px solid var(--birkenstock-border);
-  flex-wrap: wrap;
-  gap: 10px;
   font-size: 13px;
   color: var(--birkenstock-gray);
 }
@@ -223,28 +243,40 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   text-align: center;
   color: var(--birkenstock-gray);
 }
+.text-content { 
+  font-size: 1rem; 
+  line-height: 1.8; 
+  color: var(--birkenstock-gray); 
+  margin: 20px 0;
+  background: var(--birkenstock-white);
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid var(--birkenstock-border);
+}
+.text-content h3 { font-family: var(--font-head); color: var(--birkenstock-blue); margin: 16px 0 8px; }
+.text-content h3:first-child { margin-top: 0; }
 
-.text-content { font-size: 0.9rem; line-height: 1.8; color: var(--birkenstock-gray); margin: 20px 0; }
-
+/* Progress Tracker */
 .content-tracker {
   background: var(--info-light);
   border: 1px solid #bbdefb;
   border-radius: 10px;
   padding: 12px 16px;
-  margin-bottom: 16px;
+  margin: 16px 0;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 0.82rem;
+  gap: 12px;
+  font-size: 0.8rem;
   color: #1565c0;
 }
-.track-prog { flex: 1; height: 4px; background: #bbdefb; border-radius: 2px; overflow: hidden; }
-.track-fill { height: 100%; background: var(--birkenstock-blue); border-radius: 2px; transition: width .3s; }
+.track-prog { flex: 1; height: 5px; background: #bbdefb; border-radius: 3px; overflow: hidden; }
+.track-fill { height: 100%; background: var(--birkenstock-blue); border-radius: 3px; transition: width .5s ease; }
 
+/* Confirm Button */
 .confirm-viewed {
   background: var(--birkenstock-beige);
   border: 1px solid var(--birkenstock-border);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 16px 20px;
   display: flex;
   align-items: center;
@@ -253,29 +285,39 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   gap: 16px;
   flex-wrap: wrap;
 }
-.confirm-viewed p { font-size: 0.83rem; color: var(--birkenstock-gray); }
-.confirm-viewed p strong { color: var(--birkenstock-black); display: block; }
+.confirm-viewed p { font-size: 0.85rem; color: var(--birkenstock-gray); }
+.confirm-viewed p strong { color: var(--birkenstock-black); display: block; margin-bottom: 4px; }
 .btn-confirm {
   background: var(--birkenstock-blue);
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 10px 22px;
+  border-radius: 10px;
+  padding: 12px 28px;
   font-family: var(--font-head);
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
 }
-.btn-confirm:hover:not(:disabled) { background: var(--birkenstock-blue-dark); }
+.btn-confirm:hover:not(:disabled) { background: var(--birkenstock-blue-dark); transform: translateY(-1px); }
 .btn-confirm:disabled { background: var(--birkenstock-gray); cursor: not-allowed; }
-.confirmed-label { display: flex; align-items: center; gap: 6px; color: var(--birkenstock-blue); font-size: 0.82rem; font-weight: 600; }
+.confirmed-label { 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+  color: var(--success); 
+  font-size: 0.85rem; 
+  font-weight: 600;
+  background: var(--success-bg);
+  padding: 8px 16px;
+  border-radius: 30px;
+}
 
-/* Loading spinner */
+/* Loading Spinner */
 .loading-spinner {
   display: inline-block;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border: 2px solid rgba(255,255,255,0.3);
   border-radius: 50%;
   border-top-color: white;
@@ -286,65 +328,94 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   to { transform: rotate(360deg); }
 }
 .btn-loading {
-  opacity: 0.7;
+  opacity: 0.8;
   cursor: wait !important;
+}
+.btn-loading .btn-confirm {
+  cursor: wait;
 }
 
 /* Quiz */
 .quiz-wrap { padding: 8px 0; }
-.quiz-intro { background: var(--warning-light); border: 1px solid #f4a291; border-radius: 10px; padding: 16px 20px; margin: 20px 0; }
-.question { margin-bottom: 28px; }
-.question-text { font-family: var(--font-head); font-size: 0.98rem; font-weight: 700; margin-bottom: 14px; color: var(--birkenstock-blue); }
-.options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-intro { 
+  background: var(--warning-light); 
+  border: 1px solid #fed7aa; 
+  border-radius: 12px; 
+  padding: 20px; 
+  margin: 20px 0; 
+}
+.quiz-intro strong { color: var(--warning); font-size: 1rem; }
+.question { margin-bottom: 32px; }
+.question-text { 
+  font-family: var(--font-head); 
+  font-size: 1rem; 
+  font-weight: 700; 
+  margin-bottom: 16px; 
+  color: var(--birkenstock-blue);
+  padding-left: 12px;
+  border-left: 3px solid var(--birkenstock-gold);
+}
+.options { display: flex; flex-direction: column; gap: 10px; }
 .option-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   border: 1.5px solid var(--birkenstock-border);
-  border-radius: 10px;
-  padding: 12px 16px;
+  border-radius: 12px;
+  padding: 12px 18px;
   cursor: pointer;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   transition: all 0.2s;
 }
-.option-item:hover { border-color: var(--birkenstock-gold); background: rgba(197,160,89,0.1); }
+.option-item:hover { border-color: var(--birkenstock-gold); background: rgba(197,160,89,0.05); }
 .option-item.selected { border-color: var(--birkenstock-blue); background: rgba(0,51,141,0.05); }
 .option-item.correct { border-color: var(--success); background: var(--success-bg); }
-.option-item.wrong { border-color: var(--warning); background: var(--warning-light); }
+.option-item.wrong { border-color: var(--danger); background: var(--danger-bg); }
 .option-letter {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: #f0ece5;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 700;
   flex-shrink: 0;
 }
 .option-item.selected .option-letter { background: var(--birkenstock-blue); color: white; }
-.quiz-footer { margin-top: 24px; border-top: 1px solid var(--birkenstock-border); padding-top: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.quiz-footer { 
+  margin-top: 32px; 
+  border-top: 1px solid var(--birkenstock-border); 
+  padding-top: 24px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between; 
+  flex-wrap: wrap; 
+  gap: 16px; 
+}
 .btn-submit {
   background: var(--birkenstock-blue);
   color: white;
   border: none;
-  border-radius: 10px;
-  padding: 13px 32px;
+  border-radius: 12px;
+  padding: 14px 36px;
   font-family: var(--font-head);
   font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
 }
+.btn-submit:hover:not(:disabled) { background: var(--birkenstock-blue-dark); transform: translateY(-1px); }
 .btn-submit:disabled { background: #ccc; cursor: not-allowed; }
 
+/* Result Screen */
 .result-screen { text-align: center; padding: 40px 24px; display: none; }
 .result-score-ring {
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
-  border: 6px solid var(--birkenstock-blue);
+  border: 8px solid var(--birkenstock-blue);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -353,106 +424,125 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   background: rgba(0,51,141,0.05);
 }
 .result-score-ring.fail { border-color: var(--warning); background: var(--warning-light); }
-.score-num { font-family: var(--font-head); font-size: 2rem; font-weight: 900; color: var(--birkenstock-blue); }
+.score-num { font-family: var(--font-head); font-size: 2.5rem; font-weight: 900; color: var(--birkenstock-blue); }
 
+/* Certificate */
 .cert-screen { display: none; }
 .cert-card {
   background: linear-gradient(135deg, #fff8e7 0%, #fff 100%);
   border: 2px solid var(--birkenstock-gold);
-  border-radius: 20px;
+  border-radius: 24px;
   padding: 48px 40px;
   text-align: center;
   position: relative;
   margin-top: 24px;
+  box-shadow: var(--shadow-lg);
 }
 .cert-card::before {
   content: '';
   position: absolute;
-  inset: 10px;
+  inset: 12px;
   border: 1px dashed rgba(197,160,89,0.5);
-  border-radius: 14px;
+  border-radius: 18px;
   pointer-events: none;
 }
-.cert-emblem { font-size: 3rem; margin-bottom: 16px; color: var(--birkenstock-gold); }
+.cert-emblem { font-size: 3.5rem; margin-bottom: 16px; color: var(--birkenstock-gold); }
 .cert-name { font-family: var(--font-head); font-size: 2rem; font-weight: 900; color: var(--birkenstock-blue); margin-bottom: 8px; }
 .cert-row {
   display: flex;
   justify-content: center;
   gap: 48px;
   border-top: 1px solid #e2ddd6;
-  padding-top: 20px;
-  margin-top: 20px;
+  padding-top: 24px;
+  margin-top: 24px;
   flex-wrap: wrap;
 }
 .cert-col { margin: 0 12px; }
-.cert-col-label { font-size: 0.75rem; color: var(--birkenstock-gray); text-transform: uppercase; }
-.cert-col-val { font-family: var(--font-head); font-size: 1rem; font-weight: 700; color: var(--birkenstock-blue); margin-top: 4px; }
-.cert-id { font-size: 0.75rem; color: var(--birkenstock-gray); margin-top: 12px; }
-.cert-course-title { font-size: 1.1rem; color: var(--birkenstock-blue); margin: 12px 0; }
-.cert-issued { font-size: 0.85rem; color: var(--birkenstock-gold); font-weight: 600; }
-.cert-certify { font-size: 0.9rem; color: var(--birkenstock-gray); margin: 12px 0; }
-.cert-actions { display: flex; gap: 12px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
-.btn-dl {
+.cert-col-label { font-size: 0.7rem; color: var(--birkenstock-gray); text-transform: uppercase; letter-spacing: 1px; }
+.cert-col-val { font-family: var(--font-head); font-size: 1.1rem; font-weight: 700; color: var(--birkenstock-blue); margin-top: 4px; }
+.cert-id { font-size: 0.7rem; color: var(--birkenstock-gray); margin-top: 16px; }
+.cert-course-title { font-size: 1.1rem; color: var(--birkenstock-blue); margin: 16px 0; }
+.cert-issued { font-size: 0.8rem; color: var(--birkenstock-gold); font-weight: 600; letter-spacing: 1px; }
+.cert-certify { font-size: 0.85rem; color: var(--birkenstock-gray); margin: 16px 0; }
+.cert-actions { display: flex; gap: 16px; justify-content: center; margin-top: 32px; flex-wrap: wrap; }
+.btn-dl, .btn-secondary {
   background: var(--birkenstock-blue);
   color: white;
   border: none;
-  border-radius: 10px;
-  padding: 13px 28px;
+  border-radius: 12px;
+  padding: 14px 32px;
   font-family: var(--font-head);
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
 }
-.btn-dl:hover { background: var(--birkenstock-blue-dark); }
+.btn-dl:hover, .btn-secondary:hover { background: var(--birkenstock-blue-dark); transform: translateY(-1px); }
 .btn-secondary {
   background: white;
   color: var(--birkenstock-blue);
   border: 1.5px solid var(--birkenstock-blue);
-  border-radius: 10px;
-  padding: 13px 28px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s;
 }
 .btn-secondary:hover { background: var(--birkenstock-blue); color: white; }
 
+/* Toast Notification */
 .toast {
   position: fixed;
-  bottom: 24px;
+  bottom: 30px;
   left: 50%;
   transform: translateX(-50%) translateY(20px);
   background: var(--birkenstock-black);
   color: white;
-  padding: 12px 24px;
-  border-radius: 10px;
+  padding: 14px 28px;
+  border-radius: 50px;
   font-size: 0.85rem;
   opacity: 0;
   transition: all .4s;
   z-index: 1000;
+  box-shadow: var(--shadow-lg);
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-.loading { text-align: center; padding: 60px; color: var(--birkenstock-gray); }
+.toast.success { background: var(--success); }
+.toast.error { background: var(--danger); }
+
+.loading { text-align: center; padding: 80px; color: var(--birkenstock-gray); }
+
+/* Badge de certificado */
+.cert-badge {
+  display: inline-block;
+  background: var(--success-bg);
+  color: var(--success);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
 
 @media (max-width: 768px) {
   .hero { padding: 32px 20px 40px; }
   .hero h1 { font-size: 1.5rem; }
   .main { padding: 24px 20px 60px; }
   .top-bar { padding: 12px 20px; }
+  .progress-strip { top: 60px; padding: 12px 20px; }
+  .section-header { padding: 16px 20px; }
+  .section-body { padding: 0 20px 20px; }
+  .cert-card { padding: 32px 24px; }
+  .cert-name { font-size: 1.5rem; }
 }
 </style>
 </head>
 <body>
 
 <div class="top-bar">
-  <div class="logo">BIRKENSTOCK<span>S&CC PORTUGAL</span></div>
+  <div class="logo">BIRKENSTOCK<span>S&CC PORTUGAL · LMS</span></div>
   <div class="user-name" id="user-name-display">Carregando...</div>
-  <div class="deadline-badge" id="deadline-badge">Prazo: <strong id="prazo-data">---</strong></div>
+  <div class="deadline-badge" id="deadline-badge">📅 Prazo: <strong id="prazo-data">---</strong></div>
+  <button class="btn-exit" onclick="sairDaFormacao()">🚪 Sair</button>
 </div>
 
 <div class="hero">
   <div class="hero-inner">
-    <div class="hero-tag" id="hero-tag">📘 Formação Profissional</div>
+    <div class="hero-tag" id="hero-tag">🎓 Curso LMS</div>
     <h1 id="hero-title">Carregando formação...</h1>
     <p id="hero-desc">A carregar conteúdo...</p>
     <div class="hero-meta">
@@ -466,14 +556,17 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
 
 <div class="progress-strip">
   <div class="progress-strip-inner">
-    <div class="progress-label"><span>Progresso da formação</span><strong id="progress-text">0%</strong></div>
+    <div class="progress-label"><span>📊 Progresso da formação</span><strong id="progress-text">0%</strong></div>
     <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
     <div class="steps-dots" id="steps-dots"></div>
   </div>
 </div>
 
 <div class="main" id="main-content">
-  <div id="loading" class="loading">📚 A carregar formação...</div>
+  <div id="loading" class="loading">
+    <i class="fas fa-spinner fa-spin" style="font-size: 32px; margin-bottom: 16px; display: block;"></i>
+    📚 A carregar formação...
+  </div>
   <div id="modules-container" style="display:none;"></div>
 </div>
 
@@ -518,12 +611,11 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
   }
 
-  function toast(msg, isError = false) { 
+  function toast(msg, type = 'info') { 
     const t = document.getElementById('toast'); 
     t.textContent = msg; 
-    t.style.background = isError ? '#dc2626' : '#1a1a1a';
-    t.classList.add('show'); 
-    setTimeout(() => t.classList.remove('show'), 3500); 
+    t.className = 'toast show ' + type;
+    setTimeout(() => t.classList.remove('show'), 4000); 
   }
   
   function showLoading(btnId, isLoading) {
@@ -547,7 +639,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     return d.toLocaleDateString('pt-PT', {day:'2-digit', month:'short', year:'numeric'}); 
   }
 
-  // Extrair ID do Google Drive a partir da URL
+  // Extrair ID do Google Drive
   function extractGoogleDriveId(url) {
     const patterns = [
       /\/file\/d\/([^\/]+)/,
@@ -562,16 +654,12 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     return null;
   }
 
-  // Gerar embed URL para Google Drive
   function getGoogleDriveEmbedUrl(url) {
     const fileId = extractGoogleDriveId(url);
-    if (fileId) {
-      return `https://drive.google.com/file/d/${fileId}/preview`;
-    }
+    if (fileId) return `https://drive.google.com/file/d/${fileId}/preview`;
     return null;
   }
 
-  // Gerar embed URL para YouTube
   function getYoutubeEmbedUrl(url) {
     const patterns = [
       /youtube\.com\/watch\?v=([^&]+)/,
@@ -585,38 +673,15 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     return null;
   }
 
-  // Verificar se URL é do YouTube
-  function isYoutubeUrl(url) {
-    return url.includes('youtube.com') || url.includes('youtu.be');
-  }
+  function isYoutubeUrl(url) { return url.includes('youtube.com') || url.includes('youtu.be'); }
+  function isGoogleDriveUrl(url) { return url.includes('drive.google.com'); }
+  function isImageUrl(url) { return /\.(jpg|jpeg|png|gif|webp|bmp|svg)(\?|$)/i.test(url); }
+  function isPdfUrl(url) { return url.toLowerCase().endsWith('.pdf') || url.includes('.pdf?'); }
 
-  // Verificar se URL é do Google Drive
-  function isGoogleDriveUrl(url) {
-    return url.includes('drive.google.com');
-  }
-
-  // Verificar se URL é imagem
-  function isImageUrl(url) {
-    const imageExtensions = /\.(jpg|jpeg|png|gif|webp|bmp|svg)(\?|$)/i;
-    return imageExtensions.test(url);
-  }
-
-  // Verificar se URL é PowerPoint
-  function isPowerPointUrl(url) {
-    return url.includes('.pptx') || url.includes('.ppt') || url.includes('powerpoint');
-  }
-
-  // Verificar se URL é PDF
-  function isPdfUrl(url) {
-    return url.toLowerCase().endsWith('.pdf') || url.includes('.pdf?') || url.includes('/pdf/');
-  }
-
-  // Renderizar conteúdo baseado no tipo
   function renderContent(url, containerId, moduleId) {
     const container = document.getElementById(containerId);
     if (!container) return;
     
-    // Detectar tipo de conteúdo
     if (isYoutubeUrl(url)) {
       const embedUrl = getYoutubeEmbedUrl(url);
       container.innerHTML = `<div class="video-wrap"><iframe src="${embedUrl}" frameborder="0" allowfullscreen></iframe></div>`;
@@ -625,23 +690,21 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     else if (isGoogleDriveUrl(url)) {
       const embedUrl = getGoogleDriveEmbedUrl(url);
       if (embedUrl) {
-        container.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><span>📄 Documento Google Drive</span></div><div class="doc-content"><iframe src="${embedUrl}" class="doc-iframe" allow="autoplay"></iframe></div></div>`;
+        container.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><i class="fas fa-cloud"></i> Google Drive</div><div class="doc-content"><iframe src="${embedUrl}" class="doc-iframe" allow="autoplay"></iframe></div></div>`;
       } else {
-        container.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><span>📄 Documento</span></div><div class="doc-content"><iframe src="${url}" class="doc-iframe" allow="autoplay"></iframe></div></div>`;
+        container.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><i class="fas fa-link"></i> Documento</div><div class="doc-content"><iframe src="${url}" class="doc-iframe" allow="autoplay"></iframe></div></div>`;
       }
       setTimeout(() => markModuleAsViewed(moduleId), 1000);
     }
     else if (isImageUrl(url)) {
-      container.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><span>🖼️ Imagem</span></div><div class="doc-content"><img src="${url}" class="doc-image" alt="Conteúdo da formação" onload="markModuleAsViewed('${moduleId}')" onerror="this.parentElement.innerHTML='<div class=\'doc-placeholder\'>⚠️ Imagem não disponível</div>'"></div></div>`;
+      container.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><i class="fas fa-image"></i> Imagem</div><div class="doc-content"><img src="${url}" class="doc-image" alt="Conteúdo da formação" onload="markModuleAsViewed('${moduleId}')" onerror="this.parentElement.parentElement.innerHTML='<div class=\'doc-placeholder\'><i class=\'fas fa-image\' style=\'font-size:48px;margin-bottom:16px;display:block;\'></i>⚠️ Imagem não disponível</div>'"></div></div>`;
     }
     else if (isPdfUrl(url)) {
-      // Usar iframe para PDF
-      container.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><span>📄 Documento PDF</span></div><div class="doc-content"><iframe src="${url}" class="doc-iframe" allow="autoplay"></iframe></div></div>`;
+      container.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><i class="fas fa-file-pdf"></i> Documento PDF</div><div class="doc-content"><iframe src="${url}" class="doc-iframe" allow="autoplay"></iframe></div></div>`;
       setTimeout(() => markModuleAsViewed(moduleId), 1000);
     }
     else {
-      // Fallback: iframe genérico
-      container.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><span>📁 Conteúdo</span></div><div class="doc-content"><iframe src="${url}" class="doc-iframe" allow="autoplay"></iframe></div></div>`;
+      container.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><i class="fas fa-file-alt"></i> Conteúdo</div><div class="doc-content"><iframe src="${url}" class="doc-iframe" allow="autoplay"></iframe></div></div>`;
       setTimeout(() => markModuleAsViewed(moduleId), 1000);
     }
   }
@@ -656,7 +719,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     if (fillEl && fillEl.style.width !== '100%') {
       fillEl.style.width = '100%';
       if (pctEl) pctEl.textContent = '100%';
-      toast('✅ Conteúdo visualizado! Pode confirmar a conclusão.');
+      toast('✅ Conteúdo visualizado! Pode confirmar a conclusão.', 'success');
     }
   }
 
@@ -668,12 +731,11 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     if(token && token !== 'null' && token !== 'undefined') {
       try {
         const tokenData = JSON.parse(atob(token));
-        console.log("Token encontrado:", tokenData);
         
         if(tokenData.user) {
           localStorage.setItem('usuarioAtivo', tokenData.user);
           nomeUser = tokenData.user;
-          document.getElementById('user-name-display').textContent = 'Olá, ' + nomeUser;
+          document.getElementById('user-name-display').textContent = '👤 ' + nomeUser;
         }
         
         if(tokenData.prazo) {
@@ -689,7 +751,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
       }
     }
     
-    // Prazo padrão se não vier do token
     document.getElementById('prazo-data').textContent = prazoFormacao;
     return localStorage.getItem('cursoAtualId');
   }
@@ -719,7 +780,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
         modules = data.modulos || [];
         perguntas = data.perguntas || [];
         
-        document.getElementById('user-name-display').textContent = 'Olá, ' + nomeUser;
+        document.getElementById('user-name-display').textContent = '👤 ' + nomeUser;
         document.getElementById('hero-title').textContent = cursoData.nome;
         document.getElementById('hero-desc').textContent = cursoData.descricao;
         document.getElementById('meta-duration').textContent = cursoData.duracao;
@@ -776,11 +837,15 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
       const header = document.createElement('div');
       header.className = 'section-header';
       header.onclick = () => toggleSection(module.id);
+      
+      const tipoIcon = module.tipo === 'video' ? '🎬' : module.tipo === 'text' ? '📄' : '📁';
+      const tipoTexto = module.tipo === 'video' ? 'Vídeo' : module.tipo === 'text' ? 'Texto' : 'Conteúdo';
+      
       header.innerHTML = `
         <div class="s-num">${idx + 1}</div>
         <div class="s-info">
           <div class="s-title">${module.titulo || 'Módulo ' + (idx + 1)}</div>
-          <div class="s-meta">${module.tipo === 'video' ? '🎬 Vídeo' : module.tipo === 'text' ? '📄 Texto' : '📁 Conteúdo'}</div>
+          <div class="s-meta">${tipoIcon} ${tipoTexto}</div>
         </div>
         <div class="s-status">${completedModules[module.id] ? '✅' : '▶'}</div>
       `;
@@ -815,15 +880,14 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
         setTimeout(() => markModuleAsViewed(module.id), 500);
       }
       else if (url) {
-        // Ficheiro ou URL
-        contentDiv.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><span>📄 A carregar conteúdo...</span></div><div class="doc-content" id="doc-content-${module.id}"><div style="padding:40px; text-align:center;">⏳ A carregar...</div></div></div>`;
+        contentDiv.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><i class="fas fa-spinner fa-spin"></i> A carregar conteúdo...</div><div class="doc-content" id="doc-content-${module.id}"><div style="padding:60px; text-align:center;">⏳ A carregar...</div></div></div>`;
         body.appendChild(contentDiv);
         setTimeout(() => {
           renderContent(url, `doc-content-${module.id}`, module.id);
         }, 100);
       }
       else {
-        contentDiv.innerHTML = `<div class="text-content"><p>Conteúdo não disponível.</p></div>`;
+        contentDiv.innerHTML = `<div class="text-content"><p>📭 Conteúdo não disponível.</p></div>`;
         body.appendChild(contentDiv);
         setTimeout(() => markModuleAsViewed(module.id), 500);
       }
@@ -832,16 +896,17 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
       const trackerDiv = document.createElement('div');
       trackerDiv.className = 'content-tracker';
       trackerDiv.innerHTML = `
-        <span>📊 Progresso</span>
+        <i class="fas fa-chart-simple"></i>
+        <span>Progresso do módulo</span>
         <div style="flex:1"><div class="track-prog"><div class="track-fill" id="fill-${module.id}" style="width:0%"></div></div></div>
-        <span id="pct-${module.id}" style="font-size:0.78rem;font-weight:600">0%</span>
+        <span id="pct-${module.id}" style="font-size:0.75rem;font-weight:600">0%</span>
       `;
       body.appendChild(trackerDiv);
       
       const confirmDiv = document.createElement('div');
       confirmDiv.className = 'confirm-viewed';
       confirmDiv.innerHTML = `
-        <p><strong>Confirmar conclusão</strong><br>Confirme para desbloquear o próximo módulo.</p>
+        <p><i class="fas fa-check-circle"></i> <strong>Confirmar conclusão</strong><br>Após visualizar todo o conteúdo, confirme para avançar.</p>
         <button class="btn-confirm" id="btn-confirm-${module.id}" disabled onclick="confirmModule('${module.id}')">✓ Confirmar e avançar</button>
       `;
       body.appendChild(confirmDiv);
@@ -850,7 +915,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
       confirmedDiv.className = 'confirmed-label';
       confirmedDiv.id = 'confirmed-' + module.id;
       confirmedDiv.style.display = 'none';
-      confirmedDiv.innerHTML = '✅ Módulo concluído';
+      confirmedDiv.innerHTML = '<i class="fas fa-check-circle"></i> Módulo concluído';
       body.appendChild(confirmedDiv);
       
       block.appendChild(body);
@@ -866,7 +931,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     
     showLoading(`btn-confirm-${moduleId}`, true);
     
-    // Pequeno delay para feedback visual
     await new Promise(resolve => setTimeout(resolve, 500));
     
     completedModules[moduleId] = true;
@@ -879,8 +943,14 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     const confirmedDiv = document.getElementById(`confirmed-${moduleId}`);
     if (confirmedDiv) confirmedDiv.style.display = 'flex';
     
-    toast('✅ Módulo concluído!');
+    toast('✅ Módulo concluído!', 'success');
     updateProgress();
+    
+    // Guardar progresso no localStorage
+    const progressSalvo = localStorage.getItem(`progress_${nomeUser}_${cursoId}`) || '{}';
+    const progress = JSON.parse(progressSalvo);
+    progress[moduleId] = true;
+    localStorage.setItem(`progress_${nomeUser}_${cursoId}`, JSON.stringify(progress));
     
     // Desbloquear próximo módulo
     const idx = modules.findIndex(m => m.id === moduleId);
@@ -888,14 +958,12 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
       const nextBlock = document.getElementById('block-' + modules[idx + 1].id);
       if (nextBlock) {
         nextBlock.classList.remove('locked');
-        // Rolar até o próximo módulo
         setTimeout(() => {
           nextBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 300);
       }
-      toast('📚 Próximo módulo desbloqueado!');
+      toast('📚 Próximo módulo desbloqueado!', 'info');
     } else {
-      // Último módulo - desbloquear quiz
       const quizBlock = document.getElementById('block-quiz');
       if (quizBlock) {
         quizBlock.classList.remove('locked');
@@ -904,7 +972,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
         setTimeout(() => {
           quizBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 300);
-        toast('📝 Avaliação desbloqueada!');
+        toast('📝 Avaliação final desbloqueada!', 'info');
       }
     }
     
@@ -921,20 +989,21 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
         <div class="s-num">📝</div>
         <div class="s-info">
           <div class="s-title">Avaliação Final</div>
-          <div class="s-meta">Perguntas · Nota mínima: 70%</div>
+          <div class="s-meta">🎯 Perguntas · Nota mínima: 70%</div>
         </div>
         <div class="s-status" id="status-quiz">🔒</div>
       </div>
       <div class="section-body" id="body-quiz">
         <div class="quiz-wrap" id="quiz-form">
           <div class="quiz-intro">
-            <strong>📝 Avaliação de conhecimentos</strong>
-            <p>Responde a todas as perguntas. Precisas de pelo menos 70% para ser aprovado.</p>
+            <i class="fas fa-clipboard-list" style="font-size: 1.2rem; margin-right: 8px;"></i>
+            <strong>Avaliação de conhecimentos</strong>
+            <p style="margin-top: 8px;">Responde a todas as perguntas. Precisas de pelo menos 70% para ser aprovado e receber o certificado.</p>
           </div>
           <div id="quiz-questions"></div>
           <div class="quiz-footer">
-            <span id="quiz-answered">0 respondidas</span>
-            <button class="btn-submit" id="btn-submit" disabled onclick="submitQuiz()">Submeter avaliação</button>
+            <span id="quiz-answered"><i class="far fa-circle-check"></i> 0 respondidas</span>
+            <button class="btn-submit" id="btn-submit" disabled onclick="submitQuiz()">📤 Submeter avaliação</button>
           </div>
         </div>
         <div class="result-screen" id="result-screen">
@@ -987,7 +1056,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     const answered = Object.keys(window.respostas).length;
     const answeredSpan = document.getElementById('quiz-answered');
     const submitBtn = document.getElementById('btn-submit');
-    if (answeredSpan) answeredSpan.textContent = `${answered} de ${window.totalPerguntas} respondidas`;
+    if (answeredSpan) answeredSpan.innerHTML = `<i class="fas fa-check-circle"></i> ${answered} de ${window.totalPerguntas} respondidas`;
     if (submitBtn) submitBtn.disabled = answered < window.totalPerguntas;
   }
   
@@ -1014,9 +1083,10 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     const rs = document.getElementById('result-screen');
     rs.style.display = 'block';
     document.getElementById('score-num').textContent = pct + '%';
+    
     if(passed) {
       document.getElementById('result-title').textContent = '🎉 Parabéns, aprovado!';
-      document.getElementById('result-msg').textContent = `Acertaste ${score} de ${window.totalPerguntas} perguntas (${pct}%). O teu certificado foi gerado.`;
+      document.getElementById('result-msg').innerHTML = `Acertaste ${score} de ${window.totalPerguntas} perguntas (${pct}%).<br>O teu certificado foi gerado.`;
       document.getElementById('btn-see-cert').style.display = 'inline-block';
       updateProgress();
       
@@ -1028,14 +1098,31 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
           data: fmtDate(new Date()),
           dataTimestamp: Date.now()
         });
-        toast('✅ Resultado guardado!');
-      } catch(e) { console.error('Erro ao guardar histórico:', e); }
+        toast('✅ Resultado guardado!', 'success');
+        
+        // ==================================================
+        // ✅ MARCAÇÃO DE CONCLUSÃO DO CURSO
+        // ==================================================
+        localStorage.setItem('cursoConcluido', cursoId);
+        
+        // Salvar progresso completo do curso
+        const progressCompleto = {
+          completed: true,
+          completedAt: new Date().toISOString(),
+          score: pct
+        };
+        localStorage.setItem(`curso_completo_${nomeUser}_${cursoId}`, JSON.stringify(progressCompleto));
+        
+      } catch(e) { 
+        console.error('Erro ao guardar histórico:', e); 
+      }
     } else {
       document.getElementById('result-ring').classList.add('fail');
       document.getElementById('score-num').classList.add('fail');
-      document.getElementById('result-title').textContent = 'Não aprovado';
-      document.getElementById('result-msg').textContent = `Obtiveste ${pct}% (${score}/${window.totalPerguntas} corretas). Precisas de pelo menos 70%. Podes tentar novamente.`;
+      document.getElementById('result-title').textContent = '❌ Não aprovado';
+      document.getElementById('result-msg').innerHTML = `Obtiveste ${pct}% (${score}/${window.totalPerguntas} corretas).<br>Precisas de pelo menos 70%. Podes tentar novamente.`;
       document.getElementById('btn-retry').style.display = 'inline-block';
+      toast('⚠️ Não atingiu a nota mínima. Tente novamente!', 'error');
     }
     
     showLoading('btn-submit', false);
@@ -1049,15 +1136,21 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
         el.onclick = () => selectOpt(i, Array.from(el.parentNode.children).indexOf(el));
       });
     }
-    document.getElementById('quiz-answered').textContent = `0 de ${window.totalPerguntas} respondidas`;
+    document.getElementById('quiz-answered').innerHTML = `<i class="far fa-circle-check"></i> 0 de ${window.totalPerguntas} respondidas`;
     document.getElementById('btn-submit').disabled = true;
     document.getElementById('result-screen').style.display = 'none';
     document.getElementById('quiz-form').style.display = 'block';
     document.getElementById('result-ring').classList.remove('fail');
     document.getElementById('score-num').classList.remove('fail');
+    toast('🔄 Quiz reiniciado. Boa sorte!', 'info');
   }
   
   function showCertificate() {
+    // Garantir que o curso está marcado como concluído
+    if (!localStorage.getItem('cursoConcluido')) {
+      localStorage.setItem('cursoConcluido', cursoId);
+    }
+    
     const now = new Date();
     const expiry = new Date(now); 
     expiry.setFullYear(expiry.getFullYear() + 1);
@@ -1065,7 +1158,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     const certHtml = `
       <div class="cert-screen" id="cert-screen" style="display:block">
         <div class="cert-card">
-          <div class="cert-issued">Certificado Oficial · Birkenstock S&CC Portugal</div>
+          <div class="cert-issued">CERTIFICADO OFICIAL · BIRKENSTOCK S&CC PORTUGAL</div>
           <div class="cert-emblem">🎓</div>
           <div class="cert-certify">Certifica-se que</div>
           <div class="cert-name">${nomeUser}</div>
@@ -1087,30 +1180,72 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
           <div class="cert-id">ID: ${certId}</div>
         </div>
         <div class="cert-actions">
-          <button class="btn-dl" onclick="toast('⬇️ Certificado descarregado!')">⬇️ Descarregar certificado PDF</button>
-          <button class="btn-secondary" onclick="toast('📧 Certificado enviado para o teu e-mail!')">📧 Enviar para e-mail</button>
+          <button class="btn-dl" onclick="window.print()">🖨️ Imprimir Certificado</button>
+          <button class="btn-secondary" onclick="voltarDashboard()">📊 Voltar ao Dashboard</button>
         </div>
       </div>
     `;
-    document.getElementById('modules-container').insertAdjacentHTML('beforeend', certHtml);
+    const modulesContainer = document.getElementById('modules-container');
+    const existingCert = document.getElementById('cert-screen');
+    if (existingCert) existingCert.remove();
+    modulesContainer.insertAdjacentHTML('beforeend', certHtml);
     setTimeout(() => {
       const certScreen = document.getElementById('cert-screen');
       if(certScreen) certScreen.scrollIntoView({ behavior: 'smooth' });
     }, 200);
-    toast('🏅 Certificado gerado!');
+    toast('🏅 Certificado gerado!', 'success');
+  }
+  
+  function voltarDashboard() {
+    window.location.href = 'dashboard.html';
+  }
+  
+  function sairDaFormacao() {
+    if(confirm('Tem a certeza que deseja sair? O progresso será guardado.')) {
+      window.location.href = 'dashboard.html';
+    }
   }
   
   function toggleSection(id) {
     if(id === 'quiz') {
       const block = document.getElementById('block-quiz');
-      if(block && block.classList.contains('locked')) return;
+      if(block && block.classList.contains('locked')) {
+        toast('🔒 Complete todos os módulos primeiro!', 'error');
+        return;
+      }
       const bodyQuiz = document.getElementById('body-quiz');
       if(bodyQuiz) bodyQuiz.classList.toggle('open');
     } else {
       const block = document.getElementById('block-' + id);
-      if(block && block.classList.contains('locked')) return;
+      if(block && block.classList.contains('locked')) {
+        toast('🔒 Complete o módulo anterior primeiro!', 'error');
+        return;
+      }
       const body = document.getElementById('body-' + id);
       if(body) body.classList.toggle('open');
+    }
+  }
+  
+  // Carregar progresso salvo do curso
+  function carregarProgressoSalvo() {
+    const progressSalvo = localStorage.getItem(`progress_${nomeUser}_${cursoId}`);
+    if (progressSalvo) {
+      const progress = JSON.parse(progressSalvo);
+      Object.keys(progress).forEach(moduleId => {
+        if (progress[moduleId] === true) {
+          completedModules[moduleId] = true;
+        }
+      });
+    }
+    
+    // Verificar se o curso já foi concluído anteriormente
+    const cursoCompleto = localStorage.getItem(`curso_completo_${nomeUser}_${cursoId}`);
+    if (cursoCompleto) {
+      const completo = JSON.parse(cursoCompleto);
+      if (completo.completed) {
+        quizPassed = true;
+        toast('🎓 Este curso já foi concluído anteriormente!', 'success');
+      }
     }
   }
   
@@ -1123,6 +1258,8 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   window.confirmModule = confirmModule;
   window.toast = toast;
   window.markModuleAsViewed = markModuleAsViewed;
+  window.voltarDashboard = voltarDashboard;
+  window.sairDaFormacao = sairDaFormacao;
   
   window.addEventListener('load', function() {
     const usuarioAtivo = localStorage.getItem('usuarioAtivo');
@@ -1131,10 +1268,12 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
       return;
     }
     nomeUser = usuarioAtivo;
-    document.getElementById('user-name-display').textContent = 'Olá, ' + nomeUser;
+    document.getElementById('user-name-display').textContent = '👤 ' + nomeUser;
     
     const cursoIdCarregado = lerTokenUrl();
     if(cursoIdCarregado) {
+      cursoId = cursoIdCarregado;
+      carregarProgressoSalvo();
       carregarFormacao(cursoIdCarregado);
     } else {
       document.getElementById('loading').innerHTML = '❌ Nenhuma formação selecionada. <a href="dashboard.html" style="color: var(--birkenstock-blue);">Voltar ao dashboard</a>';
