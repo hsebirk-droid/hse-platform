@@ -28,6 +28,7 @@
   --font-body: 'DM Sans', sans-serif;
   --radius: 16px;
   --shadow: 0 4px 20px rgba(0,0,0,0.08);
+  --shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -193,15 +194,21 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   margin-bottom: 28px;
   overflow: hidden;
   box-shadow: var(--shadow);
+  transition: all 0.3s ease;
 }
-.section-block.locked { opacity: 0.6; pointer-events: none; }
-.section-block.completed { border-left: 4px solid var(--birkenstock-gold); border-right: 4px solid var(--birkenstock-gold); }
+.section-block.locked { opacity: 0.6; pointer-events: none; filter: grayscale(0.1); }
+.section-block.completed { 
+  border-left: 4px solid var(--birkenstock-gold);
+  border-right: 4px solid var(--birkenstock-gold);
+  opacity: 0.8;
+}
 .section-header {
   padding: 28px 32px;
   display: flex;
   align-items: center;
   gap: 24px;
   cursor: pointer;
+  transition: background 0.2s;
 }
 .section-header:hover { background: #fafaf8; }
 .s-num {
@@ -222,8 +229,16 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
 .s-title { font-family: var(--font-head); font-size: 1.3rem; font-weight: 700; color: var(--birkenstock-blue); margin-bottom: 8px; }
 .s-meta { font-size: 0.85rem; color: var(--birkenstock-gray); display: flex; align-items: center; gap: 16px; }
 .s-status { font-size: 1.4rem; }
-.section-body { padding: 0 32px 32px; border-top: 1px solid var(--birkenstock-border); display: none; }
-.section-body.open { display: block; }
+.section-body { 
+  padding: 0 32px 32px; 
+  border-top: 1px solid var(--birkenstock-border); 
+  display: block; 
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
 .video-wrap {
   background: #111;
@@ -248,8 +263,8 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   gap: 12px;
   border-bottom: 1px solid var(--birkenstock-border);
 }
-.doc-content { min-height: 600px; max-height: 750px; overflow: auto; background: #f5f5f5; text-align: center; }
-.doc-iframe { width: 100%; height: 650px; border: none; }
+.doc-content { min-height: 400px; overflow: auto; background: #f5f5f5; text-align: center; padding: 20px; }
+.doc-iframe { width: 100%; height: 500px; border: none; }
 .text-content { 
   font-size: 1rem; 
   line-height: 1.8; 
@@ -294,8 +309,9 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
+  transition: all 0.2s;
 }
-.btn-confirm:hover:not(:disabled) { background: var(--birkenstock-blue-dark); }
+.btn-confirm:hover:not(:disabled) { background: var(--birkenstock-blue-dark); transform: translateY(-2px); }
 .btn-confirm:disabled { background: var(--birkenstock-gray); cursor: not-allowed; }
 .confirmed-label { 
   display: flex; 
@@ -436,6 +452,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 .toast.success { background: var(--success); }
+.toast.error { background: var(--danger); }
 .loading { text-align: center; padding: 80px; color: var(--birkenstock-gray); }
 
 @media (max-width: 768px) {
@@ -443,6 +460,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   .hero h1 { font-size: 1.6rem; }
   .main { padding: 24px 20px 60px; }
   .top-bar { padding: 12px 20px; }
+  .progress-strip { top: 66px; padding: 16px 20px; }
   .section-header { padding: 20px; }
   .s-num { width: 44px; height: 44px; font-size: 1rem; }
   .s-title { font-size: 1.1rem; }
@@ -511,10 +529,11 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   let cursoId = null, nomeUser = localStorage.getItem('usuarioAtivo') || 'Colaborador';
   let cursoData = { nome: '', duracao: '', descricao: '' };
   let prazoFormacao = '31/12/2026';
+  let currentOpenSection = null;
 
   function toast(msg, type = 'info') { 
     const t = document.getElementById('toast'); 
-    t.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-info-circle'}"></i> ${msg}`;
+    t.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i> ${msg}`;
     t.className = `toast show ${type}`;
     setTimeout(() => t.classList.remove('show'), 4000); 
   }
@@ -559,6 +578,17 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
         modulesContainer.style.display = 'block';
         renderModules();
         updateProgress();
+        
+        // Abrir automaticamente o primeiro módulo não concluído
+        setTimeout(() => {
+          const firstUnlocked = document.querySelector('.section-block:not(.locked)');
+          if (firstUnlocked) {
+            const id = firstUnlocked.id.replace('block-', '');
+            if (id !== 'quiz') {
+              openSection(id);
+            }
+          }
+        }, 500);
       } else { loadingDiv.innerHTML = '❌ Formação não encontrada.'; }
     } catch(error) { loadingDiv.innerHTML = '❌ Erro: ' + error.message; }
   }
@@ -580,49 +610,153 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     if(quizPassed) { const dot = document.createElement('div'); dot.className = 'step-dot done'; dotsContainer.appendChild(dot); }
   }
 
+  function openSection(moduleId) {
+    // Fechar a seção atual se estiver aberta
+    if (currentOpenSection && currentOpenSection !== moduleId) {
+      const currentBody = document.getElementById(`body-${currentOpenSection}`);
+      if (currentBody) currentBody.classList.remove('open');
+    }
+    const body = document.getElementById(`body-${moduleId}`);
+    if (body) {
+      body.classList.add('open');
+      currentOpenSection = moduleId;
+      // Scroll para o módulo
+      document.getElementById(`block-${moduleId}`).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
   function renderModules() {
     const container = document.getElementById('modules-container');
     container.innerHTML = '';
+    
     modules.forEach((module, idx) => {
+      const isLocked = idx > 0 && !completedModules[modules[idx-1]?.id];
+      const isCompleted = completedModules[module.id];
+      
       const block = document.createElement('div');
-      block.className = 'section-block' + (completedModules[module.id] ? ' completed' : '');
-      block.id = 'block-' + module.id;
+      block.className = `section-block ${isLocked && !isCompleted ? 'locked' : ''} ${isCompleted ? 'completed' : ''}`;
+      block.id = `block-${module.id}`;
       block.innerHTML = `
         <div class="section-header" onclick="toggleSection('${module.id}')">
           <div class="s-num">${idx + 1}</div>
-          <div class="s-info"><div class="s-title">${escapeHtml(module.titulo)}</div><div class="s-meta">${module.tipo === 'video' ? '🎬 Vídeo' : module.tipo === 'text' ? '📄 Texto' : '📁 Conteúdo'}</div></div>
-          <div class="s-status">${completedModules[module.id] ? '✅' : '▶'}</div>
+          <div class="s-info">
+            <div class="s-title">${escapeHtml(module.titulo)}</div>
+            <div class="s-meta">${module.tipo === 'video' ? '🎬 Vídeo' : module.tipo === 'text' ? '📄 Texto' : '📁 Conteúdo'}</div>
+          </div>
+          <div class="s-status">${isCompleted ? '✅' : (isLocked ? '🔒' : '▶')}</div>
         </div>
         <div class="section-body" id="body-${module.id}">
-          <div id="content-${module.id}">Carregando conteúdo...</div>
-          <div class="content-tracker"><span>📊 Progresso</span><div style="flex:1"><div class="track-prog"><div class="track-fill" id="fill-${module.id}" style="width:0%"></div></div></div><span id="pct-${module.id}">0%</span></div>
-          <div class="confirm-viewed"><p><strong>Confirmar conclusão</strong><br>Confirme para avançar.</p><button class="btn-confirm" id="btn-confirm-${module.id}" disabled onclick="confirmModule('${module.id}')">✓ Confirmar</button></div>
-          <div class="confirmed-label" id="confirmed-${module.id}" style="display:none">✅ Módulo concluído</div>
+          <div id="content-${module.id}" style="min-height: 200px;">Carregando conteúdo...</div>
+          <div class="content-tracker">
+            <i class="fas fa-chart-simple"></i>
+            <span>Progresso do módulo</span>
+            <div style="flex:1"><div class="track-prog"><div class="track-fill" id="fill-${module.id}" style="width:0%"></div></div></div>
+            <span id="pct-${module.id}" style="font-weight:600">0%</span>
+          </div>
+          <div class="confirm-viewed">
+            <p><i class="fas fa-check-circle"></i> <strong>Confirmar conclusão</strong><br>Após visualizar todo o conteúdo, confirme para avançar.</p>
+            <button class="btn-confirm" id="btn-confirm-${module.id}" disabled onclick="confirmModule('${module.id}')">✓ Confirmar e avançar</button>
+          </div>
+          <div class="confirmed-label" id="confirmed-${module.id}" style="display:none"><i class="fas fa-check-circle"></i> Módulo concluído</div>
         </div>
       `;
       container.appendChild(block);
+      
+      // Carregar conteúdo
       setTimeout(() => {
         const url = module.conteudo?.url || '';
         const contentDiv = document.getElementById(`content-${module.id}`);
-        if(module.tipo === 'text' && module.conteudo?.texto) contentDiv.innerHTML = `<div class="text-content">${module.conteudo.texto}</div>`;
-        else if(url) contentDiv.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><i class="fas fa-file"></i> Conteúdo</div><div class="doc-content"><iframe src="${url}" class="doc-iframe"></iframe></div></div>`;
-        else contentDiv.innerHTML = '<div class="text-content">Conteúdo não disponível.</div>';
-        setTimeout(() => { document.getElementById(`btn-confirm-${module.id}`).disabled = false; document.getElementById(`fill-${module.id}`).style.width = '100%'; document.getElementById(`pct-${module.id}`).textContent = '100%'; }, 500);
+        
+        if(module.tipo === 'text' && module.conteudo?.texto) {
+          contentDiv.innerHTML = `<div class="text-content">${module.conteudo.texto}</div>`;
+          document.getElementById(`btn-confirm-${module.id}`).disabled = false;
+          document.getElementById(`fill-${module.id}`).style.width = '100%';
+          document.getElementById(`pct-${module.id}`).textContent = '100%';
+        }
+        else if(url) {
+          if(url.includes('youtube.com') || url.includes('youtu.be')) {
+            let videoId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
+            contentDiv.innerHTML = `<div class="video-wrap"><iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe></div>`;
+            document.getElementById(`btn-confirm-${module.id}`).disabled = false;
+            document.getElementById(`fill-${module.id}`).style.width = '100%';
+            document.getElementById(`pct-${module.id}`).textContent = '100%';
+          }
+          else {
+            contentDiv.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><i class="fas fa-link"></i> Conteúdo</div><div class="doc-content"><iframe src="${url}" class="doc-iframe" allow="autoplay"></iframe></div></div>`;
+            document.getElementById(`btn-confirm-${module.id}`).disabled = false;
+            document.getElementById(`fill-${module.id}`).style.width = '100%';
+            document.getElementById(`pct-${module.id}`).textContent = '100%';
+          }
+        }
+        else {
+          contentDiv.innerHTML = '<div class="text-content">Conteúdo não disponível.</div>';
+          document.getElementById(`btn-confirm-${module.id}`).disabled = false;
+          document.getElementById(`fill-${module.id}`).style.width = '100%';
+          document.getElementById(`pct-${module.id}`).textContent = '100%';
+        }
       }, 100);
     });
     renderQuiz();
   }
 
   async function confirmModule(moduleId) {
+    const btn = document.getElementById(`btn-confirm-${moduleId}`);
+    if (!btn || btn.disabled) return;
+    
+    btn.innerHTML = '<span class="loading-spinner"></span> A confirmar...';
+    btn.disabled = true;
+    
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     completedModules[moduleId] = true;
-    document.getElementById(`block-${moduleId}`).classList.add('completed');
-    document.getElementById(`btn-confirm-${moduleId}`).style.display = 'none';
-    document.getElementById(`confirmed-${moduleId}`).style.display = 'flex';
+    const block = document.getElementById(`block-${moduleId}`);
+    block.classList.add('completed');
+    
+    const confirmDiv = document.getElementById(`btn-confirm-${moduleId}`);
+    if (confirmDiv) confirmDiv.style.display = 'none';
+    const confirmedDiv = document.getElementById(`confirmed-${moduleId}`);
+    if (confirmedDiv) confirmedDiv.style.display = 'flex';
+    
     toast('✅ Módulo concluído!', 'success');
     updateProgress();
+    
+    // Fechar o módulo atual
+    const currentBody = document.getElementById(`body-${moduleId}`);
+    if (currentBody) currentBody.classList.remove('open');
+    
     const idx = modules.findIndex(m => m.id === moduleId);
-    if(idx < modules.length - 1) document.getElementById(`block-${modules[idx+1].id}`).classList.remove('locked');
-    else { document.getElementById('block-quiz').classList.remove('locked'); document.getElementById('status-quiz').innerHTML = '📝'; toast('📝 Avaliação desbloqueada!', 'info'); }
+    if (idx < modules.length - 1) {
+      // Abrir automaticamente o próximo módulo
+      const nextModuleId = modules[idx+1].id;
+      const nextBlock = document.getElementById(`block-${nextModuleId}`);
+      if (nextBlock) {
+        nextBlock.classList.remove('locked');
+        setTimeout(() => {
+          openSection(nextModuleId);
+        }, 500);
+      }
+      toast('📚 Próximo módulo desbloqueado e aberto!', 'info');
+    } else {
+      // Último módulo - abrir automaticamente a avaliação
+      const quizBlock = document.getElementById('block-quiz');
+      if (quizBlock) {
+        quizBlock.classList.remove('locked');
+        const statusQuiz = document.getElementById('status-quiz');
+        if (statusQuiz) statusQuiz.innerHTML = '📝';
+        setTimeout(() => {
+          const quizBody = document.getElementById('body-quiz');
+          if (quizBody) {
+            quizBody.classList.add('open');
+            currentOpenSection = 'quiz';
+            quizBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 500);
+        toast('📝 Avaliação final desbloqueada!', 'info');
+      }
+    }
+    
+    btn.innerHTML = '✓ Confirmar e avançar';
+    btn.disabled = false;
   }
 
   function renderQuiz() {
@@ -632,36 +766,85 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     quizBlock.id = 'block-quiz';
     quizBlock.innerHTML = `
       <div class="section-header" onclick="toggleSection('quiz')">
-        <div class="s-num">📝</div><div class="s-info"><div class="s-title">Avaliação Final</div><div class="s-meta">Nota mínima: 70%</div></div>
+        <div class="s-num">📝</div>
+        <div class="s-info">
+          <div class="s-title">Avaliação Final</div>
+          <div class="s-meta"><i class="fas fa-star"></i> Nota mínima: 70%</div>
+        </div>
         <div class="s-status" id="status-quiz">🔒</div>
       </div>
       <div class="section-body" id="body-quiz">
-        <div id="quiz-questions"></div>
-        <div class="quiz-footer"><span id="quiz-answered">0 respondidas</span><button class="btn-submit" id="btn-submit" disabled onclick="submitQuiz()">Submeter</button></div>
-        <div class="result-screen" id="result-screen"><div class="result-score-ring" id="result-ring"><div class="score-num" id="score-num">0%</div></div><h2 id="result-title"></h2><p id="result-msg"></p><div class="result-actions"><button class="btn-dl" id="btn-see-cert" onclick="showCertificate()" style="display:none">🏅 Certificado</button><button class="btn-secondary" id="btn-retry" onclick="retryQuiz()" style="display:none">🔄 Tentar</button></div></div>
+        <div class="quiz-wrap" id="quiz-form">
+          <div class="quiz-intro">
+            <i class="fas fa-clipboard-list"></i>
+            <strong>Avaliação de conhecimentos</strong>
+            <p style="margin-top: 8px;">Responde a todas as perguntas. Precisas de pelo menos 70% para ser aprovado e receber o certificado.</p>
+          </div>
+          <div id="quiz-questions"></div>
+          <div class="quiz-footer">
+            <span id="quiz-answered"><i class="far fa-circle-check"></i> 0 respondidas</span>
+            <button class="btn-submit" id="btn-submit" disabled onclick="submitQuiz()"><i class="fas fa-paper-plane"></i> Submeter avaliação</button>
+          </div>
+        </div>
+        <div class="result-screen" id="result-screen">
+          <div class="result-score-ring" id="result-ring">
+            <div class="score-num" id="score-num">0%</div>
+          </div>
+          <h2 id="result-title"></h2>
+          <p id="result-msg"></p>
+          <div class="result-actions">
+            <button class="btn-dl" id="btn-see-cert" onclick="showCertificate()" style="display:none"><i class="fas fa-certificate"></i> Ver Certificado</button>
+            <button class="btn-secondary" id="btn-retry" onclick="retryQuiz()" style="display:none"><i class="fas fa-redo"></i> Tentar novamente</button>
+          </div>
+        </div>
       </div>
     `;
     container.appendChild(quizBlock);
-    if(!perguntas.length) perguntas = [{ texto: "O que é importante para o desenvolvimento profissional?", opcoes: ["Formação contínua", "Estagnação", "Falta de interesse", "Desmotivação"], correta: "A" }];
-    document.getElementById('quiz-questions').innerHTML = perguntas.map((q, idx) => `<div class="question"><div class="question-text">${q.texto}</div><div class="options" id="opts-${idx}">${q.opcoes.map((opt, i) => `<div class="option-item" onclick="selectOpt(${idx}, ${i})"><div class="option-letter">${String.fromCharCode(65+i)}</div>${opt}</div>`).join('')}</div></div>`).join('');
+    
+    if(!perguntas.length) {
+      perguntas = [{ texto: "O que é importante para o desenvolvimento profissional?", opcoes: ["Formação contínua", "Estagnação", "Falta de interesse", "Desmotivação"], correta: "A" }];
+    }
+    document.getElementById('quiz-questions').innerHTML = perguntas.map((q, idx) => `
+      <div class="question">
+        <div class="question-text">${q.texto}</div>
+        <div class="options" id="opts-${idx}">
+          ${q.opcoes.map((opt, i) => `<div class="option-item" onclick="selectOpt(${idx}, ${i})"><div class="option-letter">${String.fromCharCode(65+i)}</div>${opt}</div>`).join('')}
+        </div>
+      </div>
+    `).join('');
     window.perguntas = perguntas; window.respostas = {}; window.totalPerguntas = perguntas.length;
   }
 
-  function selectOpt(qIdx, optIdx) { document.querySelectorAll(`#opts-${qIdx} .option-item`).forEach(el => el.classList.remove('selected')); document.querySelectorAll(`#opts-${qIdx} .option-item`)[optIdx].classList.add('selected'); window.respostas[qIdx] = String.fromCharCode(65+optIdx); document.getElementById('quiz-answered').innerHTML = `${Object.keys(window.respostas).length} de ${window.totalPerguntas} respondidas`; document.getElementById('btn-submit').disabled = Object.keys(window.respostas).length < window.totalPerguntas; }
+  function selectOpt(qIdx, optIdx) { 
+    document.querySelectorAll(`#opts-${qIdx} .option-item`).forEach(el => el.classList.remove('selected')); 
+    document.querySelectorAll(`#opts-${qIdx} .option-item`)[optIdx].classList.add('selected'); 
+    window.respostas[qIdx] = String.fromCharCode(65+optIdx); 
+    const answered = Object.keys(window.respostas).length;
+    document.getElementById('quiz-answered').innerHTML = `<i class="fas fa-check-circle"></i> ${answered} de ${window.totalPerguntas} respondidas`; 
+    document.getElementById('btn-submit').disabled = answered < window.totalPerguntas; 
+  }
 
   async function submitQuiz() {
+    const submitBtn = document.getElementById('btn-submit');
+    submitBtn.innerHTML = '<span class="loading-spinner"></span> A processar...';
+    submitBtn.disabled = true;
+    
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     let score = 0;
-    for(let i = 0; i < window.totalPerguntas; i++) { if(window.respostas[i] === window.perguntas[i].correta) score++; }
+    for(let i = 0; i < window.totalPerguntas; i++) { 
+      if(window.respostas[i] === window.perguntas[i].correta) score++; 
+    }
     const pct = Math.round((score / window.totalPerguntas) * 100);
     const passed = pct >= 70;
     quizPassed = passed;
-    document.getElementById('quiz-questions').style.display = 'none';
-    document.getElementById('quiz-footer').style.display = 'none';
+    document.getElementById('quiz-form').style.display = 'none';
     document.getElementById('result-screen').style.display = 'block';
     document.getElementById('score-num').textContent = pct + '%';
+    
     if(passed) {
       document.getElementById('result-title').innerHTML = '🎉 Aprovado!';
-      document.getElementById('result-msg').innerHTML = `Acertaste ${score}/${window.totalPerguntas} (${pct}%)`;
+      document.getElementById('result-msg').innerHTML = `Acertaste ${score}/${window.totalPerguntas} (${pct}%)<br>O teu certificado foi gerado.`;
       document.getElementById('btn-see-cert').style.display = 'inline-block';
       updateProgress();
       localStorage.setItem('cursoConcluido', cursoId);
@@ -670,27 +853,31 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     } else {
       document.getElementById('result-ring').classList.add('fail');
       document.getElementById('result-title').innerHTML = '❌ Não aprovado';
-      document.getElementById('result-msg').innerHTML = `Obtiveste ${pct}%. Precisas de 70%.`;
+      document.getElementById('result-msg').innerHTML = `Obtiveste ${pct}% (${score}/${window.totalPerguntas} corretas).<br>Precisas de pelo menos 70%. Podes tentar novamente.`;
       document.getElementById('btn-retry').style.display = 'inline-block';
+      toast('⚠️ Não atingiu a nota mínima. Tente novamente!', 'error');
     }
+    
+    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submeter avaliação';
+    submitBtn.disabled = false;
   }
 
   function retryQuiz() {
     window.respostas = {};
-    document.getElementById('quiz-questions').style.display = 'block';
-    document.getElementById('quiz-footer').style.display = 'flex';
+    document.getElementById('quiz-form').style.display = 'block';
     document.getElementById('result-screen').style.display = 'none';
     document.getElementById('btn-submit').disabled = true;
-    document.getElementById('quiz-answered').innerHTML = `0 de ${window.totalPerguntas} respondidas`;
+    document.getElementById('quiz-answered').innerHTML = `<i class="far fa-circle-check"></i> 0 de ${window.totalPerguntas} respondidas`;
     document.getElementById('result-ring').classList.remove('fail');
     document.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected', 'correct', 'wrong'));
+    toast('🔄 Quiz reiniciado. Boa sorte!', 'info');
   }
 
   function showCertificate() {
     const now = new Date();
     const certId = 'CERT-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
     const nota = document.getElementById('score-num').textContent;
-    const imagemFundo = 'imagens/fundo_certificado.png';
+    const imagemFundo = 'https://hsebirk-droid.github.io/hse-platform/imagens/fundo_certificado.png';
     const certHtml = `
       <div class="cert-screen" id="cert-screen" style="display:block">
         <div class="cert-card" style="background-image: url('${imagemFundo}'); background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 500px; position: relative; margin-top: 24px; border-radius: 16px; overflow: hidden;">
@@ -729,9 +916,57 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
 
   function voltarDashboard() { window.location.href = 'dashboard.html'; }
   function sairDaFormacao() { if(confirm('Sair? O progresso será guardado.')) window.location.href = 'dashboard.html'; }
-  function toggleSection(id) { if(id === 'quiz') { if(document.getElementById('block-quiz').classList.contains('locked')) { toast('Complete os módulos primeiro!', 'error'); return; } document.getElementById('body-quiz').classList.toggle('open'); } else { if(document.getElementById('block-' + id).classList.contains('locked')) { toast('Complete o módulo anterior!', 'error'); return; } document.getElementById('body-' + id).classList.toggle('open'); } }
+  
+  function toggleSection(id) {
+    if(id === 'quiz') { 
+      if(document.getElementById('block-quiz').classList.contains('locked')) { 
+        toast('Complete os módulos primeiro!', 'error'); 
+        return; 
+      } 
+      const bodyQuiz = document.getElementById('body-quiz');
+      if (bodyQuiz) {
+        if (currentOpenSection && currentOpenSection !== 'quiz') {
+          const currentBody = document.getElementById(`body-${currentOpenSection}`);
+          if (currentBody) currentBody.classList.remove('open');
+        }
+        bodyQuiz.classList.toggle('open');
+        if (bodyQuiz.classList.contains('open')) {
+          currentOpenSection = 'quiz';
+        } else {
+          currentOpenSection = null;
+        }
+      }
+    } else { 
+      const block = document.getElementById('block-' + id);
+      if(block && block.classList.contains('locked')) { 
+        toast('Complete o módulo anterior!', 'error'); 
+        return; 
+      }
+      const body = document.getElementById('body-' + id);
+      if (body) {
+        if (currentOpenSection && currentOpenSection !== id) {
+          const currentBody = document.getElementById(`body-${currentOpenSection}`);
+          if (currentBody) currentBody.classList.remove('open');
+        }
+        body.classList.toggle('open');
+        if (body.classList.contains('open')) {
+          currentOpenSection = id;
+        } else {
+          currentOpenSection = null;
+        }
+      }
+    }
+  }
 
-  window.toggleSection = toggleSection; window.selectOpt = selectOpt; window.submitQuiz = submitQuiz; window.retryQuiz = retryQuiz; window.showCertificate = showCertificate; window.confirmModule = confirmModule; window.voltarDashboard = voltarDashboard; window.sairDaFormacao = sairDaFormacao;
+  window.toggleSection = toggleSection;
+  window.selectOpt = selectOpt;
+  window.submitQuiz = submitQuiz;
+  window.retryQuiz = retryQuiz;
+  window.showCertificate = showCertificate;
+  window.confirmModule = confirmModule;
+  window.voltarDashboard = voltarDashboard;
+  window.sairDaFormacao = sairDaFormacao;
+  window.openSection = openSection;
 
   window.addEventListener('load', function() {
     if(!localStorage.getItem('usuarioAtivo')) { window.location.href = 'login.html'; return; }
