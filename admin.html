@@ -320,19 +320,16 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     <button class="tab" data-tab="historico">📊 Histórico</button>
   </div>
 
-  <!-- Dashboard -->
   <div class="sec active" id="sec-dashboard">
     <div class="sec-head"><h2>📈 Visão Geral</h2></div>
     <div class="sec-body"><div id="recent-activities" class="item-list"></div></div>
   </div>
 
-  <!-- Lista Formações -->
   <div class="sec" id="sec-lista-formacoes">
     <div class="sec-head"><h2>📚 Gestão de Formações</h2></div>
     <div class="sec-body"><div id="formacoes-list" class="item-list"></div></div>
   </div>
 
-  <!-- Criar Formação -->
   <div class="sec" id="sec-formacao">
     <div class="sec-head"><h2>🎓 Criar Nova Formação</h2><div id="editando-id" style="color:white;font-size:12px;"></div></div>
     <div class="sec-body">
@@ -342,7 +339,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       </div>
       <div class="fg"><label>Descrição</label><textarea id="f-descricao" rows="2" placeholder="Descreva o conteúdo da formação..."></textarea></div>
       
-      <!-- Módulos -->
       <div style="margin-top: 24px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
           <h3 style="font-size: 1.1rem; color: var(--birkenstock-blue);"><i class="fas fa-layer-group"></i> Módulos da Formação</h3>
@@ -355,7 +351,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
         <div id="modulos-container" style="background: var(--birkenstock-beige); border-radius: 12px; padding: 16px; min-height: 150px;"></div>
       </div>
       
-      <!-- Perguntas -->
       <div style="margin-top: 24px;">
         <div style="display: flex; justify-content: space-between; margin-bottom: 12px; align-items: center;">
           <h3 style="font-size: 1.1rem; color: var(--birkenstock-blue);"><i class="fas fa-question-circle"></i> Perguntas da Avaliação</h3>
@@ -371,7 +366,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     </div>
   </div>
 
-  <!-- Atribuir -->
   <div class="sec" id="sec-atribuir">
     <div class="sec-head"><h2>📨 Atribuir Formações</h2></div>
     <div class="sec-body">
@@ -395,40 +389,36 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     </div>
   </div>
 
-  <!-- Certificado -->
   <div class="sec" id="sec-certificado">
     <div class="sec-head">
       <h2>🏅 Editor de Certificado</h2>
       <div>
-        <button class="btn-sm" onclick="abrirPreviewCertificado()"><i class="fas fa-eye"></i> Pré-visualizar</button>
-        <button class="btn-sm btn-success" onclick="salvarTemplateCertificado()"><i class="fas fa-save"></i> Salvar</button>
-        <button class="btn-sm btn-warning" onclick="resetTemplateCertificado()"><i class="fas fa-undo"></i> Restaurar</button>
+        <button class="btn-sm btn-success" onclick="salvarConfigCertificado()">💾 Salvar</button>
+        <button class="btn-sm btn-warning" onclick="resetarConfigCertificado()">↺ Restaurar</button>
       </div>
     </div>
     <div class="sec-body">
       <div class="fg">
-        <label><i class="fas fa-image"></i> Imagem de Fundo</label>
-        <input type="text" id="cert-fundo-imagem" placeholder="https://hsebirk-droid.github.io/hse-platform/imagens/fundo_certificado.png">
-        <small>Cole o link completo da imagem</small>
+        <label><i class="fas fa-image"></i> URL da Imagem de Fundo</label>
+        <input type="text" id="fundo-url" style="font-family: monospace;" value="https://hsebirk-droid.github.io/hse-platform/imagens/fundo_certificado.png">
+        <small>Use o link completo da sua imagem</small>
       </div>
-      <div class="config-grid">
-        <div class="fg"><label>Nome - Top (%)</label><input type="number" id="cert-nome-top" value="45" step="1" min="0" max="100"></div>
-        <div class="fg"><label>Texto "concluiu" - Top (%)</label><input type="number" id="cert-texto-top" value="55" step="1" min="0" max="100"></div>
-        <div class="fg"><label>Formação - Top (%)</label><input type="number" id="cert-formacao-top" value="62" step="1" min="0" max="100"></div>
-        <div class="fg"><label>Nota - Esquerda (%)</label><input type="number" id="cert-nota-left" value="12" step="1" min="0" max="100"><small>Bottom (%)</small><input type="number" id="cert-nota-bottom" value="12" step="1" min="0" max="100" style="margin-top:5px;"></div>
-        <div class="fg"><label>Data - Bottom (%)</label><input type="number" id="cert-data-bottom" value="12" step="1" min="0" max="100"></div>
-        <div class="fg"><label>ID - Direita (%)</label><input type="number" id="cert-id-right" value="12" step="1" min="0" max="100"><small>Bottom (%)</small><input type="number" id="cert-id-bottom" value="12" step="1" min="0" max="100" style="margin-top:5px;"></div>
+
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 20px 0;">
+        <div class="fg"><label>Nome (Top %)</label><input type="number" id="pos-nome" value="42"></div>
+        <div class="fg"><label>Texto "concluiu" (Top %)</label><input type="number" id="pos-texto" value="52"></div>
+        <div class="fg"><label>Formação (Top %)</label><input type="number" id="pos-formacao" value="60"></div>
+        <div class="fg"><label>Nota, Data, ID (Bottom %)</label><input type="number" id="pos-bottom" value="10"></div>
       </div>
-      <div class="config-colors">
-        <div class="fg"><label>Cor do Nome</label><input type="color" id="cert-cor-nome" value="#00338D"></div>
-        <div class="fg"><label>Cor da Formação</label><input type="color" id="cert-cor-formacao" value="#C5A059"></div>
-        <div class="fg"><label>Cor dos Valores</label><input type="color" id="cert-cor-valores" value="#00338D"></div>
+
+      <div style="text-align: center; margin: 20px 0;">
+        <button class="btn" onclick="mostrarPreview()" style="width: auto; padding: 10px 30px;"><i class="fas fa-eye"></i> Ver Certificado</button>
       </div>
-      <div style="margin-top:24px;text-align:center;"><button class="btn" onclick="abrirPreviewCertificado()" style="width:auto;padding:12px 32px;"><i class="fas fa-eye"></i> Abrir Pré-visualização</button></div>
+
+      <div id="area-preview" style="margin-top: 30px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"></div>
     </div>
   </div>
 
-  <!-- Colaboradores -->
   <div class="sec" id="sec-colaboradores">
     <div class="sec-head"><h2>👥 Colaboradores</h2></div>
     <div class="sec-body">
@@ -446,7 +436,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     </div>
   </div>
 
-  <!-- Segurança -->
   <div class="sec" id="sec-seguranca">
     <div class="sec-head"><h2>🔐 Segurança</h2></div>
     <div class="sec-body">
@@ -460,11 +449,15 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     </div>
   </div>
 
-  <!-- Histórico -->
   <div class="sec" id="sec-historico">
     <div class="sec-head"><h2>📊 Histórico de Formações</h2><div><button class="btn-sm" onclick="exportarHistoricoCSV()"><i class="fas fa-file-csv"></i> CSV</button><button class="btn-sm" onclick="exportarHistoricoExcel()"><i class="fas fa-file-excel"></i> Excel</button></div></div>
     <div class="sec-body">
-      <div style="overflow-x:auto;"><table><thead><tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr></thead><tbody id="lista-notas"></tbody></table></div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr></thead>
+          <tbody id="lista-notas"></tbody>
+        </table>
+      </div>
       <button id="btn-limpar" class="btn-sm btn-danger" style="margin-top:16px;"><i class="fas fa-trash"></i> Limpar Histórico</button>
     </div>
   </div>
@@ -474,8 +467,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
 <div id="modal-modulo" class="modal"><div class="modal-content"><div class="modal-header"><h3 id="modal-modulo-titulo">Adicionar Módulo</h3><span class="modal-close" onclick="fecharModal('modal-modulo')">&times;</span></div><div class="fg"><label>Título *</label><input type="text" id="modulo-titulo"></div><div class="fg"><label>Duração</label><input type="text" id="modulo-duracao" placeholder="15 min"></div><div id="modulo-conteudo-video" style="display:none;"><div class="fg"><label>URL Vídeo</label><input type="text" id="modulo-video-url"></div></div><div id="modulo-conteudo-texto" style="display:none;"><div class="fg"><label>Conteúdo</label><textarea id="modulo-texto-conteudo" rows="6"></textarea></div></div><div id="modulo-conteudo-file" style="display:none;"><div class="fg"><label>URL Ficheiro</label><input type="text" id="modulo-file-url"></div></div><button class="btn" id="btn-salvar-modulo">Salvar</button></div></div>
 
 <div id="modal-pergunta" class="modal"><div class="modal-content"><div class="modal-header"><h3>Adicionar Pergunta</h3><span class="modal-close" onclick="fecharModal('modal-pergunta')">&times;</span></div><div class="fg"><label>Pergunta</label><input type="text" id="pergunta-texto"></div><div class="fg"><label>Opção A</label><input type="text" id="pergunta-opcao-a"></div><div class="fg"><label>Opção B</label><input type="text" id="pergunta-opcao-b"></div><div class="fg"><label>Opção C</label><input type="text" id="pergunta-opcao-c"></div><div class="fg"><label>Opção D</label><input type="text" id="pergunta-opcao-d"></div><div class="fg"><label>Correta</label><select id="pergunta-correta"><option>A</option><option>B</option><option>C</option><option>D</option></select></div><button class="btn" id="btn-salvar-pergunta">Salvar</button></div></div>
-
-<div id="preview-modal" class="modal"><div class="modal-content"><div class="modal-header"><h3>Pré-visualização do Certificado</h3><span class="modal-close" onclick="fecharPreview()">&times;</span></div><div id="preview-conteudo" style="min-height:500px;"></div><div style="margin-top:20px;text-align:center;"><button class="btn-sm btn-success" onclick="salvarTemplateCertificado()">💾 Salvar Configuração</button></div></div></div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
@@ -512,105 +503,82 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   let adminConfig = JSON.parse(localStorage.getItem('admin_config') || '{"adminPassword":"SSA2024admin"}');
   let modulos = [], perguntas = [], editandoModuloId = null, editandoPerguntaId = null, moduloTipoAtual = 'video', editandoFormacaoId = null;
 
-  // ==================== CERTIFICADO ====================
-  const defaultCertConfig = {
-    fundoImagem: "https://hsebirk-droid.github.io/hse-platform/imagens/fundo_certificado.png",
-    nomeTop: 45, textoTop: 55, formacaoTop: 62,
-    notaLeft: 12, notaBottom: 12,
-    dataBottom: 12,
-    idRight: 12, idBottom: 12,
-    corNome: "#00338D", corFormacao: "#C5A059", corValores: "#00338D"
-  };
-  let certConfig = JSON.parse(localStorage.getItem('cert_config') || JSON.stringify(defaultCertConfig));
-
-  function carregarConfigCertificado() {
-    document.getElementById('cert-fundo-imagem').value = certConfig.fundoImagem || '';
-    document.getElementById('cert-nome-top').value = certConfig.nomeTop;
-    document.getElementById('cert-texto-top').value = certConfig.textoTop;
-    document.getElementById('cert-formacao-top').value = certConfig.formacaoTop;
-    document.getElementById('cert-nota-left').value = certConfig.notaLeft;
-    document.getElementById('cert-nota-bottom').value = certConfig.notaBottom;
-    document.getElementById('cert-data-bottom').value = certConfig.dataBottom;
-    document.getElementById('cert-id-right').value = certConfig.idRight;
-    document.getElementById('cert-id-bottom').value = certConfig.idBottom;
-    document.getElementById('cert-cor-nome').value = certConfig.corNome;
-    document.getElementById('cert-cor-formacao').value = certConfig.corFormacao;
-    document.getElementById('cert-cor-valores').value = certConfig.corValores;
+  // ==================== FUNÇÕES DO CERTIFICADO ====================
+  function carregarConfigSalva() {
+    const config = localStorage.getItem('cert_config_simples');
+    if (config) {
+      const c = JSON.parse(config);
+      document.getElementById('fundo-url').value = c.url || 'https://hsebirk-droid.github.io/hse-platform/imagens/fundo_certificado.png';
+      document.getElementById('pos-nome').value = c.nomeTop || 42;
+      document.getElementById('pos-texto').value = c.textoTop || 52;
+      document.getElementById('pos-formacao').value = c.formacaoTop || 60;
+      document.getElementById('pos-bottom').value = c.bottom || 10;
+    }
   }
 
-  function salvarTemplateCertificado() {
-    certConfig = {
-      fundoImagem: document.getElementById('cert-fundo-imagem').value,
-      nomeTop: parseInt(document.getElementById('cert-nome-top').value) || 45,
-      textoTop: parseInt(document.getElementById('cert-texto-top').value) || 55,
-      formacaoTop: parseInt(document.getElementById('cert-formacao-top').value) || 62,
-      notaLeft: parseInt(document.getElementById('cert-nota-left').value) || 12,
-      notaBottom: parseInt(document.getElementById('cert-nota-bottom').value) || 12,
-      dataBottom: parseInt(document.getElementById('cert-data-bottom').value) || 12,
-      idRight: parseInt(document.getElementById('cert-id-right').value) || 12,
-      idBottom: parseInt(document.getElementById('cert-id-bottom').value) || 12,
-      corNome: document.getElementById('cert-cor-nome').value,
-      corFormacao: document.getElementById('cert-cor-formacao').value,
-      corValores: document.getElementById('cert-cor-valores').value
+  function salvarConfigCertificado() {
+    const config = {
+      url: document.getElementById('fundo-url').value,
+      nomeTop: parseInt(document.getElementById('pos-nome').value),
+      textoTop: parseInt(document.getElementById('pos-texto').value),
+      formacaoTop: parseInt(document.getElementById('pos-formacao').value),
+      bottom: parseInt(document.getElementById('pos-bottom').value)
     };
-    localStorage.setItem('cert_config', JSON.stringify(certConfig));
+    localStorage.setItem('cert_config_simples', JSON.stringify(config));
     alert('✅ Configuração salva!');
   }
 
-  function resetTemplateCertificado() {
-    certConfig = JSON.parse(JSON.stringify(defaultCertConfig));
-    localStorage.setItem('cert_config', JSON.stringify(certConfig));
-    carregarConfigCertificado();
-    alert('✅ Configuração restaurada!');
+  function resetarConfigCertificado() {
+    localStorage.removeItem('cert_config_simples');
+    carregarConfigSalva();
+    alert('↺ Configuração restaurada!');
+    mostrarPreview();
   }
 
-  function abrirPreviewCertificado() {
-    const modal = document.getElementById('preview-modal');
-    const previewDiv = document.getElementById('preview-conteudo');
-    
-    let fundoImagem = document.getElementById('cert-fundo-imagem').value.trim();
-    if (!fundoImagem) fundoImagem = defaultCertConfig.fundoImagem;
-    
+  function mostrarPreview() {
+    const url = document.getElementById('fundo-url').value;
+    if (!url) {
+      alert('Por favor, insira a URL da imagem de fundo.');
+      return;
+    }
+
+    const nomeTop = document.getElementById('pos-nome').value;
+    const textoTop = document.getElementById('pos-texto').value;
+    const formacaoTop = document.getElementById('pos-formacao').value;
+    const bottom = document.getElementById('pos-bottom').value;
+
     const dataAtual = new Date().toLocaleDateString('pt-PT');
-    const certId = 'CERT-2026-1234';
-    const nota = '85%';
-    const nome = 'João Silva';
-    const formacao = 'Formação Exemplo';
-    
-    previewDiv.innerHTML = `
-      <div style="background-image: url('${fundoImagem}'); background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 500px; position: relative; border-radius: 12px; overflow: hidden; border: 1px solid #ddd;">
-        <div style="position: relative; z-index: 2; height: 100%; min-height: 500px;">
-          <div style="position: absolute; top: ${certConfig.nomeTop}%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 80%;">
-            <div style="font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 900; color: ${certConfig.corNome};">${nome}</div>
-            <div style="font-size: 1rem; color: #616365; margin-top: 10px;">concluiu com sucesso a formação</div>
-            <div style="font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 700; color: ${certConfig.corFormacao}; margin-top: 10px;">${formacao}</div>
-          </div>
-          <div style="position: absolute; bottom: ${certConfig.notaBottom}%; left: ${certConfig.notaLeft}%; text-align: center;">
-            <div style="font-size: 0.7rem; color: #616365;">NOTA FINAL</div>
-            <div style="font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: ${certConfig.corValores};">${nota}</div>
-          </div>
-          <div style="position: absolute; bottom: ${certConfig.dataBottom}%; left: 50%; transform: translateX(-50%); text-align: center;">
-            <div style="font-size: 0.7rem; color: #616365;">DATA</div>
-            <div style="font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 600; color: ${certConfig.corValores};">${dataAtual}</div>
-          </div>
-          <div style="position: absolute; bottom: ${certConfig.idBottom}%; right: ${certConfig.idRight}%; text-align: center;">
-            <div style="font-size: 0.7rem; color: #616365;">CERTIFICADO ID</div>
-            <div style="font-family: monospace; font-size: 0.8rem; font-weight: 600; color: ${certConfig.corValores};">${certId}</div>
-          </div>
+    const certId = 'CERT-' + new Date().getFullYear() + '-1234';
+
+    const html = `
+      <div style="position: relative; background-image: url('${url}'); background-size: cover; background-position: center; min-height: 550px; border-radius: 16px; overflow: hidden;">
+        <div style="position: absolute; top: ${nomeTop}%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 80%;">
+          <div style="font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 900; color: #00338D;">João Silva</div>
+          <div style="font-size: 1rem; color: #616365; margin-top: 8px;">concluiu com sucesso a formação</div>
+          <div style="font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700; color: #C5A059; margin-top: 8px;">Formação Exemplo</div>
+        </div>
+        <div style="position: absolute; bottom: ${bottom}%; left: 10%; text-align: center;">
+          <div style="font-size: 0.7rem; color: #616365;">NOTA FINAL</div>
+          <div style="font-family: monospace; font-size: 1.2rem; font-weight: 700; color: #00338D;">85%</div>
+        </div>
+        <div style="position: absolute; bottom: ${bottom}%; left: 50%; transform: translateX(-50%); text-align: center;">
+          <div style="font-size: 0.7rem; color: #616365;">DATA</div>
+          <div style="font-family: monospace; font-size: 1rem; font-weight: 600; color: #00338D;">${dataAtual}</div>
+        </div>
+        <div style="position: absolute; bottom: ${bottom}%; right: 10%; text-align: center;">
+          <div style="font-size: 0.7rem; color: #616365;">CERTIFICADO ID</div>
+          <div style="font-family: monospace; font-size: 0.8rem; font-weight: 600; color: #00338D;">${certId}</div>
         </div>
       </div>
-      <div style="margin-top: 16px; padding: 12px; background: #f0f0f0; border-radius: 8px; font-size: 12px; text-align: center;">
-        🔍 Imagem: ${fundoImagem}
+      <div style="margin-top: 12px; padding: 8px; background: #eef2ff; border-radius: 8px; font-size: 12px; text-align: center;">
+        ✅ Imagem carregada: <strong>${url}</strong>
       </div>
     `;
-    modal.style.display = 'flex';
+    
+    document.getElementById('area-preview').innerHTML = html;
   }
 
-  function fecharPreview() {
-    document.getElementById('preview-modal').style.display = 'none';
-  }
-
-  // ==================== FUNÇÕES PRINCIPAIS (resumidas) ====================
+  // ==================== FUNÇÕES PRINCIPAIS ====================
   async function carregarFormacoes() {
     try {
       const q = window.query(window.collection(window.db, 'formacoes'), window.orderBy('dataTimestamp', 'desc'));
@@ -739,7 +707,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   async function publicarFormacao(){ const titulo = document.getElementById('f-titulo').value.trim(); if(!titulo){ alert('Título obrigatório'); return; } if(!modulos.length){ alert('Adicione módulos'); return; } if(!perguntas.length){ alert('Adicione perguntas'); return; } const novaFormacao = { nome: titulo, duracao: document.getElementById('f-duracao').value || '30 min', descricao: document.getElementById('f-descricao').value, modulos: [...modulos], perguntas: perguntas.map(p => ({texto:p.texto, opcoes:p.opcoes, correta:p.correta})), data: new Date().toLocaleDateString('pt-PT'), dataTimestamp: Date.now() }; try { if(editandoFormacaoId) { await window.updateDoc(window.doc(window.db, 'formacoes', editandoFormacaoId), novaFormacao); alert(`✅ Formação "${titulo}" atualizada!`); editandoFormacaoId = null; document.getElementById('editando-id').innerHTML = ''; document.getElementById('btn-cancelar-edicao').style.display = 'none'; } else { await window.addDoc(window.collection(window.db, 'formacoes'), novaFormacao); alert(`✅ Formação "${titulo}" publicada!`); } document.getElementById('f-titulo').value = ''; document.getElementById('f-duracao').value = ''; document.getElementById('f-descricao').value = ''; modulos = []; perguntas = []; renderModulos(); renderPerguntas(); renderFormacoesLista(); atualizarSelectores(); atualizarDashboard(); } catch(e) { alert('Erro ao publicar.'); } }
 
   // ==================== HISTÓRICO ====================
-  async function renderHistorico() { const hist = await carregarHistorico(); const tbody = document.getElementById('lista-notas'); if(!hist.length){ tbody.innerHTML = '}<tr><td colspan="6" class="empty">Nenhum resultado</td></tr>'; return; } tbody.innerHTML = hist.map(h => `<tr><td><strong>${h.nome}</strong></td><td>${h.email || '-'}</td><td>${h.curso}</td><td>${h.data}</td><td><span class="badge badge-success">${h.nota}</span></td><td><button class="btn-sm" onclick="alert('Certificado de ${h.nome}')">📄</button></td></tr>`).join(''); }
+  async function renderHistorico() { const hist = await carregarHistorico(); const tbody = document.getElementById('lista-notas'); if(!hist.length){ tbody.innerHTML = '} \\ <td colspan="6" class="empty">Nenhum resultado</td> \\ '; return; } tbody.innerHTML = hist.map(h => `<tr><td><strong>${h.nome}</strong></td><td>${h.email || '-'}</td><td>${h.curso}</td><td>${h.data}</td><td><span class="badge badge-success">${h.nota}</span></td><td><button class="btn-sm" onclick="alert('Certificado de ${h.nome}')">📄</button></td></tr>`).join(''); }
   function exportarHistoricoCSV(){ alert('Exportação CSV em breve'); }
   function exportarHistoricoExcel(){ alert('Exportação Excel em breve'); }
   async function limparHistorico(){ if(confirm('Apagar histórico?')){ const hist = await carregarHistorico(); for(const item of hist) { await window.deleteDoc(window.doc(window.db, 'historico', item.id)); } renderHistorico(); atualizarDashboard(); alert('✅ Histórico limpo!'); } }
@@ -750,7 +718,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
 
   // ==================== UTILITÁRIOS ====================
   function fecharModal(id){ document.getElementById(id).style.display = 'none'; }
-  function switchTab(tabId){ document.querySelectorAll('.sec').forEach(s => s.classList.remove('active')); document.getElementById(`sec-${tabId}`).classList.add('active'); document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active'); if(tabId === 'colaboradores') renderColabs(); if(tabId === 'historico') renderHistorico(); if(tabId === 'atribuir') atualizarSelectores(); if(tabId === 'dashboard') atualizarDashboard(); if(tabId === 'lista-formacoes') renderFormacoesLista(); if(tabId === 'certificado') carregarConfigCertificado(); }
+  function switchTab(tabId){ document.querySelectorAll('.sec').forEach(s => s.classList.remove('active')); document.getElementById(`sec-${tabId}`).classList.add('active'); document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active'); if(tabId === 'colaboradores') renderColabs(); if(tabId === 'historico') renderHistorico(); if(tabId === 'atribuir') atualizarSelectores(); if(tabId === 'dashboard') atualizarDashboard(); if(tabId === 'lista-formacoes') renderFormacoesLista(); if(tabId === 'certificado') carregarConfigSalva(); }
   window.editarFormacao = async (id) => { const docRef = window.doc(window.db, 'formacoes', id); const docSnap = await window.getDoc(docRef); if(docSnap.exists()) { const data = docSnap.data(); document.getElementById('f-titulo').value = data.nome; document.getElementById('f-duracao').value = data.duracao; document.getElementById('f-descricao').value = data.descricao; modulos = data.modulos || []; perguntas = data.perguntas || []; editandoFormacaoId = id; renderModulos(); renderPerguntas(); document.getElementById('editando-id').innerHTML = `✏️ Editando: ${data.nome}`; document.getElementById('btn-cancelar-edicao').style.display = 'inline-block'; switchTab('formacao'); } };
   window.cancelarEdicao = () => { editandoFormacaoId = null; document.getElementById('f-titulo').value = ''; document.getElementById('f-duracao').value = ''; document.getElementById('f-descricao').value = ''; modulos = []; perguntas = []; renderModulos(); renderPerguntas(); document.getElementById('editando-id').innerHTML = ''; document.getElementById('btn-cancelar-edicao').style.display = 'none'; };
 
@@ -766,7 +734,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   document.getElementById('btn-cancelar-edicao').addEventListener('click', () => window.cancelarEdicao());
 
   // Inicialização
-  renderModulos(); renderPerguntas(); renderColabs(); renderHistorico(); atualizarSelectores(); atualizarDashboard(); renderFormacoesLista(); carregarConfigCertificado();
+  renderModulos(); renderPerguntas(); renderColabs(); renderHistorico(); atualizarSelectores(); atualizarDashboard(); renderFormacoesLista(); carregarConfigSalva();
 
   // Expor funções
   window.abrirModalModulo = abrirModalModulo; window.editarModulo = editarModulo; window.removerModulo = removerModulo;
@@ -774,8 +742,8 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   window.removerColab = removerColab; window.copiarLink = copiarLink; window.selecionarTodos = selecionarTodos; window.deselecionarTodos = deselecionarTodos;
   window.exportarHistoricoCSV = exportarHistoricoCSV; window.exportarHistoricoExcel = exportarHistoricoExcel;
   window.alterarPasswordAdmin = alterarPasswordAdmin; window.checkPasswordStrength = checkPasswordStrength;
-  window.abrirPreviewCertificado = abrirPreviewCertificado; window.fecharPreview = fecharPreview;
-  window.salvarTemplateCertificado = salvarTemplateCertificado; window.resetTemplateCertificado = resetTemplateCertificado;
+  window.salvarConfigCertificado = salvarConfigCertificado; window.resetarConfigCertificado = resetarConfigCertificado;
+  window.mostrarPreview = mostrarPreview;
 </script>
 </body>
 </html>
