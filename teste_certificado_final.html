@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teste Certificado</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #F7F5F0;
+    padding: 40px;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  h2 {
+    color: #00338D;
+    margin-bottom: 20px;
+  }
+  .url-box {
+    background: #F4F7F9;
+    padding: 15px;
+    border-radius: 12px;
+    margin: 20px 0;
+    word-break: break-all;
+    font-family: monospace;
+    border: 1px solid #D7DEED;
+  }
+  .btn {
+    background: #00338D;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  .preview {
+    margin-top: 20px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    min-height: 500px;
+  }
+  .info {
+    margin-top: 16px;
+    padding: 12px;
+    background: #DBEAFE;
+    border-radius: 8px;
+    font-size: 12px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>🎓 Teste do Certificado</h2>
+  
+  <div class="url-box">
+    🔗 <strong>Link da imagem:</strong><br>
+    https://hsebirk-droid.github.io/hse-platform/imagens/fundo_certificado.png
+  </div>
+  
+  <button class="btn" onclick="mostrarCertificado()">👁️ Mostrar Certificado</button>
+  
+  <div id="preview" class="preview"></div>
+  <div id="info" class="info"></div>
+</div>
+
+<script>
+  function mostrarCertificado() {
+    const url = "https://hsebirk-droid.github.io/hse-platform/imagens/fundo_certificado.png";
+    const hoje = new Date().toLocaleDateString('pt-PT');
+    const certId = 'CERT-2026-1234';
+    
+    const html = `
+      <div style="position: relative; background-image: url('${url}'); background-size: cover; background-position: center; min-height: 550px;">
+        <div style="position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 80%;">
+          <div style="font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 900; color: #00338D;">João Silva</div>
+          <div style="font-size: 1rem; color: #616365; margin-top: 8px;">concluiu com sucesso a formação</div>
+          <div style="font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 700; color: #C5A059; margin-top: 8px;">Formação Exemplo</div>
+        </div>
+        <div style="position: absolute; bottom: 10%; left: 12%; text-align: center;">
+          <div style="font-size: 0.7rem; color: #616365;">NOTA FINAL</div>
+          <div style="font-size: 1.3rem; font-weight: 700; color: #00338D;">85%</div>
+        </div>
+        <div style="position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%); text-align: center;">
+          <div style="font-size: 0.7rem; color: #616365;">DATA</div>
+          <div style="font-size: 1rem; font-weight: 600; color: #00338D;">${hoje}</div>
+        </div>
+        <div style="position: absolute; bottom: 10%; right: 12%; text-align: center;">
+          <div style="font-size: 0.7rem; color: #616365;">CERTIFICADO ID</div>
+          <div style="font-size: 0.8rem; font-weight: 600; color: #00338D;">${certId}</div>
+        </div>
+      </div>
+      <div style="margin-top: 12px; padding: 8px; background: #eef2ff; border-radius: 8px; font-size: 12px; text-align: center;">
+        ✅ Imagem carregada com sucesso!
+      </div>
+    `;
+    
+    document.getElementById('preview').innerHTML = html;
+    document.getElementById('info').innerHTML = '✅ Certificado gerado com sucesso!';
+  }
+  
+  // Mostrar automaticamente ao carregar
+  mostrarCertificado();
+</script>
+</body>
+</html>
