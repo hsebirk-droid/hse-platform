@@ -108,6 +108,12 @@
 <script>
   function gerarPreview() {
     const url = document.getElementById('imagemUrl').value;
+    if (!url) {
+      document.getElementById('previewArea').innerHTML = '<div style="padding: 40px; text-align: center; color: red;">❌ URL da imagem não definida!</div>';
+      document.getElementById('infoMsg').innerHTML = '❌ Por favor, insira a URL da imagem.';
+      return;
+    }
+    
     const nomeTop = document.getElementById('nomeTop').value;
     const textoTop = document.getElementById('textoTop').value;
     const formacaoTop = document.getElementById('formacaoTop').value;
