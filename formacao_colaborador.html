@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Birkenstock S&CC — Formação LMS</title>
+<title>Birkenstock S&CC — Formação</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
@@ -12,7 +12,6 @@
   --birkenstock-blue-dark: #00277A;
   --birkenstock-gold: #C5A059;
   --birkenstock-gray: #616365;
-  --birkenstock-gray-light: #9CA3AF;
   --birkenstock-beige: #F7F5F0;
   --birkenstock-white: #FFFFFF;
   --birkenstock-black: #1A1A1A;
@@ -29,13 +28,11 @@
   --font-body: 'DM Sans', sans-serif;
   --radius: 16px;
   --shadow: 0 4px 20px rgba(0,0,0,0.08);
-  --shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { background: var(--birkenstock-beige); font-family: var(--font-body); color: var(--birkenstock-black); min-height: 100vh; }
 
-/* Header */
 .top-bar {
   background: var(--birkenstock-blue);
   padding: 16px 40px;
@@ -91,12 +88,8 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   font-weight: 500;
   transition: all 0.2s;
 }
-.btn-exit:hover {
-  background: rgba(255,255,255,0.3);
-  transform: translateY(-1px);
-}
+.btn-exit:hover { background: rgba(255,255,255,0.3); }
 
-/* Hero Section */
 .hero {
   background: linear-gradient(135deg, var(--birkenstock-blue) 0%, var(--birkenstock-blue-dark) 100%);
   padding: 56px 40px 64px;
@@ -157,7 +150,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   border-radius: 30px;
 }
 
-/* Progress Bar - Mais Larga */
 .progress-strip {
   background: var(--birkenstock-white);
   border-bottom: 1px solid var(--birkenstock-border);
@@ -165,24 +157,16 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   position: sticky;
   top: 74px;
   z-index: 50;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
 }
-.progress-strip-inner { 
-  max-width: 900px; 
-  margin: 0 auto; 
-}
+.progress-strip-inner { max-width: 900px; margin: 0 auto; }
 .progress-label { 
   display: flex; 
   justify-content: space-between; 
   font-size: 0.85rem; 
   color: var(--birkenstock-gray); 
   margin-bottom: 12px; 
-  font-weight: 500;
 }
-.progress-label strong { 
-  color: var(--birkenstock-blue); 
-  font-weight: 700;
-}
+.progress-label strong { color: var(--birkenstock-blue); }
 .prog-track { 
   height: 10px; 
   background: #ede9e2; 
@@ -195,29 +179,13 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   border-radius: 8px; 
   transition: width .5s ease; 
 }
-.steps-dots { 
-  display: flex; 
-  gap: 12px; 
-  margin-top: 16px; 
-}
-.step-dot { 
-  flex: 1; 
-  height: 4px; 
-  border-radius: 4px; 
-  background: #ede9e2; 
-  transition: background .3s; 
-}
+.steps-dots { display: flex; gap: 12px; margin-top: 16px; }
+.step-dot { flex: 1; height: 4px; border-radius: 4px; background: #ede9e2; }
 .step-dot.done { background: var(--birkenstock-blue); }
 .step-dot.active { background: var(--birkenstock-gold); }
 
-/* Main Content - Mais Larga */
-.main { 
-  max-width: 900px; 
-  margin: 0 auto; 
-  padding: 40px 40px 80px; 
-}
+.main { max-width: 900px; margin: 0 auto; padding: 40px 40px 80px; }
 
-/* Módulos - MAIS LARGOS E COM MAIS ESPAÇO */
 .section-block {
   background: var(--birkenstock-white);
   border-radius: var(--radius);
@@ -225,35 +193,17 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   margin-bottom: 28px;
   overflow: hidden;
   box-shadow: var(--shadow);
-  transition: all 0.3s ease;
-  width: 100%;
 }
-.section-block:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
-}
-.section-block.locked { 
-  opacity: 0.6; 
-  pointer-events: none; 
-  filter: grayscale(0.1);
-}
-.section-block.completed { 
-  border-left: 4px solid var(--birkenstock-gold);
-  border-right: 4px solid var(--birkenstock-gold);
-}
-
+.section-block.locked { opacity: 0.6; pointer-events: none; }
+.section-block.completed { border-left: 4px solid var(--birkenstock-gold); border-right: 4px solid var(--birkenstock-gold); }
 .section-header {
   padding: 28px 32px;
   display: flex;
   align-items: center;
   gap: 24px;
   cursor: pointer;
-  transition: background 0.2s;
 }
-.section-header:hover { 
-  background: #fafaf8; 
-}
-
+.section-header:hover { background: #fafaf8; }
 .s-num {
   width: 56px;
   height: 56px;
@@ -266,74 +216,29 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   font-size: 1.2rem;
   font-weight: 700;
   flex-shrink: 0;
-  transition: all 0.2s;
 }
-.section-block.completed .s-num { 
-  background: var(--birkenstock-blue); 
-  color: white; 
-}
+.section-block.completed .s-num { background: var(--birkenstock-blue); color: white; }
+.s-info { flex: 1; }
+.s-title { font-family: var(--font-head); font-size: 1.3rem; font-weight: 700; color: var(--birkenstock-blue); margin-bottom: 8px; }
+.s-meta { font-size: 0.85rem; color: var(--birkenstock-gray); display: flex; align-items: center; gap: 16px; }
+.s-status { font-size: 1.4rem; }
+.section-body { padding: 0 32px 32px; border-top: 1px solid var(--birkenstock-border); display: none; }
+.section-body.open { display: block; }
 
-.s-info { 
-  flex: 1; 
-}
-.s-title { 
-  font-family: var(--font-head); 
-  font-size: 1.3rem; 
-  font-weight: 700; 
-  color: var(--birkenstock-blue); 
-  margin-bottom: 8px;
-}
-.s-meta { 
-  font-size: 0.85rem; 
-  color: var(--birkenstock-gray); 
-  display: flex; 
-  align-items: center; 
-  gap: 16px;
-}
-.s-meta i {
-  margin-right: 4px;
-}
-.s-status { 
-  font-size: 1.4rem; 
-  font-weight: 500;
-}
-
-.section-body {
-  padding: 0 32px 32px;
-  border-top: 1px solid var(--birkenstock-border);
-  display: none;
-}
-.section-body.open { 
-  display: block; 
-  animation: fadeIn 0.3s ease;
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Content Embeds - Mais Largos */
 .video-wrap {
   background: #111;
   border-radius: 16px;
   overflow: hidden;
   aspect-ratio: 16/9;
   margin: 24px 0;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
-.video-wrap iframe { 
-  width: 100%; 
-  height: 100%; 
-  border: none; 
-}
-
+.video-wrap iframe { width: 100%; height: 100%; border: none; }
 .doc-viewer {
   background: #fafaf8;
   border: 1px solid var(--birkenstock-border);
   border-radius: 16px;
   margin: 24px 0;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 .doc-viewer-header {
   background: #f5f5f5;
@@ -342,45 +247,9 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   align-items: center;
   gap: 12px;
   border-bottom: 1px solid var(--birkenstock-border);
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--birkenstock-gray);
 }
-.doc-viewer-header i {
-  font-size: 1.2rem;
-  color: var(--birkenstock-blue);
-}
-.doc-content {
-  padding: 0;
-  min-height: 600px;
-  max-height: 750px;
-  overflow: auto;
-  background: #f5f5f5;
-  text-align: center;
-}
-.doc-iframe {
-  width: 100%;
-  height: 650px;
-  border: none;
-}
-.doc-image {
-  max-width: 100%;
-  max-height: 550px;
-  object-fit: contain;
-  margin: 20px auto;
-  display: block;
-}
-.doc-placeholder {
-  padding: 80px;
-  text-align: center;
-  color: var(--birkenstock-gray);
-}
-.doc-placeholder i {
-  font-size: 48px;
-  margin-bottom: 16px;
-  display: block;
-}
-
+.doc-content { min-height: 600px; max-height: 750px; overflow: auto; background: #f5f5f5; text-align: center; }
+.doc-iframe { width: 100%; height: 650px; border: none; }
 .text-content { 
   font-size: 1rem; 
   line-height: 1.8; 
@@ -391,26 +260,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   border-radius: 16px;
   border: 1px solid var(--birkenstock-border);
 }
-.text-content h3 { 
-  font-family: var(--font-head); 
-  color: var(--birkenstock-blue); 
-  margin: 24px 0 12px; 
-  font-size: 1.2rem;
-}
-.text-content h3:first-child { 
-  margin-top: 0; 
-}
-.text-content p {
-  margin-bottom: 16px;
-}
-.text-content ul, .text-content ol {
-  margin: 16px 0 16px 24px;
-}
-.text-content li {
-  margin-bottom: 8px;
-}
-
-/* Progress Tracker */
 .content-tracker {
   background: var(--info-light);
   border: 1px solid #bbdefb;
@@ -420,24 +269,9 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   display: flex;
   align-items: center;
   gap: 16px;
-  font-size: 0.85rem;
-  color: #1565c0;
 }
-.track-prog { 
-  flex: 1; 
-  height: 8px; 
-  background: #bbdefb; 
-  border-radius: 6px; 
-  overflow: hidden; 
-}
-.track-fill { 
-  height: 100%; 
-  background: linear-gradient(90deg, var(--birkenstock-blue), var(--birkenstock-gold));
-  border-radius: 6px; 
-  transition: width .5s ease; 
-}
-
-/* Confirm Button */
+.track-prog { flex: 1; height: 8px; background: #bbdefb; border-radius: 6px; overflow: hidden; }
+.track-fill { height: 100%; background: linear-gradient(90deg, var(--birkenstock-blue), var(--birkenstock-gold)); border-radius: 6px; transition: width .5s ease; }
 .confirm-viewed {
   background: var(--birkenstock-beige);
   border: 1px solid var(--birkenstock-border);
@@ -447,22 +281,8 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   align-items: center;
   justify-content: space-between;
   margin: 24px 0 16px;
-  gap: 20px;
   flex-wrap: wrap;
-}
-.confirm-viewed p { 
-  font-size: 0.9rem; 
-  color: var(--birkenstock-gray); 
-}
-.confirm-viewed p strong { 
-  color: var(--birkenstock-black); 
-  display: block; 
-  margin-bottom: 4px;
-  font-size: 1rem;
-}
-.confirm-viewed p i {
-  color: var(--birkenstock-gold);
-  margin-right: 6px;
+  gap: 20px;
 }
 .btn-confirm {
   background: var(--birkenstock-blue);
@@ -474,33 +294,18 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
 }
-.btn-confirm:hover:not(:disabled) { 
-  background: var(--birkenstock-blue-dark); 
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,51,141,0.3);
-}
-.btn-confirm:disabled { 
-  background: var(--birkenstock-gray); 
-  cursor: not-allowed; 
-}
+.btn-confirm:hover:not(:disabled) { background: var(--birkenstock-blue-dark); }
+.btn-confirm:disabled { background: var(--birkenstock-gray); cursor: not-allowed; }
 .confirmed-label { 
   display: flex; 
   align-items: center; 
   gap: 10px; 
   color: var(--success); 
-  font-size: 0.9rem; 
-  font-weight: 600;
   background: var(--success-bg);
   padding: 10px 20px;
   border-radius: 40px;
 }
-.confirmed-label i {
-  font-size: 1rem;
-}
-
-/* Loading Spinner */
 .loading-spinner {
   display: inline-block;
   width: 18px;
@@ -511,33 +316,13 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   animation: spin 0.8s linear infinite;
   margin-right: 10px;
 }
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-.btn-loading {
-  opacity: 0.8;
-  cursor: wait !important;
-}
-
-/* Quiz - Mais Largo */
-.quiz-wrap { 
-  padding: 8px 0; 
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 .quiz-intro { 
   background: var(--warning-light); 
   border: 1px solid #fed7aa; 
   border-radius: 16px; 
   padding: 24px; 
   margin: 24px 0; 
-}
-.quiz-intro i {
-  font-size: 1.5rem;
-  margin-right: 10px;
-  color: var(--warning);
-}
-.quiz-intro strong { 
-  color: var(--warning); 
-  font-size: 1rem; 
 }
 .question { 
   margin-bottom: 36px; 
@@ -555,11 +340,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   padding-left: 16px;
   border-left: 4px solid var(--birkenstock-gold);
 }
-.options { 
-  display: flex; 
-  flex-direction: column; 
-  gap: 12px; 
-}
+.options { display: flex; flex-direction: column; gap: 12px; }
 .option-item {
   display: flex;
   align-items: center;
@@ -568,26 +349,11 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   border-radius: 14px;
   padding: 14px 20px;
   cursor: pointer;
-  font-size: 0.95rem;
-  transition: all 0.2s;
 }
-.option-item:hover { 
-  border-color: var(--birkenstock-gold); 
-  background: rgba(197,160,89,0.05); 
-  transform: translateX(4px);
-}
-.option-item.selected { 
-  border-color: var(--birkenstock-blue); 
-  background: rgba(0,51,141,0.05); 
-}
-.option-item.correct { 
-  border-color: var(--success); 
-  background: var(--success-bg); 
-}
-.option-item.wrong { 
-  border-color: var(--danger); 
-  background: var(--danger-bg); 
-}
+.option-item:hover { border-color: var(--birkenstock-gold); background: rgba(197,160,89,0.05); }
+.option-item.selected { border-color: var(--birkenstock-blue); background: rgba(0,51,141,0.05); }
+.option-item.correct { border-color: var(--success); background: var(--success-bg); }
+.option-item.wrong { border-color: var(--danger); background: var(--danger-bg); }
 .option-letter {
   width: 36px;
   height: 36px;
@@ -600,16 +366,12 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   font-weight: 700;
   flex-shrink: 0;
 }
-.option-item.selected .option-letter { 
-  background: var(--birkenstock-blue); 
-  color: white; 
-}
+.option-item.selected .option-letter { background: var(--birkenstock-blue); color: white; }
 .quiz-footer { 
   margin-top: 36px; 
   border-top: 1px solid var(--birkenstock-border); 
   padding-top: 28px; 
   display: flex; 
-  align-items: center; 
   justify-content: space-between; 
   flex-wrap: wrap; 
   gap: 20px; 
@@ -620,166 +382,44 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   border: none;
   border-radius: 40px;
   padding: 14px 40px;
-  font-family: var(--font-head);
-  font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
 }
-.btn-submit:hover:not(:disabled) { 
-  background: var(--birkenstock-blue-dark); 
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,51,141,0.3);
-}
-.btn-submit:disabled { 
-  background: #ccc; 
-  cursor: not-allowed; 
-}
-
-/* Result Screen */
-.result-screen { 
-  text-align: center; 
-  padding: 48px 32px; 
-  display: none; 
-}
+.btn-submit:disabled { background: #ccc; cursor: not-allowed; }
+.result-screen { text-align: center; padding: 48px 32px; display: none; }
 .result-score-ring {
   width: 160px;
   height: 160px;
   border-radius: 50%;
   border: 8px solid var(--birkenstock-blue);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   margin: 0 auto 28px;
   background: rgba(0,51,141,0.05);
 }
-.result-score-ring.fail { 
-  border-color: var(--warning); 
-  background: var(--warning-light); 
-}
-.score-num { 
-  font-family: var(--font-head); 
-  font-size: 2.8rem; 
-  font-weight: 900; 
-  color: var(--birkenstock-blue); 
-}
-
-/* Certificate */
-.cert-screen { 
-  display: none; 
-}
-.cert-card {
-  background: linear-gradient(135deg, #fff8e7 0%, #fff 100%);
-  border: 2px solid var(--birkenstock-gold);
-  border-radius: 32px;
-  padding: 56px 48px;
-  text-align: center;
-  position: relative;
-  margin-top: 32px;
-  box-shadow: var(--shadow-lg);
-}
-.cert-card::before {
-  content: '';
-  position: absolute;
-  inset: 16px;
-  border: 1px dashed rgba(197,160,89,0.5);
-  border-radius: 24px;
-  pointer-events: none;
-}
-.cert-emblem { 
-  font-size: 4rem; 
-  margin-bottom: 20px; 
-  color: var(--birkenstock-gold); 
-}
-.cert-name { 
-  font-family: var(--font-head); 
-  font-size: 2.2rem; 
-  font-weight: 900; 
-  color: var(--birkenstock-blue); 
-  margin-bottom: 12px; 
-}
-.cert-row {
-  display: flex;
-  justify-content: center;
-  gap: 60px;
-  border-top: 1px solid #e2ddd6;
-  padding-top: 28px;
-  margin-top: 28px;
-  flex-wrap: wrap;
-}
-.cert-col { 
-  margin: 0 12px; 
-}
-.cert-col-label { 
-  font-size: 0.75rem; 
-  color: var(--birkenstock-gray); 
-  text-transform: uppercase; 
-  letter-spacing: 1px; 
-}
-.cert-col-val { 
-  font-family: var(--font-head); 
-  font-size: 1.2rem; 
-  font-weight: 700; 
-  color: var(--birkenstock-blue); 
-  margin-top: 6px; 
-}
-.cert-id { 
-  font-size: 0.75rem; 
-  color: var(--birkenstock-gray); 
-  margin-top: 20px; 
-}
-.cert-course-title { 
-  font-size: 1.2rem; 
-  color: var(--birkenstock-blue); 
-  margin: 20px 0; 
-}
-.cert-issued { 
-  font-size: 0.85rem; 
-  color: var(--birkenstock-gold); 
-  font-weight: 600; 
-  letter-spacing: 1px; 
-  margin-bottom: 16px;
-}
-.cert-certify { 
-  font-size: 0.9rem; 
-  color: var(--birkenstock-gray); 
-  margin: 20px 0; 
-}
-.cert-actions { 
-  display: flex; 
-  gap: 20px; 
-  justify-content: center; 
-  margin-top: 40px; 
-  flex-wrap: wrap; 
-}
-.btn-dl, .btn-secondary {
+.result-score-ring.fail { border-color: var(--warning); background: var(--warning-light); }
+.score-num { font-family: var(--font-head); font-size: 2.8rem; font-weight: 900; color: var(--birkenstock-blue); }
+.cert-screen { display: none; }
+.cert-actions { display: flex; gap: 20px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+.btn-dl {
   background: var(--birkenstock-blue);
   color: white;
   border: none;
   border-radius: 40px;
-  padding: 14px 36px;
-  font-family: var(--font-head);
-  font-size: 0.9rem;
-  font-weight: 700;
+  padding: 12px 32px;
   cursor: pointer;
-  transition: all 0.2s;
-}
-.btn-dl:hover, .btn-secondary:hover { 
-  background: var(--birkenstock-blue-dark); 
-  transform: translateY(-2px);
+  font-weight: 600;
 }
 .btn-secondary {
   background: white;
   color: var(--birkenstock-blue);
   border: 2px solid var(--birkenstock-blue);
+  border-radius: 40px;
+  padding: 12px 32px;
+  cursor: pointer;
+  font-weight: 600;
 }
-.btn-secondary:hover { 
-  background: var(--birkenstock-blue); 
-  color: white; 
-}
-
-/* Toast Notification */
 .toast {
   position: fixed;
   bottom: 30px;
@@ -793,103 +433,56 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
   opacity: 0;
   transition: all .4s;
   z-index: 1000;
-  box-shadow: var(--shadow-lg);
-  display: flex;
-  align-items: center;
-  gap: 10px;
 }
-.toast.show { 
-  opacity: 1; 
-  transform: translateX(-50%) translateY(0); 
-}
-.toast.success { 
-  background: var(--success); 
-}
-.toast.error { 
-  background: var(--danger); 
-}
-.toast.info { 
-  background: var(--info); 
-}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.success { background: var(--success); }
+.loading { text-align: center; padding: 80px; color: var(--birkenstock-gray); }
 
-.loading { 
-  text-align: center; 
-  padding: 80px; 
-  color: var(--birkenstock-gray); 
-}
-.loading i {
-  font-size: 48px;
-  margin-bottom: 20px;
-  display: block;
-  color: var(--birkenstock-blue);
-}
-
-/* Responsive */
 @media (max-width: 768px) {
   .hero { padding: 40px 24px 48px; }
   .hero h1 { font-size: 1.6rem; }
   .main { padding: 24px 20px 60px; }
   .top-bar { padding: 12px 20px; }
-  .progress-strip { padding: 16px 20px; top: 66px; }
   .section-header { padding: 20px; }
   .s-num { width: 44px; height: 44px; font-size: 1rem; }
   .s-title { font-size: 1.1rem; }
   .section-body { padding: 0 20px 20px; }
-  .text-content { padding: 20px; }
-  .cert-card { padding: 32px 24px; }
-  .cert-name { font-size: 1.6rem; }
-  .hero-meta-item { font-size: 0.75rem; }
 }
 </style>
 </head>
 <body>
 
 <div class="top-bar">
-  <div class="logo">BIRKENSTOCK<span>S&CC PORTUGAL · LMS</span></div>
-  <div class="user-name">
-    <i class="fas fa-user-circle"></i>
-    <span id="user-name-display">Carregando...</span>
-  </div>
-  <div class="deadline-badge" id="deadline-badge">
-    <i class="fas fa-calendar-alt"></i> Prazo: <strong id="prazo-data">---</strong>
-  </div>
-  <button class="btn-exit" onclick="sairDaFormacao()">
-    <i class="fas fa-sign-out-alt"></i> Sair
-  </button>
+  <div class="logo">BIRKENSTOCK<span>S&CC PORTUGAL</span></div>
+  <div class="user-name"><i class="fas fa-user-circle"></i> <span id="user-name-display">Carregando...</span></div>
+  <div class="deadline-badge"><i class="fas fa-calendar-alt"></i> Prazo: <strong id="prazo-data">---</strong></div>
+  <button class="btn-exit" onclick="sairDaFormacao()"><i class="fas fa-sign-out-alt"></i> Sair</button>
 </div>
 
 <div class="hero">
   <div class="hero-inner">
-    <div class="hero-tag">
-      <i class="fas fa-graduation-cap"></i> Curso LMS
-    </div>
+    <div class="hero-tag"><i class="fas fa-graduation-cap"></i> Curso</div>
     <h1 id="hero-title">Carregando formação...</h1>
     <p id="hero-desc">A carregar conteúdo...</p>
     <div class="hero-meta">
       <div class="hero-meta-item"><i class="fas fa-clock"></i> <span id="meta-duration">--</span></div>
       <div class="hero-meta-item"><i class="fas fa-layer-group"></i> <span id="meta-modules">-- módulos</span></div>
-      <div class="hero-meta-item"><i class="fas fa-question-circle"></i> Avaliação final</div>
-      <div class="hero-meta-item"><i class="fas fa-certificate"></i> Certificado automático</div>
+      <div class="hero-meta-item"><i class="fas fa-question-circle"></i> Avaliação</div>
+      <div class="hero-meta-item"><i class="fas fa-certificate"></i> Certificado</div>
     </div>
   </div>
 </div>
 
 <div class="progress-strip">
   <div class="progress-strip-inner">
-    <div class="progress-label">
-      <span><i class="fas fa-chart-line"></i> Progresso da formação</span>
-      <strong id="progress-text">0%</strong>
-    </div>
+    <div class="progress-label"><span><i class="fas fa-chart-line"></i> Progresso</span><strong id="progress-text">0%</strong></div>
     <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
     <div class="steps-dots" id="steps-dots"></div>
   </div>
 </div>
 
 <div class="main" id="main-content">
-  <div id="loading" class="loading">
-    <i class="fas fa-spinner fa-spin"></i>
-    📚 A carregar formação...
-  </div>
+  <div id="loading" class="loading"><i class="fas fa-spinner fa-spin"></i> A carregar formação...</div>
   <div id="modules-container" style="display:none;"></div>
 </div>
 
@@ -910,410 +503,128 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
-
   window.db = db;
-  window.doc = doc;
-  window.getDoc = getDoc;
-  window.collection = collection;
-  window.addDoc = addDoc;
 </script>
 
 <script>
-  let modules = [];
-  let perguntas = [];
-  let completedModules = {};
-  let answers = {};
-  let quizPassed = false;
-  let cursoId = null;
-  let nomeUser = localStorage.getItem('usuarioAtivo') || 'Colaborador';
+  let modules = [], perguntas = [], completedModules = {}, answers = {}, quizPassed = false;
+  let cursoId = null, nomeUser = localStorage.getItem('usuarioAtivo') || 'Colaborador';
   let cursoData = { nome: '', duracao: '', descricao: '' };
   let prazoFormacao = '31/12/2026';
-  
-  // Configurar PDF.js worker
-  if (typeof pdfjsLib !== 'undefined') {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-  }
 
   function toast(msg, type = 'info') { 
     const t = document.getElementById('toast'); 
-    t.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i> ${msg}`;
+    t.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-info-circle'}"></i> ${msg}`;
     t.className = `toast show ${type}`;
     setTimeout(() => t.classList.remove('show'), 4000); 
   }
   
-  function showLoading(btnId, isLoading) {
-    const btn = document.getElementById(btnId);
-    if (!btn) return;
-    if (isLoading) {
-      btn.classList.add('btn-loading');
-      btn.disabled = true;
-      const originalText = btn.innerHTML;
-      btn.setAttribute('data-original-text', originalText);
-      btn.innerHTML = '<span class="loading-spinner"></span> A processar...';
-    } else {
-      btn.classList.remove('btn-loading');
-      btn.disabled = false;
-      const originalText = btn.getAttribute('data-original-text');
-      if (originalText) btn.innerHTML = originalText;
-    }
-  }
-  
-  function fmtDate(d) { 
-    return d.toLocaleDateString('pt-PT', {day:'2-digit', month:'long', year:'numeric'}); 
-  }
+  function fmtDate(d) { return d.toLocaleDateString('pt-PT', {day:'2-digit', month:'short', year:'numeric'}); }
+  function escapeHtml(text) { if (!text) return ''; return text.replace(/[&<>]/g, function(m) { return m === '&' ? '&amp;' : m === '<' ? '&lt;' : m === '>' ? '&gt;' : m; }); }
 
-  // Extrair ID do Google Drive
-  function extractGoogleDriveId(url) {
-    const patterns = [
-      /\/file\/d\/([^\/]+)/,
-      /id=([^&]+)/,
-      /\/d\/([^\/]+)/,
-      /uc\?export=view&id=([^&]+)/
-    ];
-    for (const pattern of patterns) {
-      const match = url.match(pattern);
-      if (match) return match[1];
-    }
-    return null;
-  }
-
-  function getGoogleDriveEmbedUrl(url) {
-    const fileId = extractGoogleDriveId(url);
-    if (fileId) return `https://drive.google.com/file/d/${fileId}/preview`;
-    return null;
-  }
-
-  function getYoutubeEmbedUrl(url) {
-    const patterns = [
-      /youtube\.com\/watch\?v=([^&]+)/,
-      /youtu\.be\/([^?]+)/,
-      /youtube\.com\/embed\/([^?]+)/
-    ];
-    for (const pattern of patterns) {
-      const match = url.match(pattern);
-      if (match) return `https://www.youtube.com/embed/${match[1]}`;
-    }
-    return null;
-  }
-
-  function isYoutubeUrl(url) { return url.includes('youtube.com') || url.includes('youtu.be'); }
-  function isGoogleDriveUrl(url) { return url.includes('drive.google.com'); }
-  function isImageUrl(url) { return /\.(jpg|jpeg|png|gif|webp|bmp|svg)(\?|$)/i.test(url); }
-  function isPdfUrl(url) { return url.toLowerCase().endsWith('.pdf') || url.includes('.pdf?'); }
-
-  function renderContent(url, containerId, moduleId) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    
-    if (isYoutubeUrl(url)) {
-      const embedUrl = getYoutubeEmbedUrl(url);
-      container.innerHTML = `<div class="video-wrap"><iframe src="${embedUrl}" frameborder="0" allowfullscreen></iframe></div>`;
-      setTimeout(() => markModuleAsViewed(moduleId), 1000);
-    }
-    else if (isGoogleDriveUrl(url)) {
-      const embedUrl = getGoogleDriveEmbedUrl(url);
-      if (embedUrl) {
-        container.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><i class="fab fa-google-drive"></i> Google Drive</div><div class="doc-content"><iframe src="${embedUrl}" class="doc-iframe" allow="autoplay"></iframe></div></div>`;
-      } else {
-        container.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><i class="fas fa-link"></i> Documento</div><div class="doc-content"><iframe src="${url}" class="doc-iframe" allow="autoplay"></iframe></div></div>`;
-      }
-      setTimeout(() => markModuleAsViewed(moduleId), 1000);
-    }
-    else if (isImageUrl(url)) {
-      container.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><i class="fas fa-image"></i> Imagem</div><div class="doc-content"><img src="${url}" class="doc-image" alt="Conteúdo da formação" onload="markModuleAsViewed('${moduleId}')" onerror="this.parentElement.parentElement.innerHTML='<div class=\'doc-placeholder\'><i class=\'fas fa-image\'></i><br>⚠️ Imagem não disponível</div>'"></div></div>`;
-    }
-    else if (isPdfUrl(url)) {
-      container.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><i class="fas fa-file-pdf"></i> Documento PDF</div><div class="doc-content"><iframe src="${url}" class="doc-iframe" allow="autoplay"></iframe></div></div>`;
-      setTimeout(() => markModuleAsViewed(moduleId), 1000);
-    }
-    else {
-      container.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><i class="fas fa-file-alt"></i> Conteúdo</div><div class="doc-content"><iframe src="${url}" class="doc-iframe" allow="autoplay"></iframe></div></div>`;
-      setTimeout(() => markModuleAsViewed(moduleId), 1000);
-    }
-  }
-
-  function markModuleAsViewed(moduleId) {
-    const confirmBtn = document.getElementById(`btn-confirm-${moduleId}`);
-    if (confirmBtn && confirmBtn.disabled) {
-      confirmBtn.disabled = false;
-    }
-    const fillEl = document.getElementById(`fill-${moduleId}`);
-    const pctEl = document.getElementById(`pct-${moduleId}`);
-    if (fillEl && fillEl.style.width !== '100%') {
-      fillEl.style.width = '100%';
-      if (pctEl) pctEl.textContent = '100%';
-      toast('✅ Conteúdo visualizado! Pode confirmar a conclusão.', 'success');
-    }
-  }
-
-  // ==================== LER TOKEN DA URL ====================
   function lerTokenUrl() {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
-    
-    if(token && token !== 'null' && token !== 'undefined') {
+    if(token && token !== 'null') {
       try {
         const tokenData = JSON.parse(atob(token));
-        
-        if(tokenData.user) {
-          localStorage.setItem('usuarioAtivo', tokenData.user);
-          nomeUser = tokenData.user;
-          document.getElementById('user-name-display').innerHTML = `<i class="fas fa-user"></i> ${nomeUser}`;
-        }
-        
-        if(tokenData.prazo) {
-          prazoFormacao = tokenData.prazo;
-          document.getElementById('prazo-data').textContent = prazoFormacao;
-        }
-        
-        if(tokenData.cursoId) {
-          return tokenData.cursoId;
-        }
-      } catch(e) {
-        console.error('Erro ao ler token:', e);
-      }
+        if(tokenData.user) { localStorage.setItem('usuarioAtivo', tokenData.user); nomeUser = tokenData.user; }
+        if(tokenData.prazo) { prazoFormacao = tokenData.prazo; document.getElementById('prazo-data').textContent = prazoFormacao; }
+        if(tokenData.cursoId) return tokenData.cursoId;
+      } catch(e) {}
     }
-    
     document.getElementById('prazo-data').textContent = prazoFormacao;
     return localStorage.getItem('cursoAtualId');
   }
 
-  // ==================== CARREGAR FORMAÇÃO ====================
   async function carregarFormacao(id) {
     const loadingDiv = document.getElementById('loading');
     const modulesContainer = document.getElementById('modules-container');
-    
     loadingDiv.style.display = 'block';
     modulesContainer.style.display = 'none';
-    
-    if(!id) {
-      loadingDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ❌ Nenhuma formação selecionada. <a href="dashboard.html" style="color: var(--birkenstock-blue);">Voltar ao dashboard</a>';
-      return;
-    }
-    
+    if(!id) { loadingDiv.innerHTML = '❌ Nenhuma formação selecionada.'; return; }
     try {
-      const docRef = window.doc(window.db, 'formacoes', id);
-      const docSnap = await window.getDoc(docRef);
-      
+      const docSnap = await window.getDoc(window.doc(window.db, 'formacoes', id));
       if(docSnap.exists()) {
         const data = docSnap.data();
-        cursoData.nome = data.nome || 'Formação';
-        cursoData.duracao = data.duracao || '45 minutos';
-        cursoData.descricao = data.descricao || '';
+        cursoData = { nome: data.nome, duracao: data.duracao, descricao: data.descricao };
         modules = data.modulos || [];
         perguntas = data.perguntas || [];
-        
         document.getElementById('user-name-display').innerHTML = `<i class="fas fa-user"></i> ${nomeUser}`;
         document.getElementById('hero-title').textContent = cursoData.nome;
         document.getElementById('hero-desc').textContent = cursoData.descricao;
         document.getElementById('meta-duration').textContent = cursoData.duracao;
         document.getElementById('meta-modules').textContent = modules.length + ' módulos';
-        
         loadingDiv.style.display = 'none';
         modulesContainer.style.display = 'block';
-        
         renderModules();
         updateProgress();
-      } else {
-        loadingDiv.innerHTML = '<i class="fas fa-search"></i> ❌ Formação não encontrada. <a href="dashboard.html" style="color: var(--birkenstock-blue);">Voltar ao dashboard</a>';
-      }
-    } catch(error) {
-      console.error('Erro ao carregar formação:', error);
-      loadingDiv.innerHTML = '<i class="fas fa-bug"></i> ❌ Erro ao carregar formação: ' + error.message;
-    }
+      } else { loadingDiv.innerHTML = '❌ Formação não encontrada.'; }
+    } catch(error) { loadingDiv.innerHTML = '❌ Erro: ' + error.message; }
   }
 
   function updateProgress() {
     const total = modules.length + 1;
-    let done = modules.filter(m => completedModules[m.id]).length;
-    if(quizPassed) done++;
+    let done = modules.filter(m => completedModules[m.id]).length + (quizPassed ? 1 : 0);
     const pct = Math.round((done / total) * 100);
     document.getElementById('prog-fill').style.width = pct + '%';
     document.getElementById('progress-text').textContent = pct + '%';
-    
     const dotsContainer = document.getElementById('steps-dots');
     dotsContainer.innerHTML = '';
     modules.forEach((m, idx) => {
       const dot = document.createElement('div');
       dot.className = 'step-dot';
       if(completedModules[m.id]) dot.classList.add('done');
-      if(idx === modules.length - 1 && !quizPassed) dot.classList.add('active');
       dotsContainer.appendChild(dot);
     });
-    
-    if(quizPassed) {
-      const lastDot = document.createElement('div');
-      lastDot.className = 'step-dot done';
-      dotsContainer.appendChild(lastDot);
-    }
+    if(quizPassed) { const dot = document.createElement('div'); dot.className = 'step-dot done'; dotsContainer.appendChild(dot); }
   }
 
   function renderModules() {
     const container = document.getElementById('modules-container');
     container.innerHTML = '';
-    
     modules.forEach((module, idx) => {
       const block = document.createElement('div');
       block.className = 'section-block' + (completedModules[module.id] ? ' completed' : '');
       block.id = 'block-' + module.id;
-      
-      const header = document.createElement('div');
-      header.className = 'section-header';
-      header.onclick = () => toggleSection(module.id);
-      
-      const tipoIcon = module.tipo === 'video' ? '🎬' : module.tipo === 'text' ? '📄' : '📁';
-      const tipoTexto = module.tipo === 'video' ? 'Vídeo' : module.tipo === 'text' ? 'Texto' : 'Conteúdo';
-      
-      header.innerHTML = `
-        <div class="s-num">${idx + 1}</div>
-        <div class="s-info">
-          <div class="s-title">${escapeHtml(module.titulo || 'Módulo ' + (idx + 1))}</div>
-          <div class="s-meta">
-            <span><i class="fas ${module.tipo === 'video' ? 'fa-video' : module.tipo === 'text' ? 'fa-file-alt' : 'fa-file'}"></i> ${tipoTexto}</span>
-          </div>
+      block.innerHTML = `
+        <div class="section-header" onclick="toggleSection('${module.id}')">
+          <div class="s-num">${idx + 1}</div>
+          <div class="s-info"><div class="s-title">${escapeHtml(module.titulo)}</div><div class="s-meta">${module.tipo === 'video' ? '🎬 Vídeo' : module.tipo === 'text' ? '📄 Texto' : '📁 Conteúdo'}</div></div>
+          <div class="s-status">${completedModules[module.id] ? '✅' : '▶'}</div>
         </div>
-        <div class="s-status">${completedModules[module.id] ? '<i class="fas fa-check-circle" style="color: var(--success);"></i>' : '<i class="fas fa-chevron-right"></i>'}</div>
+        <div class="section-body" id="body-${module.id}">
+          <div id="content-${module.id}">Carregando conteúdo...</div>
+          <div class="content-tracker"><span>📊 Progresso</span><div style="flex:1"><div class="track-prog"><div class="track-fill" id="fill-${module.id}" style="width:0%"></div></div></div><span id="pct-${module.id}">0%</span></div>
+          <div class="confirm-viewed"><p><strong>Confirmar conclusão</strong><br>Confirme para avançar.</p><button class="btn-confirm" id="btn-confirm-${module.id}" disabled onclick="confirmModule('${module.id}')">✓ Confirmar</button></div>
+          <div class="confirmed-label" id="confirmed-${module.id}" style="display:none">✅ Módulo concluído</div>
+        </div>
       `;
-      block.appendChild(header);
-      
-      const body = document.createElement('div');
-      body.className = 'section-body';
-      body.id = 'body-' + module.id;
-      
-      let contentDiv = document.createElement('div');
-      contentDiv.id = `content-${module.id}`;
-      
-      const conteudo = module.conteudo || {};
-      const url = conteudo.url || '';
-      
-      if (module.tipo === 'video' && url) {
-        contentDiv.innerHTML = `<div class="video-wrap" id="video-${module.id}"></div>`;
-        body.appendChild(contentDiv);
-        setTimeout(() => {
-          const embedUrl = getYoutubeEmbedUrl(url);
-          if (embedUrl) {
-            document.getElementById(`video-${module.id}`).innerHTML = `<iframe src="${embedUrl}" frameborder="0" allowfullscreen style="width:100%; height:100%;"></iframe>`;
-          } else {
-            document.getElementById(`video-${module.id}`).innerHTML = `<iframe src="${url}" frameborder="0" allowfullscreen style="width:100%; height:100%;"></iframe>`;
-          }
-          markModuleAsViewed(module.id);
-        }, 100);
-      }
-      else if (module.tipo === 'text' && conteudo.texto) {
-        contentDiv.innerHTML = `<div class="text-content">${conteudo.texto}</div>`;
-        body.appendChild(contentDiv);
-        setTimeout(() => markModuleAsViewed(module.id), 500);
-      }
-      else if (url) {
-        contentDiv.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><i class="fas fa-spinner fa-spin"></i> A carregar conteúdo...</div><div class="doc-content" id="doc-content-${module.id}"><div style="padding:80px; text-align:center;"><i class="fas fa-spinner fa-spin" style="font-size:32px;"></i><br>A carregar...</div></div></div>`;
-        body.appendChild(contentDiv);
-        setTimeout(() => {
-          renderContent(url, `doc-content-${module.id}`, module.id);
-        }, 100);
-      }
-      else {
-        contentDiv.innerHTML = `<div class="text-content"><i class="fas fa-ban"></i> Conteúdo não disponível.</div>`;
-        body.appendChild(contentDiv);
-        setTimeout(() => markModuleAsViewed(module.id), 500);
-      }
-      
-      // Tracker de progresso
-      const trackerDiv = document.createElement('div');
-      trackerDiv.className = 'content-tracker';
-      trackerDiv.innerHTML = `
-        <i class="fas fa-chart-simple"></i>
-        <span>Progresso do módulo</span>
-        <div style="flex:1"><div class="track-prog"><div class="track-fill" id="fill-${module.id}" style="width:0%"></div></div></div>
-        <span id="pct-${module.id}" style="font-size:0.8rem;font-weight:600">0%</span>
-      `;
-      body.appendChild(trackerDiv);
-      
-      const confirmDiv = document.createElement('div');
-      confirmDiv.className = 'confirm-viewed';
-      confirmDiv.innerHTML = `
-        <p><i class="fas fa-check-circle"></i> <strong>Confirmar conclusão</strong><br>Após visualizar todo o conteúdo, confirme para avançar.</p>
-        <button class="btn-confirm" id="btn-confirm-${module.id}" disabled onclick="confirmModule('${module.id}')">✓ Confirmar e avançar</button>
-      `;
-      body.appendChild(confirmDiv);
-      
-      const confirmedDiv = document.createElement('div');
-      confirmedDiv.className = 'confirmed-label';
-      confirmedDiv.id = 'confirmed-' + module.id;
-      confirmedDiv.style.display = 'none';
-      confirmedDiv.innerHTML = '<i class="fas fa-check-circle"></i> Módulo concluído';
-      body.appendChild(confirmedDiv);
-      
-      block.appendChild(body);
       container.appendChild(block);
+      setTimeout(() => {
+        const url = module.conteudo?.url || '';
+        const contentDiv = document.getElementById(`content-${module.id}`);
+        if(module.tipo === 'text' && module.conteudo?.texto) contentDiv.innerHTML = `<div class="text-content">${module.conteudo.texto}</div>`;
+        else if(url) contentDiv.innerHTML = `<div class="doc-viewer"><div class="doc-viewer-header"><i class="fas fa-file"></i> Conteúdo</div><div class="doc-content"><iframe src="${url}" class="doc-iframe"></iframe></div></div>`;
+        else contentDiv.innerHTML = '<div class="text-content">Conteúdo não disponível.</div>';
+        setTimeout(() => { document.getElementById(`btn-confirm-${module.id}`).disabled = false; document.getElementById(`fill-${module.id}`).style.width = '100%'; document.getElementById(`pct-${module.id}`).textContent = '100%'; }, 500);
+      }, 100);
     });
-    
     renderQuiz();
   }
-  
-  function escapeHtml(text) {
-    if (!text) return '';
-    return text.replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
-    });
-  }
-  
+
   async function confirmModule(moduleId) {
-    const btn = document.getElementById(`btn-confirm-${moduleId}`);
-    if (!btn || btn.disabled) return;
-    
-    showLoading(`btn-confirm-${moduleId}`, true);
-    
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
     completedModules[moduleId] = true;
-    const block = document.getElementById('block-' + moduleId);
-    if (block) block.classList.add('completed');
-    
-    const confirmBtn = document.getElementById(`btn-confirm-${moduleId}`);
-    if (confirmBtn) confirmBtn.style.display = 'none';
-    
-    const confirmedDiv = document.getElementById(`confirmed-${moduleId}`);
-    if (confirmedDiv) confirmedDiv.style.display = 'flex';
-    
+    document.getElementById(`block-${moduleId}`).classList.add('completed');
+    document.getElementById(`btn-confirm-${moduleId}`).style.display = 'none';
+    document.getElementById(`confirmed-${moduleId}`).style.display = 'flex';
     toast('✅ Módulo concluído!', 'success');
     updateProgress();
-    
-    // Guardar progresso no localStorage
-    const progressSalvo = localStorage.getItem(`progress_${nomeUser}_${cursoId}`) || '{}';
-    const progress = JSON.parse(progressSalvo);
-    progress[moduleId] = true;
-    localStorage.setItem(`progress_${nomeUser}_${cursoId}`, JSON.stringify(progress));
-    
-    // Desbloquear próximo módulo
     const idx = modules.findIndex(m => m.id === moduleId);
-    if (idx < modules.length - 1) {
-      const nextBlock = document.getElementById('block-' + modules[idx + 1].id);
-      if (nextBlock) {
-        nextBlock.classList.remove('locked');
-        setTimeout(() => {
-          nextBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 300);
-      }
-      toast('📚 Próximo módulo desbloqueado!', 'info');
-    } else {
-      const quizBlock = document.getElementById('block-quiz');
-      if (quizBlock) {
-        quizBlock.classList.remove('locked');
-        const statusQuiz = document.getElementById('status-quiz');
-        if (statusQuiz) statusQuiz.innerHTML = '<i class="fas fa-check-circle"></i>';
-        setTimeout(() => {
-          quizBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 300);
-        toast('📝 Avaliação final desbloqueada!', 'info');
-      }
-    }
-    
-    showLoading(`btn-confirm-${moduleId}`, false);
+    if(idx < modules.length - 1) document.getElementById(`block-${modules[idx+1].id}`).classList.remove('locked');
+    else { document.getElementById('block-quiz').classList.remove('locked'); document.getElementById('status-quiz').innerHTML = '📝'; toast('📝 Avaliação desbloqueada!', 'info'); }
   }
-  
+
   function renderQuiz() {
     const container = document.getElementById('modules-container');
     const quizBlock = document.createElement('div');
@@ -1321,295 +632,114 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); colo
     quizBlock.id = 'block-quiz';
     quizBlock.innerHTML = `
       <div class="section-header" onclick="toggleSection('quiz')">
-        <div class="s-num">📝</div>
-        <div class="s-info">
-          <div class="s-title">Avaliação Final</div>
-          <div class="s-meta">
-            <span><i class="fas fa-question-circle"></i> ${perguntas.length} perguntas</span>
-            <span><i class="fas fa-chart-line"></i> Nota mínima: 70%</span>
-          </div>
-        </div>
-        <div class="s-status" id="status-quiz"><i class="fas fa-lock"></i></div>
+        <div class="s-num">📝</div><div class="s-info"><div class="s-title">Avaliação Final</div><div class="s-meta">Nota mínima: 70%</div></div>
+        <div class="s-status" id="status-quiz">🔒</div>
       </div>
       <div class="section-body" id="body-quiz">
-        <div class="quiz-wrap" id="quiz-form">
-          <div class="quiz-intro">
-            <i class="fas fa-clipboard-list"></i>
-            <strong>Avaliação de conhecimentos</strong>
-            <p style="margin-top: 12px;">Responde a todas as perguntas. Precisas de pelo menos 70% para ser aprovado e receber o certificado.</p>
-          </div>
-          <div id="quiz-questions"></div>
-          <div class="quiz-footer">
-            <span id="quiz-answered"><i class="far fa-circle-check"></i> 0 respondidas</span>
-            <button class="btn-submit" id="btn-submit" disabled onclick="submitQuiz()"><i class="fas fa-paper-plane"></i> Submeter avaliação</button>
-          </div>
-        </div>
-        <div class="result-screen" id="result-screen">
-          <div class="result-score-ring" id="result-ring">
-            <div class="score-num" id="score-num">0%</div>
-          </div>
-          <h2 id="result-title"></h2>
-          <p id="result-msg"></p>
-          <div class="result-actions">
-            <button class="btn-dl" id="btn-see-cert" onclick="showCertificate()" style="display:none"><i class="fas fa-certificate"></i> Ver Certificado</button>
-            <button class="btn-secondary" id="btn-retry" onclick="retryQuiz()" style="display:none"><i class="fas fa-redo"></i> Tentar novamente</button>
-          </div>
-        </div>
+        <div id="quiz-questions"></div>
+        <div class="quiz-footer"><span id="quiz-answered">0 respondidas</span><button class="btn-submit" id="btn-submit" disabled onclick="submitQuiz()">Submeter</button></div>
+        <div class="result-screen" id="result-screen"><div class="result-score-ring" id="result-ring"><div class="score-num" id="score-num">0%</div></div><h2 id="result-title"></h2><p id="result-msg"></p><div class="result-actions"><button class="btn-dl" id="btn-see-cert" onclick="showCertificate()" style="display:none">🏅 Certificado</button><button class="btn-secondary" id="btn-retry" onclick="retryQuiz()" style="display:none">🔄 Tentar</button></div></div>
       </div>
     `;
     container.appendChild(quizBlock);
-    
-    if(!perguntas.length) {
-      perguntas = [
-        { texto: "Qual é a melhor forma de aprender um novo conceito?", opcoes: ["Praticar diariamente", "Apenas ler", "Decorar", "Ignorar"], correta: "A" },
-        { texto: "O que é importante para o desenvolvimento profissional?", opcoes: ["Formação contínua", "Estagnação", "Falta de interesse", "Desmotivação"], correta: "A" },
-        { texto: "Como aplicar os conhecimentos adquiridos?", opcoes: ["Na prática diária", "Esquecer", "Guardar", "Não aplicar"], correta: "A" }
-      ];
-    }
-    
-    const questionsDiv = document.getElementById('quiz-questions');
-    questionsDiv.innerHTML = perguntas.map((q, idx) => `
-      <div class="question" id="q-${idx}">
-        <div class="question-text">${escapeHtml(q.texto)}</div>
-        <div class="options" id="opts-${idx}">
-          ${q.opcoes.map((opt, optIdx) => `
-            <div class="option-item" onclick="selectOpt(${idx}, ${optIdx})">
-              <div class="option-letter">${String.fromCharCode(65+optIdx)}</div>
-              ${escapeHtml(opt)}
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `).join('');
-    
-    window.perguntas = perguntas;
-    window.respostas = {};
-    window.totalPerguntas = perguntas.length;
+    if(!perguntas.length) perguntas = [{ texto: "O que é importante para o desenvolvimento profissional?", opcoes: ["Formação contínua", "Estagnação", "Falta de interesse", "Desmotivação"], correta: "A" }];
+    document.getElementById('quiz-questions').innerHTML = perguntas.map((q, idx) => `<div class="question"><div class="question-text">${q.texto}</div><div class="options" id="opts-${idx}">${q.opcoes.map((opt, i) => `<div class="option-item" onclick="selectOpt(${idx}, ${i})"><div class="option-letter">${String.fromCharCode(65+i)}</div>${opt}</div>`).join('')}</div></div>`).join('');
+    window.perguntas = perguntas; window.respostas = {}; window.totalPerguntas = perguntas.length;
   }
-  
-  function selectOpt(qIdx, optIdx) {
-    document.querySelectorAll(`#opts-${qIdx} .option-item`).forEach(el => el.classList.remove('selected'));
-    document.querySelectorAll(`#opts-${qIdx} .option-item`)[optIdx].classList.add('selected');
-    window.respostas[qIdx] = String.fromCharCode(65+optIdx);
-    const answered = Object.keys(window.respostas).length;
-    const answeredSpan = document.getElementById('quiz-answered');
-    const submitBtn = document.getElementById('btn-submit');
-    if (answeredSpan) answeredSpan.innerHTML = `<i class="fas fa-check-circle"></i> ${answered} de ${window.totalPerguntas} respondidas`;
-    if (submitBtn) submitBtn.disabled = answered < window.totalPerguntas;
-  }
-  
+
+  function selectOpt(qIdx, optIdx) { document.querySelectorAll(`#opts-${qIdx} .option-item`).forEach(el => el.classList.remove('selected')); document.querySelectorAll(`#opts-${qIdx} .option-item`)[optIdx].classList.add('selected'); window.respostas[qIdx] = String.fromCharCode(65+optIdx); document.getElementById('quiz-answered').innerHTML = `${Object.keys(window.respostas).length} de ${window.totalPerguntas} respondidas`; document.getElementById('btn-submit').disabled = Object.keys(window.respostas).length < window.totalPerguntas; }
+
   async function submitQuiz() {
-    const submitBtn = document.getElementById('btn-submit');
-    showLoading('btn-submit', true);
-    
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
     let score = 0;
-    for(let i = 0; i < window.totalPerguntas; i++) {
-      const isCorrect = window.respostas[i] === window.perguntas[i].correta;
-      if(isCorrect) score++;
-      document.querySelectorAll(`#opts-${i} .option-item`).forEach((el, idx) => {
-        if(String.fromCharCode(65+idx) === window.perguntas[i].correta) el.classList.add('correct');
-        else if(idx === window.respostas[i]?.charCodeAt(0)-65 && !isCorrect) el.classList.add('wrong');
-        el.onclick = null;
-      });
-    }
+    for(let i = 0; i < window.totalPerguntas; i++) { if(window.respostas[i] === window.perguntas[i].correta) score++; }
     const pct = Math.round((score / window.totalPerguntas) * 100);
     const passed = pct >= 70;
     quizPassed = passed;
-    document.getElementById('quiz-form').style.display = 'none';
-    const rs = document.getElementById('result-screen');
-    rs.style.display = 'block';
+    document.getElementById('quiz-questions').style.display = 'none';
+    document.getElementById('quiz-footer').style.display = 'none';
+    document.getElementById('result-screen').style.display = 'block';
     document.getElementById('score-num').textContent = pct + '%';
-    
     if(passed) {
-      document.getElementById('result-title').innerHTML = '<i class="fas fa-trophy" style="color: var(--birkenstock-gold);"></i> Parabéns, aprovado!';
-      document.getElementById('result-msg').innerHTML = `Acertaste ${score} de ${window.totalPerguntas} perguntas (${pct}%).<br>O teu certificado foi gerado.`;
+      document.getElementById('result-title').innerHTML = '🎉 Aprovado!';
+      document.getElementById('result-msg').innerHTML = `Acertaste ${score}/${window.totalPerguntas} (${pct}%)`;
       document.getElementById('btn-see-cert').style.display = 'inline-block';
       updateProgress();
-      
-      try {
-        await window.addDoc(window.collection(window.db, 'historico'), {
-          nome: nomeUser,
-          curso: cursoData.nome,
-          nota: pct + '%',
-          data: fmtDate(new Date()),
-          dataTimestamp: Date.now()
-        });
-        toast('✅ Resultado guardado!', 'success');
-        
-        // MARCAÇÃO DE CONCLUSÃO DO CURSO
-        localStorage.setItem('cursoConcluido', cursoId);
-        
-        const progressCompleto = {
-          completed: true,
-          completedAt: new Date().toISOString(),
-          score: pct
-        };
-        localStorage.setItem(`curso_completo_${nomeUser}_${cursoId}`, JSON.stringify(progressCompleto));
-        
-      } catch(e) { 
-        console.error('Erro ao guardar histórico:', e); 
-      }
+      localStorage.setItem('cursoConcluido', cursoId);
+      await window.addDoc(window.collection(window.db, 'historico'), { nome: nomeUser, curso: cursoData.nome, nota: pct + '%', data: fmtDate(new Date()), dataTimestamp: Date.now() });
+      toast('✅ Certificado gerado!', 'success');
     } else {
       document.getElementById('result-ring').classList.add('fail');
-      document.getElementById('score-num').classList.add('fail');
-      document.getElementById('result-title').innerHTML = '<i class="fas fa-exclamation-triangle"></i> Não aprovado';
-      document.getElementById('result-msg').innerHTML = `Obtiveste ${pct}% (${score}/${window.totalPerguntas} corretas).<br>Precisas de pelo menos 70%. Podes tentar novamente.`;
+      document.getElementById('result-title').innerHTML = '❌ Não aprovado';
+      document.getElementById('result-msg').innerHTML = `Obtiveste ${pct}%. Precisas de 70%.`;
       document.getElementById('btn-retry').style.display = 'inline-block';
-      toast('⚠️ Não atingiu a nota mínima. Tente novamente!', 'error');
     }
-    
-    showLoading('btn-submit', false);
   }
-  
+
   function retryQuiz() {
     window.respostas = {};
-    for(let i = 0; i < window.totalPerguntas; i++) {
-      document.querySelectorAll(`#opts-${i} .option-item`).forEach(el => {
-        el.classList.remove('selected','correct','wrong');
-        el.onclick = () => selectOpt(i, Array.from(el.parentNode.children).indexOf(el));
-      });
-    }
-    document.getElementById('quiz-answered').innerHTML = `<i class="far fa-circle-check"></i> 0 de ${window.totalPerguntas} respondidas`;
-    document.getElementById('btn-submit').disabled = true;
+    document.getElementById('quiz-questions').style.display = 'block';
+    document.getElementById('quiz-footer').style.display = 'flex';
     document.getElementById('result-screen').style.display = 'none';
-    document.getElementById('quiz-form').style.display = 'block';
+    document.getElementById('btn-submit').disabled = true;
+    document.getElementById('quiz-answered').innerHTML = `0 de ${window.totalPerguntas} respondidas`;
     document.getElementById('result-ring').classList.remove('fail');
-    document.getElementById('score-num').classList.remove('fail');
-    toast('🔄 Quiz reiniciado. Boa sorte!', 'info');
+    document.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected', 'correct', 'wrong'));
   }
-  
+
   function showCertificate() {
-    if (!localStorage.getItem('cursoConcluido')) {
-      localStorage.setItem('cursoConcluido', cursoId);
-    }
-    
     const now = new Date();
-    const expiry = new Date(now); 
-    expiry.setFullYear(expiry.getFullYear() + 1);
-    const certId = 'CERT-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random()*9000);
+    const certId = 'CERT-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
+    const nota = document.getElementById('score-num').textContent;
+    const imagemFundo = 'imagens/fundo_certificado.png';
     const certHtml = `
       <div class="cert-screen" id="cert-screen" style="display:block">
-        <div class="cert-card">
-          <div class="cert-issued">CERTIFICADO OFICIAL · BIRKENSTOCK S&CC PORTUGAL</div>
-          <div class="cert-emblem">🎓</div>
-          <div class="cert-certify">Certifica-se que</div>
-          <div class="cert-name">${nomeUser}</div>
-          <div class="cert-course-title">concluiu com sucesso a formação<br><strong>${escapeHtml(cursoData.nome)}</strong></div>
-          <div class="cert-row">
-            <div class="cert-col">
-              <div class="cert-col-label">Nota final</div>
-              <div class="cert-col-val">${document.getElementById('score-num').textContent}</div>
+        <div class="cert-card" style="background-image: url('${imagemFundo}'); background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 500px; position: relative; margin-top: 24px; border-radius: 16px; overflow: hidden;">
+          <div style="position: relative; z-index: 2; height: 100%; min-height: 500px;">
+            <div style="position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 80%;">
+              <div style="font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 900; color: #00338D; margin-bottom: 20px;">${escapeHtml(nomeUser)}</div>
+              <div style="font-size: 1rem; color: #616365; margin-bottom: 12px;">concluiu com sucesso a formação</div>
+              <div style="font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 700; color: #C5A059;">${escapeHtml(cursoData.nome)}</div>
             </div>
-            <div class="cert-col">
-              <div class="cert-col-label">Data de emissão</div>
-              <div class="cert-col-val">${fmtDate(now)}</div>
+            <div style="position: absolute; bottom: 12%; left: 12%; text-align: center;">
+              <div style="font-size: 0.7rem; color: #616365; text-transform: uppercase;">NOTA FINAL</div>
+              <div style="font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: #00338D;">${nota}</div>
             </div>
-            <div class="cert-col">
-              <div class="cert-col-label">Validade</div>
-              <div class="cert-col-val">${fmtDate(expiry)}</div>
+            <div style="position: absolute; bottom: 12%; left: 50%; transform: translateX(-50%); text-align: center;">
+              <div style="font-size: 0.7rem; color: #616365; text-transform: uppercase;">DATA</div>
+              <div style="font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 600; color: #00338D;">${fmtDate(now)}</div>
+            </div>
+            <div style="position: absolute; bottom: 12%; right: 12%; text-align: center;">
+              <div style="font-size: 0.7rem; color: #616365; text-transform: uppercase;">CERTIFICADO ID</div>
+              <div style="font-family: monospace; font-size: 0.8rem; font-weight: 600; color: #00338D;">${certId}</div>
             </div>
           </div>
-          <div class="cert-id">ID: ${certId}</div>
         </div>
-        <div class="cert-actions">
-          <button class="btn-dl" onclick="window.print()"><i class="fas fa-print"></i> Imprimir Certificado</button>
-          <button class="btn-secondary" onclick="voltarDashboard()"><i class="fas fa-home"></i> Voltar ao Dashboard</button>
+        <div class="cert-actions" style="margin-top: 20px;">
+          <button class="btn-dl" onclick="window.print()"><i class="fas fa-print"></i> Imprimir</button>
+          <button class="btn-secondary" onclick="voltarDashboard()"><i class="fas fa-home"></i> Voltar</button>
         </div>
       </div>
     `;
     const modulesContainer = document.getElementById('modules-container');
-    const existingCert = document.getElementById('cert-screen');
-    if (existingCert) existingCert.remove();
+    const existing = document.getElementById('cert-screen');
+    if(existing) existing.remove();
     modulesContainer.insertAdjacentHTML('beforeend', certHtml);
-    setTimeout(() => {
-      const certScreen = document.getElementById('cert-screen');
-      if(certScreen) certScreen.scrollIntoView({ behavior: 'smooth' });
-    }, 200);
-    toast('🏅 Certificado gerado!', 'success');
+    setTimeout(() => document.getElementById('cert-screen')?.scrollIntoView({ behavior: 'smooth' }), 200);
   }
-  
-  function voltarDashboard() {
-    window.location.href = 'dashboard.html';
-  }
-  
-  function sairDaFormacao() {
-    if(confirm('Tem a certeza que deseja sair? O progresso será guardado.')) {
-      window.location.href = 'dashboard.html';
-    }
-  }
-  
-  function toggleSection(id) {
-    if(id === 'quiz') {
-      const block = document.getElementById('block-quiz');
-      if(block && block.classList.contains('locked')) {
-        toast('🔒 Complete todos os módulos primeiro!', 'error');
-        return;
-      }
-      const bodyQuiz = document.getElementById('body-quiz');
-      if(bodyQuiz) bodyQuiz.classList.toggle('open');
-    } else {
-      const block = document.getElementById('block-' + id);
-      if(block && block.classList.contains('locked')) {
-        toast('🔒 Complete o módulo anterior primeiro!', 'error');
-        return;
-      }
-      const body = document.getElementById('body-' + id);
-      if(body) body.classList.toggle('open');
-    }
-  }
-  
-  function carregarProgressoSalvo() {
-    const progressSalvo = localStorage.getItem(`progress_${nomeUser}_${cursoId}`);
-    if (progressSalvo) {
-      const progress = JSON.parse(progressSalvo);
-      Object.keys(progress).forEach(moduleId => {
-        if (progress[moduleId] === true) {
-          completedModules[moduleId] = true;
-        }
-      });
-    }
-    
-    const cursoCompleto = localStorage.getItem(`curso_completo_${nomeUser}_${cursoId}`);
-    if (cursoCompleto) {
-      const completo = JSON.parse(cursoCompleto);
-      if (completo.completed) {
-        quizPassed = true;
-        toast('🎓 Este curso já foi concluído anteriormente!', 'success');
-      }
-    }
-  }
-  
-  // ==================== INICIALIZAÇÃO ====================
-  window.toggleSection = toggleSection;
-  window.selectOpt = selectOpt;
-  window.submitQuiz = submitQuiz;
-  window.retryQuiz = retryQuiz;
-  window.showCertificate = showCertificate;
-  window.confirmModule = confirmModule;
-  window.toast = toast;
-  window.markModuleAsViewed = markModuleAsViewed;
-  window.voltarDashboard = voltarDashboard;
-  window.sairDaFormacao = sairDaFormacao;
-  
+
+  function voltarDashboard() { window.location.href = 'dashboard.html'; }
+  function sairDaFormacao() { if(confirm('Sair? O progresso será guardado.')) window.location.href = 'dashboard.html'; }
+  function toggleSection(id) { if(id === 'quiz') { if(document.getElementById('block-quiz').classList.contains('locked')) { toast('Complete os módulos primeiro!', 'error'); return; } document.getElementById('body-quiz').classList.toggle('open'); } else { if(document.getElementById('block-' + id).classList.contains('locked')) { toast('Complete o módulo anterior!', 'error'); return; } document.getElementById('body-' + id).classList.toggle('open'); } }
+
+  window.toggleSection = toggleSection; window.selectOpt = selectOpt; window.submitQuiz = submitQuiz; window.retryQuiz = retryQuiz; window.showCertificate = showCertificate; window.confirmModule = confirmModule; window.voltarDashboard = voltarDashboard; window.sairDaFormacao = sairDaFormacao;
+
   window.addEventListener('load', function() {
-    const usuarioAtivo = localStorage.getItem('usuarioAtivo');
-    if(!usuarioAtivo) {
-      window.location.href = 'login.html';
-      return;
-    }
-    nomeUser = usuarioAtivo;
+    if(!localStorage.getItem('usuarioAtivo')) { window.location.href = 'login.html'; return; }
+    nomeUser = localStorage.getItem('usuarioAtivo');
     document.getElementById('user-name-display').innerHTML = `<i class="fas fa-user"></i> ${nomeUser}`;
-    
     const cursoIdCarregado = lerTokenUrl();
-    if(cursoIdCarregado) {
-      cursoId = cursoIdCarregado;
-      carregarProgressoSalvo();
-      carregarFormacao(cursoIdCarregado);
-    } else {
-      document.getElementById('loading').innerHTML = '<i class="fas fa-exclamation-triangle"></i> ❌ Nenhuma formação selecionada. <a href="dashboard.html" style="color: var(--birkenstock-blue);">Voltar ao dashboard</a>';
-    }
+    if(cursoIdCarregado) { cursoId = cursoIdCarregado; carregarFormacao(cursoIdCarregado); }
+    else document.getElementById('loading').innerHTML = '❌ Nenhuma formação selecionada.';
   });
 </script>
 </body>
