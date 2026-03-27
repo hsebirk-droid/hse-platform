@@ -499,12 +499,12 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     <div class="sec-head"><h2>📊 Histórico de Formações</h2><div><button class="btn-sm" onclick="exportarHistoricoCSV()"><i class="fas fa-file-csv"></i> CSV</button><button class="btn-sm" onclick="exportarHistoricoExcel()"><i class="fas fa-file-excel"></i> Excel</button></div></div>
     <div class="sec-body">
       <div style="overflow-x:auto;">
-        <table>
+         <table>
           <thead>
-            <tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr>
+             <tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr>
           </thead>
           <tbody id="lista-notas"></tbody>
-        </table>
+         </table>
       </div>
       <button id="btn-limpar" class="btn-sm btn-danger" style="margin-top:16px;"><i class="fas fa-trash"></i> Limpar Histórico</button>
     </div>
@@ -560,7 +560,19 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+  import { 
+    getFirestore, 
+    collection, 
+    addDoc, 
+    getDocs, 
+    doc, 
+    updateDoc, 
+    deleteDoc, 
+    query, 
+    orderBy, 
+    getDoc,
+    where
+  } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAwywvboQgWqkrZlbwrUPdaUq-gLnWM64E",
@@ -573,7 +585,21 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+
+  // EXPORTAR PARA O ESCOPO GLOBAL
   window.db = db;
+  window.collection = collection;
+  window.addDoc = addDoc;
+  window.getDocs = getDocs;
+  window.doc = doc;
+  window.updateDoc = updateDoc;
+  window.deleteDoc = deleteDoc;
+  window.query = query;
+  window.orderBy = orderBy;
+  window.getDoc = getDoc;
+  window.where = where;
+  
+  console.log("✅ Firebase inicializado com sucesso!");
 </script>
 
 <script>
@@ -636,7 +662,13 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     const modal = document.getElementById('preview-modal');
     const previewDiv = document.getElementById('preview-conteudo');
     
-    const fundoImagem = certConfig.fundoImagem || 'imagens/fundo_certificado.png';
+    let fundoImagem = certConfig.fundoImagem || 'imagens/fundo_certificado.png';
+    
+    // Se o caminho não começar com http, adiciona o domínio
+    if (!fundoImagem.startsWith('http') && !fundoImagem.startsWith('data:')) {
+      fundoImagem = window.location.origin + window.location.pathname.replace('admin.html', '') + fundoImagem;
+    }
+    
     const dataAtual = new Date().toLocaleDateString('pt-PT');
     const certId = 'CERT-2026-1234';
     const nota = '85%';
@@ -644,11 +676,11 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     const formacao = 'Formação Exemplo';
     
     previewDiv.innerHTML = `
-      <div style="background-image: url('${fundoImagem}'); background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 500px; position: relative; border-radius: 12px; overflow: hidden;">
+      <div style="background-image: url('${fundoImagem}'); background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 500px; position: relative; border-radius: 12px; overflow: hidden; border: 1px solid #ddd;">
         <div style="position: relative; z-index: 2; height: 100%; min-height: 500px;">
           <div style="position: absolute; top: ${certConfig.nomeTop}%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 80%;">
             <div style="font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 900; color: ${certConfig.corNome};">${nome}</div>
-            <div style="font-size: 1rem; color: #616365; margin-top: ${certConfig.textoTop - certConfig.nomeTop}%;">concluiu com sucesso a formação</div>
+            <div style="font-size: 1rem; color: #616365; margin-top: 10px;">concluiu com sucesso a formação</div>
             <div style="font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 700; color: ${certConfig.corFormacao}; margin-top: 10px;">${formacao}</div>
           </div>
           <div style="position: absolute; bottom: ${certConfig.notaBottom}%; left: ${certConfig.notaLeft}%; text-align: center;">
@@ -665,6 +697,9 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
           </div>
         </div>
       </div>
+      <div style="margin-top: 16px; padding: 12px; background: #f0f0f0; border-radius: 8px; font-size: 12px; text-align: center;">
+        🔍 <strong>Informação:</strong> Imagem carregada de: ${fundoImagem}
+      </div>
     `;
     modal.style.display = 'flex';
   }
@@ -675,26 +710,32 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
 
   // ==================== FUNÇÕES PRINCIPAIS ====================
   async function carregarFormacoes() {
-    const q = window.query(window.collection(window.db, 'formacoes'), window.orderBy('dataTimestamp', 'desc'));
-    const querySnapshot = await window.getDocs(q);
-    const cursos = [];
-    querySnapshot.forEach((doc) => { cursos.push({ id: doc.id, ...doc.data() }); });
-    return cursos;
+    try {
+      const q = window.query(window.collection(window.db, 'formacoes'), window.orderBy('dataTimestamp', 'desc'));
+      const querySnapshot = await window.getDocs(q);
+      const cursos = [];
+      querySnapshot.forEach((doc) => { cursos.push({ id: doc.id, ...doc.data() }); });
+      return cursos;
+    } catch(e) { console.error("Erro ao carregar formações:", e); return []; }
   }
 
   async function carregarColaboradores() {
-    const querySnapshot = await window.getDocs(window.collection(window.db, 'colaboradores'));
-    const colaboradores = [];
-    querySnapshot.forEach((doc) => { colaboradores.push({ id: doc.id, ...doc.data() }); });
-    return colaboradores;
+    try {
+      const querySnapshot = await window.getDocs(window.collection(window.db, 'colaboradores'));
+      const colaboradores = [];
+      querySnapshot.forEach((doc) => { colaboradores.push({ id: doc.id, ...doc.data() }); });
+      return colaboradores;
+    } catch(e) { console.error("Erro ao carregar colaboradores:", e); return []; }
   }
 
   async function carregarHistorico() {
-    const q = window.query(window.collection(window.db, 'historico'), window.orderBy('dataTimestamp', 'desc'));
-    const querySnapshot = await window.getDocs(q);
-    const historico = [];
-    querySnapshot.forEach((doc) => { historico.push({ id: doc.id, ...doc.data() }); });
-    return historico;
+    try {
+      const q = window.query(window.collection(window.db, 'historico'), window.orderBy('dataTimestamp', 'desc'));
+      const querySnapshot = await window.getDocs(q);
+      const historico = [];
+      querySnapshot.forEach((doc) => { historico.push({ id: doc.id, ...doc.data() }); });
+      return historico;
+    } catch(e) { console.error("Erro ao carregar histórico:", e); return []; }
   }
 
   async function atualizarDashboard() {
@@ -807,7 +848,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   async function publicarFormacao(){ const titulo = document.getElementById('f-titulo').value.trim(); if(!titulo){ alert('Título obrigatório'); return; } if(!modulos.length){ alert('Adicione módulos'); return; } if(!perguntas.length){ alert('Adicione perguntas'); return; } const novaFormacao = { nome: titulo, duracao: document.getElementById('f-duracao').value || '30 min', descricao: document.getElementById('f-descricao').value, modulos: [...modulos], perguntas: perguntas.map(p => ({texto:p.texto, opcoes:p.opcoes, correta:p.correta})), data: new Date().toLocaleDateString('pt-PT'), dataTimestamp: Date.now() }; try { if(editandoFormacaoId) { await window.updateDoc(window.doc(window.db, 'formacoes', editandoFormacaoId), novaFormacao); alert(`✅ Formação "${titulo}" atualizada!`); editandoFormacaoId = null; document.getElementById('editando-id').innerHTML = ''; document.getElementById('btn-cancelar-edicao').style.display = 'none'; } else { await window.addDoc(window.collection(window.db, 'formacoes'), novaFormacao); alert(`✅ Formação "${titulo}" publicada!`); } document.getElementById('f-titulo').value = ''; document.getElementById('f-duracao').value = ''; document.getElementById('f-descricao').value = ''; modulos = []; perguntas = []; renderModulos(); renderPerguntas(); renderFormacoesLista(); atualizarSelectores(); atualizarDashboard(); } catch(e) { alert('Erro ao publicar.'); } }
 
   // ==================== HISTÓRICO ====================
-  async function renderHistorico() { const historico = await carregarHistorico(); const tbody = document.getElementById('lista-notas'); if(!historico.length){ tbody.innerHTML = '<tr><td colspan="6" class="empty">Nenhum resultado</td></tr>'; return; } tbody.innerHTML = historico.map(h => `<tr><td><strong>${h.nome}</strong></td><td>${h.email || '-'}</td><td>${h.curso}</td><td>${h.data}</td><td><span class="badge badge-success">${h.nota}</span></td><td><button class="btn-sm" onclick="alert('Certificado de ${h.nome}')">📄</button></td></tr>`).join(''); }
+  async function renderHistorico() { const historico = await carregarHistorico(); const tbody = document.getElementById('lista-notas'); if(!historico.length){ tbody.innerHTML = '}<tr><td colspan="6" class="empty">Nenhum resultado</td></tr>'; return; } tbody.innerHTML = historico.map(h => `<tr><td><strong>${h.nome}</strong></td><td>${h.email || '-'}</td><td>${h.curso}</td><td>${h.data}</td><td><span class="badge badge-success">${h.nota}</span></td><td><button class="btn-sm" onclick="alert('Certificado de ${h.nome}')">📄</button></td></tr>`).join(''); }
   function exportarHistoricoCSV(){ alert('Exportação CSV em breve'); }
   function exportarHistoricoExcel(){ alert('Exportação Excel em breve'); }
   async function limparHistorico(){ if(confirm('Apagar histórico?')){ const historico = await carregarHistorico(); for(const item of historico) { await window.deleteDoc(window.doc(window.db, 'historico', item.id)); } renderHistorico(); atualizarDashboard(); alert('✅ Histórico limpo!'); } }
