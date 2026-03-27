@@ -320,16 +320,19 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     <button class="tab" data-tab="historico">📊 Histórico</button>
   </div>
 
+  <!-- Dashboard -->
   <div class="sec active" id="sec-dashboard">
     <div class="sec-head"><h2>📈 Visão Geral</h2></div>
     <div class="sec-body"><div id="recent-activities" class="item-list"></div></div>
   </div>
 
+  <!-- Lista Formações -->
   <div class="sec" id="sec-lista-formacoes">
     <div class="sec-head"><h2>📚 Gestão de Formações</h2></div>
     <div class="sec-body"><div id="formacoes-list" class="item-list"></div></div>
   </div>
 
+  <!-- Criar Formação -->
   <div class="sec" id="sec-formacao">
     <div class="sec-head"><h2>🎓 Criar Nova Formação</h2><div id="editando-id" style="color:white;font-size:12px;"></div></div>
     <div class="sec-body">
@@ -368,6 +371,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     </div>
   </div>
 
+  <!-- Atribuir -->
   <div class="sec" id="sec-atribuir">
     <div class="sec-head"><h2>📨 Atribuir Formações</h2></div>
     <div class="sec-body">
@@ -391,6 +395,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     </div>
   </div>
 
+  <!-- Certificado -->
   <div class="sec" id="sec-certificado">
     <div class="sec-head">
       <h2>🏅 Editor de Certificado</h2>
@@ -401,70 +406,29 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       </div>
     </div>
     <div class="sec-body">
-      <!-- Imagem de Fundo -->
       <div class="fg">
         <label><i class="fas fa-image"></i> Imagem de Fundo</label>
-        <input type="text" id="cert-fundo-imagem" placeholder="imagens/fundo_certificado.png">
-        <small style="color: var(--birkenstock-gray);">Caminho da imagem (ex: imagens/fundo_certificado.png)</small>
+        <input type="text" id="cert-fundo-imagem" placeholder="https://hsebirk-droid.github.io/hse-platform/imagens/fundo_certificado.png">
+        <small>Cole o link completo da imagem</small>
       </div>
-
-      <!-- Posicionamento dos elementos -->
       <div class="config-grid">
-        <div class="fg">
-          <label><i class="fas fa-user"></i> Nome - Posição Top (%)</label>
-          <input type="number" id="cert-nome-top" value="45" step="1" min="0" max="100">
-        </div>
-        <div class="fg">
-          <label><i class="fas fa-check-circle"></i> Texto "concluiu" - Top (%)</label>
-          <input type="number" id="cert-texto-top" value="55" step="1" min="0" max="100">
-        </div>
-        <div class="fg">
-          <label><i class="fas fa-graduation-cap"></i> Formação - Top (%)</label>
-          <input type="number" id="cert-formacao-top" value="62" step="1" min="0" max="100">
-        </div>
-        <div class="fg">
-          <label><i class="fas fa-star"></i> Nota - Esquerda (%)</label>
-          <input type="number" id="cert-nota-left" value="12" step="1" min="0" max="100">
-          <small>e Bottom (%)</small>
-          <input type="number" id="cert-nota-bottom" value="12" step="1" min="0" max="100" style="margin-top: 5px;">
-        </div>
-        <div class="fg">
-          <label><i class="fas fa-calendar"></i> Data - Bottom (%)</label>
-          <input type="number" id="cert-data-bottom" value="12" step="1" min="0" max="100">
-        </div>
-        <div class="fg">
-          <label><i class="fas fa-qrcode"></i> ID - Direita (%)</label>
-          <input type="number" id="cert-id-right" value="12" step="1" min="0" max="100">
-          <small>e Bottom (%)</small>
-          <input type="number" id="cert-id-bottom" value="12" step="1" min="0" max="100" style="margin-top: 5px;">
-        </div>
+        <div class="fg"><label>Nome - Top (%)</label><input type="number" id="cert-nome-top" value="45" step="1" min="0" max="100"></div>
+        <div class="fg"><label>Texto "concluiu" - Top (%)</label><input type="number" id="cert-texto-top" value="55" step="1" min="0" max="100"></div>
+        <div class="fg"><label>Formação - Top (%)</label><input type="number" id="cert-formacao-top" value="62" step="1" min="0" max="100"></div>
+        <div class="fg"><label>Nota - Esquerda (%)</label><input type="number" id="cert-nota-left" value="12" step="1" min="0" max="100"><small>Bottom (%)</small><input type="number" id="cert-nota-bottom" value="12" step="1" min="0" max="100" style="margin-top:5px;"></div>
+        <div class="fg"><label>Data - Bottom (%)</label><input type="number" id="cert-data-bottom" value="12" step="1" min="0" max="100"></div>
+        <div class="fg"><label>ID - Direita (%)</label><input type="number" id="cert-id-right" value="12" step="1" min="0" max="100"><small>Bottom (%)</small><input type="number" id="cert-id-bottom" value="12" step="1" min="0" max="100" style="margin-top:5px;"></div>
       </div>
-
-      <!-- Cores -->
       <div class="config-colors">
-        <div class="fg">
-          <label>Cor do Nome</label>
-          <input type="color" id="cert-cor-nome" value="#00338D">
-        </div>
-        <div class="fg">
-          <label>Cor da Formação</label>
-          <input type="color" id="cert-cor-formacao" value="#C5A059">
-        </div>
-        <div class="fg">
-          <label>Cor dos Valores</label>
-          <input type="color" id="cert-cor-valores" value="#00338D">
-        </div>
+        <div class="fg"><label>Cor do Nome</label><input type="color" id="cert-cor-nome" value="#00338D"></div>
+        <div class="fg"><label>Cor da Formação</label><input type="color" id="cert-cor-formacao" value="#C5A059"></div>
+        <div class="fg"><label>Cor dos Valores</label><input type="color" id="cert-cor-valores" value="#00338D"></div>
       </div>
-
-      <!-- Botão pré-visualização -->
-      <div style="margin-top: 24px; text-align: center;">
-        <button class="btn" onclick="abrirPreviewCertificado()" style="width: auto; padding: 12px 32px;">
-          <i class="fas fa-eye"></i> Abrir Pré-visualização
-        </button>
-      </div>
+      <div style="margin-top:24px;text-align:center;"><button class="btn" onclick="abrirPreviewCertificado()" style="width:auto;padding:12px 32px;"><i class="fas fa-eye"></i> Abrir Pré-visualização</button></div>
     </div>
   </div>
 
+  <!-- Colaboradores -->
   <div class="sec" id="sec-colaboradores">
     <div class="sec-head"><h2>👥 Colaboradores</h2></div>
     <div class="sec-body">
@@ -482,6 +446,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     </div>
   </div>
 
+  <!-- Segurança -->
   <div class="sec" id="sec-seguranca">
     <div class="sec-head"><h2>🔐 Segurança</h2></div>
     <div class="sec-body">
@@ -495,84 +460,26 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     </div>
   </div>
 
+  <!-- Histórico -->
   <div class="sec" id="sec-historico">
     <div class="sec-head"><h2>📊 Histórico de Formações</h2><div><button class="btn-sm" onclick="exportarHistoricoCSV()"><i class="fas fa-file-csv"></i> CSV</button><button class="btn-sm" onclick="exportarHistoricoExcel()"><i class="fas fa-file-excel"></i> Excel</button></div></div>
     <div class="sec-body">
-      <div style="overflow-x:auto;">
-         <table>
-          <thead>
-             <tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr>
-          </thead>
-          <tbody id="lista-notas"></tbody>
-         </table>
-      </div>
+      <div style="overflow-x:auto;"><table><thead><tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr></thead><tbody id="lista-notas"></tbody></table></div>
       <button id="btn-limpar" class="btn-sm btn-danger" style="margin-top:16px;"><i class="fas fa-trash"></i> Limpar Histórico</button>
     </div>
   </div>
 </div>
 
-<!-- Modal de Módulo -->
-<div id="modal-modulo" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3 id="modal-modulo-titulo">Adicionar Módulo</h3>
-      <span class="modal-close" onclick="fecharModal('modal-modulo')">&times;</span>
-    </div>
-    <div class="fg"><label>Título do Módulo *</label><input type="text" id="modulo-titulo" placeholder="Ex: Introdução"></div>
-    <div class="fg"><label>Duração</label><input type="text" id="modulo-duracao" placeholder="15 min"></div>
-    <div id="modulo-conteudo-video" style="display:none;"><div class="fg"><label>URL do Vídeo *</label><input type="text" id="modulo-video-url" placeholder="https://..."></div></div>
-    <div id="modulo-conteudo-texto" style="display:none;"><div class="fg"><label>Conteúdo *</label><textarea id="modulo-texto-conteudo" rows="6"></textarea></div></div>
-    <div id="modulo-conteudo-file" style="display:none;"><div class="fg"><label>URL do Ficheiro *</label><input type="text" id="modulo-file-url" placeholder="https://..."></div></div>
-    <button class="btn" id="btn-salvar-modulo"><i class="fas fa-save"></i> Salvar Módulo</button>
-  </div>
-</div>
+<!-- Modais -->
+<div id="modal-modulo" class="modal"><div class="modal-content"><div class="modal-header"><h3 id="modal-modulo-titulo">Adicionar Módulo</h3><span class="modal-close" onclick="fecharModal('modal-modulo')">&times;</span></div><div class="fg"><label>Título *</label><input type="text" id="modulo-titulo"></div><div class="fg"><label>Duração</label><input type="text" id="modulo-duracao" placeholder="15 min"></div><div id="modulo-conteudo-video" style="display:none;"><div class="fg"><label>URL Vídeo</label><input type="text" id="modulo-video-url"></div></div><div id="modulo-conteudo-texto" style="display:none;"><div class="fg"><label>Conteúdo</label><textarea id="modulo-texto-conteudo" rows="6"></textarea></div></div><div id="modulo-conteudo-file" style="display:none;"><div class="fg"><label>URL Ficheiro</label><input type="text" id="modulo-file-url"></div></div><button class="btn" id="btn-salvar-modulo">Salvar</button></div></div>
 
-<!-- Modal de Pergunta -->
-<div id="modal-pergunta" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3>Adicionar Pergunta</h3>
-      <span class="modal-close" onclick="fecharModal('modal-pergunta')">&times;</span>
-    </div>
-    <div class="fg"><label>Pergunta *</label><input type="text" id="pergunta-texto"></div>
-    <div class="fg"><label>Opção A *</label><input type="text" id="pergunta-opcao-a"></div>
-    <div class="fg"><label>Opção B *</label><input type="text" id="pergunta-opcao-b"></div>
-    <div class="fg"><label>Opção C *</label><input type="text" id="pergunta-opcao-c"></div>
-    <div class="fg"><label>Opção D *</label><input type="text" id="pergunta-opcao-d"></div>
-    <div class="fg"><label>Correta *</label><select id="pergunta-correta"><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
-    <button class="btn" id="btn-salvar-pergunta"><i class="fas fa-save"></i> Salvar Pergunta</button>
-  </div>
-</div>
+<div id="modal-pergunta" class="modal"><div class="modal-content"><div class="modal-header"><h3>Adicionar Pergunta</h3><span class="modal-close" onclick="fecharModal('modal-pergunta')">&times;</span></div><div class="fg"><label>Pergunta</label><input type="text" id="pergunta-texto"></div><div class="fg"><label>Opção A</label><input type="text" id="pergunta-opcao-a"></div><div class="fg"><label>Opção B</label><input type="text" id="pergunta-opcao-b"></div><div class="fg"><label>Opção C</label><input type="text" id="pergunta-opcao-c"></div><div class="fg"><label>Opção D</label><input type="text" id="pergunta-opcao-d"></div><div class="fg"><label>Correta</label><select id="pergunta-correta"><option>A</option><option>B</option><option>C</option><option>D</option></select></div><button class="btn" id="btn-salvar-pergunta">Salvar</button></div></div>
 
-<!-- Modal de Pré-visualização do Certificado -->
-<div id="preview-modal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3>Pré-visualização do Certificado</h3>
-      <span class="modal-close" onclick="fecharPreview()">&times;</span>
-    </div>
-    <div id="preview-conteudo" style="min-height: 500px; position: relative;"></div>
-    <div style="margin-top: 20px; text-align: center;">
-      <button class="btn-sm btn-success" onclick="salvarTemplateCertificado()"><i class="fas fa-save"></i> Salvar Configuração</button>
-    </div>
-  </div>
-</div>
+<div id="preview-modal" class="modal"><div class="modal-content"><div class="modal-header"><h3>Pré-visualização do Certificado</h3><span class="modal-close" onclick="fecharPreview()">&times;</span></div><div id="preview-conteudo" style="min-height:500px;"></div><div style="margin-top:20px;text-align:center;"><button class="btn-sm btn-success" onclick="salvarTemplateCertificado()">💾 Salvar Configuração</button></div></div></div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-  import { 
-    getFirestore, 
-    collection, 
-    addDoc, 
-    getDocs, 
-    doc, 
-    updateDoc, 
-    deleteDoc, 
-    query, 
-    orderBy, 
-    getDoc,
-    where
-  } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, getDoc, where } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAwywvboQgWqkrZlbwrUPdaUq-gLnWM64E",
@@ -586,7 +493,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // EXPORTAR PARA O ESCOPO GLOBAL
   window.db = db;
   window.collection = collection;
   window.addDoc = addDoc;
@@ -599,16 +505,16 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   window.getDoc = getDoc;
   window.where = where;
   
-  console.log("✅ Firebase inicializado com sucesso!");
+  console.log("✅ Firebase inicializado!");
 </script>
 
 <script>
   let adminConfig = JSON.parse(localStorage.getItem('admin_config') || '{"adminPassword":"SSA2024admin"}');
   let modulos = [], perguntas = [], editandoModuloId = null, editandoPerguntaId = null, moduloTipoAtual = 'video', editandoFormacaoId = null;
 
-  // ==================== CONFIGURAÇÃO DO CERTIFICADO ====================
+  // ==================== CERTIFICADO ====================
   const defaultCertConfig = {
-    fundoImagem: "imagens/fundo_certificado.png",
+    fundoImagem: "https://hsebirk-droid.github.io/hse-platform/imagens/fundo_certificado.png",
     nomeTop: 45, textoTop: 55, formacaoTop: 62,
     notaLeft: 12, notaBottom: 12,
     dataBottom: 12,
@@ -619,17 +525,17 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
 
   function carregarConfigCertificado() {
     document.getElementById('cert-fundo-imagem').value = certConfig.fundoImagem || '';
-    document.getElementById('cert-nome-top').value = certConfig.nomeTop || 45;
-    document.getElementById('cert-texto-top').value = certConfig.textoTop || 55;
-    document.getElementById('cert-formacao-top').value = certConfig.formacaoTop || 62;
-    document.getElementById('cert-nota-left').value = certConfig.notaLeft || 12;
-    document.getElementById('cert-nota-bottom').value = certConfig.notaBottom || 12;
-    document.getElementById('cert-data-bottom').value = certConfig.dataBottom || 12;
-    document.getElementById('cert-id-right').value = certConfig.idRight || 12;
-    document.getElementById('cert-id-bottom').value = certConfig.idBottom || 12;
-    document.getElementById('cert-cor-nome').value = certConfig.corNome || "#00338D";
-    document.getElementById('cert-cor-formacao').value = certConfig.corFormacao || "#C5A059";
-    document.getElementById('cert-cor-valores').value = certConfig.corValores || "#00338D";
+    document.getElementById('cert-nome-top').value = certConfig.nomeTop;
+    document.getElementById('cert-texto-top').value = certConfig.textoTop;
+    document.getElementById('cert-formacao-top').value = certConfig.formacaoTop;
+    document.getElementById('cert-nota-left').value = certConfig.notaLeft;
+    document.getElementById('cert-nota-bottom').value = certConfig.notaBottom;
+    document.getElementById('cert-data-bottom').value = certConfig.dataBottom;
+    document.getElementById('cert-id-right').value = certConfig.idRight;
+    document.getElementById('cert-id-bottom').value = certConfig.idBottom;
+    document.getElementById('cert-cor-nome').value = certConfig.corNome;
+    document.getElementById('cert-cor-formacao').value = certConfig.corFormacao;
+    document.getElementById('cert-cor-valores').value = certConfig.corValores;
   }
 
   function salvarTemplateCertificado() {
@@ -648,7 +554,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       corValores: document.getElementById('cert-cor-valores').value
     };
     localStorage.setItem('cert_config', JSON.stringify(certConfig));
-    alert('✅ Configuração do certificado salva!');
+    alert('✅ Configuração salva!');
   }
 
   function resetTemplateCertificado() {
@@ -662,55 +568,8 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     const modal = document.getElementById('preview-modal');
     const previewDiv = document.getElementById('preview-conteudo');
     
-    // PEGA O LINK DIRETAMENTE DO CAMPO
     let fundoImagem = document.getElementById('cert-fundo-imagem').value.trim();
-    
-    // SE ESTIVER VAZIO, USA O PADRÃO
-    if (!fundoImagem) {
-        fundoImagem = 'https://hsebirk-droid.github.io/hse-platform/imagens/fundo_certificado.png';
-    }
-    
-    // SE NÃO COMEÇAR COM HTTP, ADICIONA O DOMÍNIO
-    if (!fundoImagem.startsWith('http') && !fundoImagem.startsWith('data:')) {
-        fundoImagem = 'https://hsebirk-droid.github.io/hse-platform/' + fundoImagem;
-    }
-    
-    console.log("🔍 Imagem a carregar:", fundoImagem);
-    
-    const dataAtual = new Date().toLocaleDateString('pt-PT');
-    const certId = 'CERT-2026-1234';
-    const nota = '85%';
-    const nome = 'João Silva';
-    const formacao = 'Formação Exemplo';
-    
-    previewDiv.innerHTML = `
-        <div style="background-image: url('${fundoImagem}'); background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 500px; position: relative; border-radius: 12px; overflow: hidden; border: 1px solid #ddd;">
-            <div style="position: relative; z-index: 2; height: 100%; min-height: 500px;">
-                <div style="position: absolute; top: ${certConfig.nomeTop}%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 80%;">
-                    <div style="font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 900; color: ${certConfig.corNome};">${nome}</div>
-                    <div style="font-size: 1rem; color: #616365; margin-top: 10px;">concluiu com sucesso a formação</div>
-                    <div style="font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 700; color: ${certConfig.corFormacao}; margin-top: 10px;">${formacao}</div>
-                </div>
-                <div style="position: absolute; bottom: ${certConfig.notaBottom}%; left: ${certConfig.notaLeft}%; text-align: center;">
-                    <div style="font-size: 0.7rem; color: #616365;">NOTA FINAL</div>
-                    <div style="font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: ${certConfig.corValores};">${nota}</div>
-                </div>
-                <div style="position: absolute; bottom: ${certConfig.dataBottom}%; left: 50%; transform: translateX(-50%); text-align: center;">
-                    <div style="font-size: 0.7rem; color: #616365;">DATA</div>
-                    <div style="font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 600; color: ${certConfig.corValores};">${dataAtual}</div>
-                </div>
-                <div style="position: absolute; bottom: ${certConfig.idBottom}%; right: ${certConfig.idRight}%; text-align: center;">
-                    <div style="font-size: 0.7rem; color: #616365;">CERTIFICADO ID</div>
-                    <div style="font-family: monospace; font-size: 0.8rem; font-weight: 600; color: ${certConfig.corValores};">${certId}</div>
-                </div>
-            </div>
-        </div>
-        <div style="margin-top: 16px; padding: 12px; background: #f0f0f0; border-radius: 8px; font-size: 12px; text-align: center; word-break: break-all;">
-            🔍 <strong>Link da imagem:</strong> ${fundoImagem}
-        </div>
-    `;
-    modal.style.display = 'flex';
-}
+    if (!fundoImagem) fundoImagem = defaultCertConfig.fundoImagem;
     
     const dataAtual = new Date().toLocaleDateString('pt-PT');
     const certId = 'CERT-2026-1234';
@@ -741,7 +600,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
         </div>
       </div>
       <div style="margin-top: 16px; padding: 12px; background: #f0f0f0; border-radius: 8px; font-size: 12px; text-align: center;">
-        🔍 <strong>Informação:</strong> Imagem carregada de: ${fundoImagem}
+        🔍 Imagem: ${fundoImagem}
       </div>
     `;
     modal.style.display = 'flex';
@@ -751,62 +610,57 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     document.getElementById('preview-modal').style.display = 'none';
   }
 
-  // ==================== FUNÇÕES PRINCIPAIS ====================
+  // ==================== FUNÇÕES PRINCIPAIS (resumidas) ====================
   async function carregarFormacoes() {
     try {
       const q = window.query(window.collection(window.db, 'formacoes'), window.orderBy('dataTimestamp', 'desc'));
-      const querySnapshot = await window.getDocs(q);
+      const snap = await window.getDocs(q);
       const cursos = [];
-      querySnapshot.forEach((doc) => { cursos.push({ id: doc.id, ...doc.data() }); });
+      snap.forEach(doc => cursos.push({ id: doc.id, ...doc.data() }));
       return cursos;
-    } catch(e) { console.error("Erro ao carregar formações:", e); return []; }
+    } catch(e) { return []; }
   }
 
   async function carregarColaboradores() {
     try {
-      const querySnapshot = await window.getDocs(window.collection(window.db, 'colaboradores'));
-      const colaboradores = [];
-      querySnapshot.forEach((doc) => { colaboradores.push({ id: doc.id, ...doc.data() }); });
-      return colaboradores;
-    } catch(e) { console.error("Erro ao carregar colaboradores:", e); return []; }
+      const snap = await window.getDocs(window.collection(window.db, 'colaboradores'));
+      const cols = [];
+      snap.forEach(doc => cols.push({ id: doc.id, ...doc.data() }));
+      return cols;
+    } catch(e) { return []; }
   }
 
   async function carregarHistorico() {
     try {
       const q = window.query(window.collection(window.db, 'historico'), window.orderBy('dataTimestamp', 'desc'));
-      const querySnapshot = await window.getDocs(q);
-      const historico = [];
-      querySnapshot.forEach((doc) => { historico.push({ id: doc.id, ...doc.data() }); });
-      return historico;
-    } catch(e) { console.error("Erro ao carregar histórico:", e); return []; }
+      const snap = await window.getDocs(q);
+      const hist = [];
+      snap.forEach(doc => hist.push({ id: doc.id, ...doc.data() }));
+      return hist;
+    } catch(e) { return []; }
   }
 
   async function atualizarDashboard() {
     const cursos = await carregarFormacoes();
-    const colaboradores = await carregarColaboradores();
-    const historico = await carregarHistorico();
+    const cols = await carregarColaboradores();
+    const hist = await carregarHistorico();
     document.getElementById('dashboard-grid').innerHTML = `
-      <div class="dash-card"><div class="dash-icon" style="background:var(--info-bg)">👥</div><div class="dash-info"><h3>${colaboradores.length}</h3><p>Colaboradores</p></div></div>
+      <div class="dash-card"><div class="dash-icon" style="background:var(--info-bg)">👥</div><div class="dash-info"><h3>${cols.length}</h3><p>Colaboradores</p></div></div>
       <div class="dash-card"><div class="dash-icon" style="background:var(--success-bg)">📚</div><div class="dash-info"><h3>${cursos.length}</h3><p>Formações</p></div></div>
-      <div class="dash-card"><div class="dash-icon" style="background:var(--purple-bg)">🏅</div><div class="dash-info"><h3>${historico.length}</h3><p>Certificados</p></div></div>`;
-    const recentes = historico.slice(0,5);
-    document.getElementById('recent-activities').innerHTML = recentes.length ? recentes.map(h => `<div class="item-card"><div class="item-card-info"><strong>${h.nome}</strong> concluiu "${h.curso}" com ${h.nota}</div><div class="item-card-meta">${h.data}</div></div>`).join('') : '<div class="empty">Sem atividades recentes.</div>';
+      <div class="dash-card"><div class="dash-icon" style="background:var(--purple-bg)">🏅</div><div class="dash-info"><h3>${hist.length}</h3><p>Certificados</p></div></div>`;
+    const recentes = hist.slice(0,5);
+    document.getElementById('recent-activities').innerHTML = recentes.length ? recentes.map(h => `<div class="item-card"><div><strong>${h.nome}</strong> concluiu "${h.curso}" com ${h.nota}</div><div class="item-card-meta">${h.data}</div></div>`).join('') : '<div class="empty">Sem atividades.</div>';
   }
 
   async function renderFormacoesLista() {
     const cursos = await carregarFormacoes();
     const container = document.getElementById('formacoes-list');
-    if(!cursos.length) { container.innerHTML = '<div class="empty">Nenhuma formação criada.</div>'; return; }
-    container.innerHTML = cursos.map(curso => `
-      <div class="item-card">
-        <div class="item-card-info"><div class="item-card-title">📘 ${curso.nome}</div><div class="item-card-meta">${curso.modulos?.length || 0} módulos · ${curso.perguntas?.length || 0} perguntas</div></div>
-        <div class="item-card-actions"><button onclick="editarFormacao('${curso.id}')" style="color:var(--info)">✏️ Editar</button><button onclick="apagarFormacao('${curso.id}')" style="color:var(--danger)">🗑️ Apagar</button></div>
-      </div>
-    `).join('');
+    if(!cursos.length) { container.innerHTML = '<div class="empty">Nenhuma formação.</div>'; return; }
+    container.innerHTML = cursos.map(c => `<div class="item-card"><div><div class="item-card-title">📘 ${c.nome}</div><div class="item-card-meta">${c.modulos?.length || 0} módulos · ${c.perguntas?.length || 0} perguntas</div></div><div><button onclick="editarFormacao('${c.id}')">✏️</button><button onclick="apagarFormacao('${c.id}')">🗑️</button></div></div>`).join('');
   }
 
   async function apagarFormacao(id) {
-    if(!confirm('Apagar esta formação?')) return;
+    if(!confirm('Apagar?')) return;
     try { await window.deleteDoc(window.doc(window.db, 'formacoes', id)); alert('✅ Apagada!'); renderFormacoesLista(); atualizarDashboard(); atualizarSelectores(); } catch(e) { alert('Erro'); }
   }
 
@@ -821,7 +675,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     document.getElementById('modulo-conteudo-video').style.display = tipo === 'video' ? 'block' : 'none';
     document.getElementById('modulo-conteudo-texto').style.display = tipo === 'text' ? 'block' : 'none';
     document.getElementById('modulo-conteudo-file').style.display = tipo === 'file' ? 'block' : 'none';
-    document.getElementById('modal-modulo-titulo').textContent = tipo === 'video' ? '🎬 Vídeo' : tipo === 'text' ? '📄 Texto' : '📁 Ficheiro/URL';
     document.getElementById('modal-modulo').style.display = 'flex';
   }
 
@@ -831,9 +684,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     editandoModuloId = id; moduloTipoAtual = m.tipo;
     document.getElementById('modulo-titulo').value = m.titulo;
     document.getElementById('modulo-duracao').value = m.duracao;
-    document.getElementById('modulo-conteudo-video').style.display = m.tipo === 'video' ? 'block' : 'none';
-    document.getElementById('modulo-conteudo-texto').style.display = m.tipo === 'text' ? 'block' : 'none';
-    document.getElementById('modulo-conteudo-file').style.display = m.tipo === 'file' ? 'block' : 'none';
     if(m.tipo === 'video') document.getElementById('modulo-video-url').value = m.conteudo.url;
     if(m.tipo === 'text') document.getElementById('modulo-texto-conteudo').value = m.conteudo.texto;
     if(m.tipo === 'file') document.getElementById('modulo-file-url').value = m.conteudo.url;
@@ -855,32 +705,30 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     alert('✅ Módulo salvo!');
   }
 
-  function removerModulo(id) { if(confirm('Remover módulo?')) { modulos = modulos.filter(m => m.id !== id); renderModulos(); } }
+  function removerModulo(id) { if(confirm('Remover?')) { modulos = modulos.filter(m => m.id !== id); renderModulos(); } }
 
   function renderModulos() {
     const container = document.getElementById('modulos-container');
-    if(!modulos.length) { container.innerHTML = '<div class="alert alert-info">Nenhum módulo. Clique nos botões acima para adicionar.</div>'; return; }
-    container.innerHTML = modulos.map((m, idx) => `
-      <div class="modulo-card"><div style="display:flex; justify-content:space-between; align-items:center;"><div><span style="background:var(--birkenstock-blue); color:white; width:28px; height:28px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; margin-right:10px;">${idx+1}</span><strong>${m.titulo}</strong><div style="font-size:11px; color:var(--birkenstock-gray);">${m.tipo === 'video' ? '🎬 Vídeo' : m.tipo === 'text' ? '📄 Texto' : '📁 Ficheiro'} · ${m.duracao}</div></div><div><button onclick="editarModulo(${m.id})" style="background:var(--info); color:white; border:none; padding:4px 8px; border-radius:4px;">✏️</button> <button onclick="removerModulo(${m.id})" style="background:var(--danger); color:white; border:none; padding:4px 8px; border-radius:4px;">🗑️</button></div></div></div>
-    `).join('');
+    if(!modulos.length) { container.innerHTML = '<div class="alert alert-info">Nenhum módulo. Clique nos botões acima.</div>'; return; }
+    container.innerHTML = modulos.map((m, idx) => `<div class="modulo-card"><div><span style="background:var(--birkenstock-blue);color:white;border-radius:50%;display:inline-block;width:28px;height:28px;text-align:center;line-height:28px;margin-right:10px;">${idx+1}</span><strong>${m.titulo}</strong><div style="font-size:11px;">${m.tipo === 'video' ? '🎬 Vídeo' : m.tipo === 'text' ? '📄 Texto' : '📁 Ficheiro'} · ${m.duracao}</div></div><div><button onclick="editarModulo(${m.id})">✏️</button><button onclick="removerModulo(${m.id})">🗑️</button></div></div>`).join('');
   }
 
   // ==================== PERGUNTAS ====================
   function abrirModalPergunta() { editandoPerguntaId = null; document.getElementById('pergunta-texto').value = ''; document.getElementById('pergunta-opcao-a').value = ''; document.getElementById('pergunta-opcao-b').value = ''; document.getElementById('pergunta-opcao-c').value = ''; document.getElementById('pergunta-opcao-d').value = ''; document.getElementById('pergunta-correta').value = 'A'; document.getElementById('modal-pergunta').style.display = 'flex'; }
   function editarPergunta(id) { const p = perguntas.find(p => p.id === id); if(!p) return; editandoPerguntaId = id; document.getElementById('pergunta-texto').value = p.texto; document.getElementById('pergunta-opcao-a').value = p.opcoes[0]; document.getElementById('pergunta-opcao-b').value = p.opcoes[1]; document.getElementById('pergunta-opcao-c').value = p.opcoes[2]; document.getElementById('pergunta-opcao-d').value = p.opcoes[3]; document.getElementById('pergunta-correta').value = p.correta; document.getElementById('modal-pergunta').style.display = 'flex'; }
   function salvarPergunta() { const texto = document.getElementById('pergunta-texto').value.trim(); if(!texto) { alert('Texto obrigatório'); return; } const opcoes = [document.getElementById('pergunta-opcao-a').value.trim(), document.getElementById('pergunta-opcao-b').value.trim(), document.getElementById('pergunta-opcao-c').value.trim(), document.getElementById('pergunta-opcao-d').value.trim()]; if(opcoes.some(o => !o)) { alert('Todas opções obrigatórias'); return; } const correta = document.getElementById('pergunta-correta').value; if(editandoPerguntaId) { const idx = perguntas.findIndex(p => p.id === editandoPerguntaId); if(idx !== -1) perguntas[idx] = { ...perguntas[idx], texto, opcoes, correta }; } else perguntas.push({ id: Date.now(), texto, opcoes, correta }); renderPerguntas(); fecharModal('modal-pergunta'); alert('✅ Pergunta salva!'); }
-  function removerPergunta(id) { if(confirm('Remover pergunta?')) { perguntas = perguntas.filter(p => p.id !== id); renderPerguntas(); } }
-  function renderPerguntas() { const container = document.getElementById('perguntas-container'); if(!perguntas.length) { container.innerHTML = '<div class="alert alert-info">Nenhuma pergunta. Clique em "Adicionar Pergunta".</div>'; return; } container.innerHTML = perguntas.map((p, idx) => `<div class="pergunta-card"><div><span style="background:var(--warning); color:white; width:24px; height:24px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; margin-right:8px;">${idx+1}</span><strong>${p.texto}</strong><div style="font-size:11px;">A) ${p.opcoes[0]} | B) ${p.opcoes[1]} | C) ${p.opcoes[2]} | D) ${p.opcoes[3]} | ✓ ${p.correta}</div></div><div><button onclick="editarPergunta(${p.id})" style="background:var(--info); color:white; border:none; padding:4px 8px; border-radius:4px;">✏️</button> <button onclick="removerPergunta(${p.id})" style="background:var(--danger); color:white; border:none; padding:4px 8px; border-radius:4px;">🗑️</button></div></div>`).join(''); }
+  function removerPergunta(id) { if(confirm('Remover?')) { perguntas = perguntas.filter(p => p.id !== id); renderPerguntas(); } }
+  function renderPerguntas() { const container = document.getElementById('perguntas-container'); if(!perguntas.length) { container.innerHTML = '<div class="alert alert-info">Nenhuma pergunta.</div>'; return; } container.innerHTML = perguntas.map((p, idx) => `<div class="pergunta-card"><div><span style="background:var(--warning);color:white;border-radius:50%;display:inline-block;width:24px;height:24px;text-align:center;line-height:24px;margin-right:8px;">${idx+1}</span><strong>${p.texto}</strong><div style="font-size:11px;">A) ${p.opcoes[0]} | B) ${p.opcoes[1]} | C) ${p.opcoes[2]} | D) ${p.opcoes[3]} | ✓ ${p.correta}</div></div><div><button onclick="editarPergunta(${p.id})">✏️</button><button onclick="removerPergunta(${p.id})">🗑️</button></div></div>`).join(''); }
 
   // ==================== COLABORADORES ====================
-  async function renderColabs() { const colaboradores = await carregarColaboradores(); const container = document.getElementById('colab-list'); if(!colaboradores.length) { container.innerHTML = '<div class="empty">Nenhum colaborador.</div>'; return; } container.innerHTML = colaboradores.map(c => `<div class="item-card"><div><strong>${c.user}</strong><div class="item-card-meta">${c.email || 'sem email'}</div></div><button onclick="removerColab('${c.id}')" style="color:var(--danger)">🗑️</button></div>`).join(''); }
+  async function renderColabs() { const cols = await carregarColaboradores(); const container = document.getElementById('colab-list'); if(!cols.length) { container.innerHTML = '<div class="empty">Nenhum colaborador.</div>'; return; } container.innerHTML = cols.map(c => `<div class="item-card"><div><strong>${c.user}</strong><div class="item-card-meta">${c.email || 'sem email'}</div></div><button onclick="removerColab('${c.id}')" style="color:var(--danger)">🗑️</button></div>`).join(''); }
   async function removerColab(id) { if(confirm('Remover?')) { await window.deleteDoc(window.doc(window.db, 'colaboradores', id)); renderColabs(); atualizarSelectores(); atualizarDashboard(); } }
   async function saveUser() { const user = document.getElementById('u-nome').value.trim().toLowerCase(); const email = document.getElementById('u-email').value.trim(); const pass = document.getElementById('u-pass').value; if(!user || !pass) { alert('Preencha utilizador e password.'); return; } await window.addDoc(window.collection(window.db, 'colaboradores'), { user, email, pass, dataCriacao: new Date().toISOString() }); alert('✅ Colaborador criado!'); document.getElementById('u-nome').value = ''; document.getElementById('u-email').value = ''; document.getElementById('u-pass').value = ''; renderColabs(); atualizarSelectores(); atualizarDashboard(); }
-  function importColaboradores(files) { if(!files || !files[0]) return; const reader = new FileReader(); reader.onload = async function(e) { const lines = e.target.result.split('\n'); let imported = 0; for(let i = 1; i < lines.length; i++){ const parts = lines[i].split(','); if(parts.length >= 3){ const user = parts[0].trim().toLowerCase(); const pass = parts[1].trim(); const email = parts[2].trim(); if(user && pass){ await window.addDoc(window.collection(window.db, 'colaboradores'), { user, email, pass, dataCriacao: new Date().toISOString() }); imported++; } } } alert(`✅ Importados ${imported} colaboradores!`); renderColabs(); atualizarSelectores(); atualizarDashboard(); }; reader.readAsText(files[0], 'UTF-8'); }
+  function importColaboradores(files) { if(!files || !files[0]) return; const reader = new FileReader(); reader.onload = async function(e) { const lines = e.target.result.split('\n'); let imported = 0; for(let i=1;i<lines.length;i++){ const parts = lines[i].split(','); if(parts.length>=3){ const user = parts[0].trim().toLowerCase(); const pass = parts[1].trim(); const email = parts[2].trim(); if(user && pass){ await window.addDoc(window.collection(window.db, 'colaboradores'), { user, email, pass, dataCriacao: new Date().toISOString() }); imported++; } } } alert(`✅ Importados ${imported} colaboradores!`); renderColabs(); atualizarSelectores(); atualizarDashboard(); }; reader.readAsText(files[0], 'UTF-8'); }
   function downloadModeloCSV(){ const csv = "utilizador,password,email\njoao.silva,pass123,joao@empresa.pt\nmaria.santos,ssa456,maria@empresa.pt"; const blob = new Blob([csv], {type:'text/csv'}); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'modelo_colaboradores.csv'; link.click(); }
 
   // ==================== ATRIBUIÇÃO ====================
-  async function atualizarSelectores() { const cursos = await carregarFormacoes(); const colaboradores = await carregarColaboradores(); document.getElementById('atribuir-curso').innerHTML = '<option value="">Selecione</option>' + cursos.map(c => `<option value="${c.id}">${c.nome}</option>`).join(''); document.getElementById('colab-selector-grid').innerHTML = colaboradores.map(c => `<label class="colab-check"><input type="checkbox" value="${c.user}" data-email="${c.email || ''}"> ${c.user}</label>`).join(''); }
+  async function atualizarSelectores() { const cursos = await carregarFormacoes(); const cols = await carregarColaboradores(); document.getElementById('atribuir-curso').innerHTML = '<option value="">Selecione</option>' + cursos.map(c => `<option value="${c.id}">${c.nome}</option>`).join(''); document.getElementById('colab-selector-grid').innerHTML = cols.map(c => `<label class="colab-check"><input type="checkbox" value="${c.user}" data-email="${c.email || ''}"> ${c.user}</label>`).join(''); }
   function selecionarTodos(){ document.querySelectorAll('#colab-selector-grid input').forEach(cb => cb.checked = true); }
   function deselecionarTodos(){ document.querySelectorAll('#colab-selector-grid input').forEach(cb => cb.checked = false); }
   function gerarLinks(){ const cursoId = document.getElementById('atribuir-curso').value; if(!cursoId){ alert('Selecione uma formação'); return; } const selected = Array.from(document.querySelectorAll('#colab-selector-grid input:checked')).map(cb => ({ user: cb.value, email: cb.dataset.email })); if(!selected.length){ alert('Selecione colaboradores'); return; } const baseUrl = window.location.origin + window.location.pathname.replace('admin.html','') + 'formacao_colaborador.html'; const links = selected.map(c => { const tokenData = { user: c.user, cursoId, prazo: document.getElementById('atribuir-prazo').value || '31/12/2026', timestamp: Date.now() }; const token = btoa(JSON.stringify(tokenData)).replace(/=/g,''); const link = `${baseUrl}?token=${token}`; localStorage.setItem(`token_${token}`, JSON.stringify(tokenData)); return { user: c.user, email: c.email, link }; }); document.getElementById('links-list').innerHTML = links.map(l => `<div class="item-card"><div><strong>${l.user}</strong><div style="font-size:11px;word-break:break-all;">${l.link}</div></div><button class="btn-sm" onclick="copiarLink('${l.link}')">📋 Copiar</button></div>`).join(''); document.getElementById('links-gerados').style.display = 'block'; alert(`✅ ${links.length} link(s) gerados!`); return links; }
@@ -891,10 +739,10 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   async function publicarFormacao(){ const titulo = document.getElementById('f-titulo').value.trim(); if(!titulo){ alert('Título obrigatório'); return; } if(!modulos.length){ alert('Adicione módulos'); return; } if(!perguntas.length){ alert('Adicione perguntas'); return; } const novaFormacao = { nome: titulo, duracao: document.getElementById('f-duracao').value || '30 min', descricao: document.getElementById('f-descricao').value, modulos: [...modulos], perguntas: perguntas.map(p => ({texto:p.texto, opcoes:p.opcoes, correta:p.correta})), data: new Date().toLocaleDateString('pt-PT'), dataTimestamp: Date.now() }; try { if(editandoFormacaoId) { await window.updateDoc(window.doc(window.db, 'formacoes', editandoFormacaoId), novaFormacao); alert(`✅ Formação "${titulo}" atualizada!`); editandoFormacaoId = null; document.getElementById('editando-id').innerHTML = ''; document.getElementById('btn-cancelar-edicao').style.display = 'none'; } else { await window.addDoc(window.collection(window.db, 'formacoes'), novaFormacao); alert(`✅ Formação "${titulo}" publicada!`); } document.getElementById('f-titulo').value = ''; document.getElementById('f-duracao').value = ''; document.getElementById('f-descricao').value = ''; modulos = []; perguntas = []; renderModulos(); renderPerguntas(); renderFormacoesLista(); atualizarSelectores(); atualizarDashboard(); } catch(e) { alert('Erro ao publicar.'); } }
 
   // ==================== HISTÓRICO ====================
-  async function renderHistorico() { const historico = await carregarHistorico(); const tbody = document.getElementById('lista-notas'); if(!historico.length){ tbody.innerHTML = '}<tr><td colspan="6" class="empty">Nenhum resultado</td></tr>'; return; } tbody.innerHTML = historico.map(h => `<tr><td><strong>${h.nome}</strong></td><td>${h.email || '-'}</td><td>${h.curso}</td><td>${h.data}</td><td><span class="badge badge-success">${h.nota}</span></td><td><button class="btn-sm" onclick="alert('Certificado de ${h.nome}')">📄</button></td></tr>`).join(''); }
+  async function renderHistorico() { const hist = await carregarHistorico(); const tbody = document.getElementById('lista-notas'); if(!hist.length){ tbody.innerHTML = '}<tr><td colspan="6" class="empty">Nenhum resultado</td></tr>'; return; } tbody.innerHTML = hist.map(h => `<tr><td><strong>${h.nome}</strong></td><td>${h.email || '-'}</td><td>${h.curso}</td><td>${h.data}</td><td><span class="badge badge-success">${h.nota}</span></td><td><button class="btn-sm" onclick="alert('Certificado de ${h.nome}')">📄</button></td></tr>`).join(''); }
   function exportarHistoricoCSV(){ alert('Exportação CSV em breve'); }
   function exportarHistoricoExcel(){ alert('Exportação Excel em breve'); }
-  async function limparHistorico(){ if(confirm('Apagar histórico?')){ const historico = await carregarHistorico(); for(const item of historico) { await window.deleteDoc(window.doc(window.db, 'historico', item.id)); } renderHistorico(); atualizarDashboard(); alert('✅ Histórico limpo!'); } }
+  async function limparHistorico(){ if(confirm('Apagar histórico?')){ const hist = await carregarHistorico(); for(const item of hist) { await window.deleteDoc(window.doc(window.db, 'historico', item.id)); } renderHistorico(); atualizarDashboard(); alert('✅ Histórico limpo!'); } }
 
   // ==================== SEGURANÇA ====================
   function checkPasswordStrength(pass){ let s=0; if(pass.length>=8)s++; if(/[A-Z]/.test(pass))s++; if(/[0-9]/.test(pass))s++; if(/[^a-zA-Z0-9]/.test(pass))s++; const d=document.getElementById('password-strength'); d.className='password-strength'; if(s<=1)d.classList.add('strength-weak'); else if(s<=2)d.classList.add('strength-medium'); else d.classList.add('strength-strong'); }
