@@ -261,6 +261,22 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   background: #059669;
 }
 
+/* Indicador de scroll */
+.scroll-indicator {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(0,51,141,0.9);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 0.8rem;
+  z-index: 1000;
+  display: none;
+  font-weight: bold;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
 @media (max-width: 768px) {
   .top-bar { padding: 12px 20px; }
   .hero { padding: 32px 20px; }
@@ -307,6 +323,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="scroll-indicator" id="scrollIndicator"></div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
@@ -342,7 +359,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   let nomeUser = localStorage.getItem('usuarioAtivo') || 'Colaborador';
   let cursoData = {};
   let moduleProgress = {};
-  let progressIntervals = {};
+  let scrollEvents = {};
 
   function toast(msg) {
     const t = document.getElementById('toast');
@@ -449,65 +466,107 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     document.getElementById('progress-text').textContent = pct + '%';
   }
 
-  // Iniciar progresso do módulo baseado em tempo
-  function startModuleProgress(moduleIdStr, tipo) {
-    // Se já estiver completo ou já tiver intervalo, não iniciar novamente
-    if (completedModules[moduleIdStr] || progressIntervals[moduleIdStr]) return;
+  // Atualizar progresso baseado no scroll do conteúdo
+  function setupScrollProgress(moduleIdStr, contentElement) {
+    if (scrollEvents[moduleIdStr]) return;
     
-    // Se o progresso já está em 100%, ativar botão
-    if (moduleProgress[moduleIdStr] >= 100) {
-      const btn = document.getElementById(`btn-confirm-${moduleIdStr}`);
-      if (btn && btn.disabled) {
-        btn.disabled = false;
-      }
-      return;
-    }
+    const indicator = document.getElementById('scrollIndicator');
     
-    // Definir velocidade com base no tipo de conteúdo
-    let incrementSpeed = 1; // % por segundo
-    if (tipo === 'video') {
-      incrementSpeed = 2; // mais rápido
-    } else if (tipo === 'text') {
-      incrementSpeed = 0.8; // mais lento para ler
-    } else {
-      incrementSpeed = 1.2;
-    }
-    
-    progressIntervals[moduleIdStr] = setInterval(() => {
-      // Se o módulo não estiver aberto, não aumentar progresso
-      const body = document.getElementById(`body-${moduleIdStr}`);
-      if (!body || !body.classList.contains('open')) return;
+    const updateProgress = () => {
+      if (completedModules[moduleIdStr]) return;
       
-      if (moduleProgress[moduleIdStr] < 100) {
-        moduleProgress[moduleIdStr] = Math.min(100, moduleProgress[moduleIdStr] + incrementSpeed);
+      const rect = contentElement.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
+      const totalHeight = rect.height;
+      
+      let percent = 0;
+      if (totalHeight > 0 && visibleHeight > 0) {
+        percent = Math.min(100, Math.max(0, Math.round((visibleHeight / totalHeight) * 100)));
+      }
+      
+      // Acumular progresso baseado na percentagem visualizada
+      if (percent > moduleProgress[moduleIdStr]) {
+        moduleProgress[moduleIdStr] = percent;
+      }
+      
+      // Atualizar barra
+      const fillEl = document.getElementById(`fill-${moduleIdStr}`);
+      const pctEl = document.getElementById(`pct-${moduleIdStr}`);
+      if (fillEl) fillEl.style.width = moduleProgress[moduleIdStr] + '%';
+      if (pctEl) pctEl.textContent = moduleProgress[moduleIdStr] + '%';
+      
+      indicator.textContent = `📖 Progresso: ${moduleProgress[moduleIdStr]}%`;
+      indicator.style.display = 'block';
+      
+      // Quando chegar a 100%, ativar botão
+      if (moduleProgress[moduleIdStr] >= 100) {
+        const btn = document.getElementById(`btn-confirm-${moduleIdStr}`);
+        if (btn && btn.disabled) {
+          btn.disabled = false;
+          toast('✅ Conteúdo completamente visualizado! Pode confirmar a conclusão.');
+          indicator.style.display = 'none';
+        }
+      }
+    };
+    
+    // Atualizar no scroll e resize
+    const handler = () => updateProgress();
+    window.addEventListener('scroll', handler);
+    window.addEventListener('resize', handler);
+    scrollEvents[moduleIdStr] = { handler, interval: setInterval(updateProgress, 500) };
+    
+    updateProgress();
+  }
+
+  // Setup para vídeo - progresso baseado no tempo
+  function setupVideoProgress(moduleIdStr, iframeElement) {
+    if (scrollEvents[moduleIdStr]) return;
+    
+    const indicator = document.getElementById('scrollIndicator');
+    
+    // Tentar aceder ao player do YouTube (funciona apenas se o iframe tiver API)
+    // Como não temos controlo direto, simulamos progresso baseado no tempo de visualização
+    let videoDuration = 60; // duração estimada em segundos
+    let elapsedTime = 0;
+    
+    const interval = setInterval(() => {
+      if (completedModules[moduleIdStr]) {
+        clearInterval(interval);
+        return;
+      }
+      
+      // Verificar se o módulo está aberto
+      const body = document.getElementById(`body-${moduleIdStr}`);
+      if (body && body.classList.contains('open') && moduleProgress[moduleIdStr] < 100) {
+        elapsedTime += 1;
+        let percent = Math.min(100, Math.round((elapsedTime / videoDuration) * 100));
         
-        // Atualizar UI
-        const fillEl = document.getElementById(`fill-${moduleIdStr}`);
-        const pctEl = document.getElementById(`pct-${moduleIdStr}`);
-        if (fillEl) fillEl.style.width = moduleProgress[moduleIdStr] + '%';
-        if (pctEl) pctEl.textContent = Math.floor(moduleProgress[moduleIdStr]) + '%';
+        if (percent > moduleProgress[moduleIdStr]) {
+          moduleProgress[moduleIdStr] = percent;
+          
+          const fillEl = document.getElementById(`fill-${moduleIdStr}`);
+          const pctEl = document.getElementById(`pct-${moduleIdStr}`);
+          if (fillEl) fillEl.style.width = moduleProgress[moduleIdStr] + '%';
+          if (pctEl) pctEl.textContent = moduleProgress[moduleIdStr] + '%';
+          
+          indicator.textContent = `🎬 Vídeo: ${moduleProgress[moduleIdStr]}%`;
+          indicator.style.display = 'block';
+        }
         
-        // Quando chegar a 100%, ativar botão
         if (moduleProgress[moduleIdStr] >= 100) {
           const btn = document.getElementById(`btn-confirm-${moduleIdStr}`);
           if (btn && btn.disabled) {
             btn.disabled = false;
-            toast('✅ Conteúdo visualizado! Pode confirmar a conclusão.');
+            toast('✅ Vídeo visualizado! Pode confirmar a conclusão.');
+            indicator.style.display = 'none';
           }
-          // Parar o intervalo
-          if (progressIntervals[moduleIdStr]) {
-            clearInterval(progressIntervals[moduleIdStr]);
-            delete progressIntervals[moduleIdStr];
-          }
-        }
-      } else {
-        // Se já chegou a 100%, parar intervalo
-        if (progressIntervals[moduleIdStr]) {
-          clearInterval(progressIntervals[moduleIdStr]);
-          delete progressIntervals[moduleIdStr];
+          clearInterval(interval);
         }
       }
-    }, 1000); // atualiza a cada segundo
+    }, 1000);
+    
+    scrollEvents[moduleIdStr] = { interval };
   }
 
   function renderModules() {
@@ -551,53 +610,46 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
       `;
       container.appendChild(block);
       
-      // Carregar conteúdo e iniciar progresso quando abrir
+      // Carregar conteúdo e configurar tracking
       setTimeout(() => {
         const url = module.conteudo?.url || '';
         const contentDiv = document.getElementById(`content-${moduleIdStr}`);
         
         if (module.tipo === 'text' && module.conteudo?.texto) {
-          contentDiv.innerHTML = `<div class="text-content">${module.conteudo.texto}</div>`;
-          // Iniciar progresso quando o módulo for aberto
-          const checkOpen = setInterval(() => {
-            const body = document.getElementById(`body-${moduleIdStr}`);
-            if (body && body.classList.contains('open') && !completedModules[moduleIdStr]) {
-              startModuleProgress(moduleIdStr, 'text');
-              clearInterval(checkOpen);
-            }
-          }, 500);
+          contentDiv.innerHTML = `<div class="text-content" id="text-content-${moduleIdStr}">${module.conteudo.texto}</div>`;
+          const textElement = document.getElementById(`text-content-${moduleIdStr}`);
+          if (textElement) {
+            setupScrollProgress(moduleIdStr, textElement);
+          }
         }
         else if (url) {
           if (url.includes('youtube.com') || url.includes('youtu.be')) {
             let videoId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
-            contentDiv.innerHTML = `<div class="video-wrap"><iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe></div>`;
-            const checkOpen = setInterval(() => {
-              const body = document.getElementById(`body-${moduleIdStr}`);
-              if (body && body.classList.contains('open') && !completedModules[moduleIdStr]) {
-                startModuleProgress(moduleIdStr, 'video');
-                clearInterval(checkOpen);
-              }
-            }, 500);
+            contentDiv.innerHTML = `<div class="video-wrap" id="video-wrap-${moduleIdStr}"><iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe></div>`;
+            setupVideoProgress(moduleIdStr);
+          } else if (url.includes('drive.google.com')) {
+            // Converter link do Google Drive para embed
+            let fileId = url.match(/[-\w]{25,}/)?.[0];
+            let embedUrl = fileId ? `https://drive.google.com/file/d/${fileId}/preview` : url;
+            contentDiv.innerHTML = `<div class="doc-viewer" id="doc-viewer-${moduleIdStr}"><iframe src="${embedUrl}" class="doc-iframe" allow="autoplay"></iframe></div>`;
+            const docElement = document.getElementById(`doc-viewer-${moduleIdStr}`);
+            if (docElement) {
+              setupScrollProgress(moduleIdStr, docElement);
+            }
           } else {
-            contentDiv.innerHTML = `<div class="doc-viewer"><iframe src="${url}" class="doc-iframe" allow="autoplay"></iframe></div>`;
-            const checkOpen = setInterval(() => {
-              const body = document.getElementById(`body-${moduleIdStr}`);
-              if (body && body.classList.contains('open') && !completedModules[moduleIdStr]) {
-                startModuleProgress(moduleIdStr, 'document');
-                clearInterval(checkOpen);
-              }
-            }, 500);
+            contentDiv.innerHTML = `<div class="doc-viewer" id="doc-viewer-${moduleIdStr}"><iframe src="${url}" class="doc-iframe" allow="autoplay"></iframe></div>`;
+            const docElement = document.getElementById(`doc-viewer-${moduleIdStr}`);
+            if (docElement) {
+              setupScrollProgress(moduleIdStr, docElement);
+            }
           }
         }
         else {
           contentDiv.innerHTML = '<div class="text-content">Conteúdo não disponível.</div>';
-          const checkOpen = setInterval(() => {
-            const body = document.getElementById(`body-${moduleIdStr}`);
-            if (body && body.classList.contains('open') && !completedModules[moduleIdStr]) {
-              startModuleProgress(moduleIdStr, 'text');
-              clearInterval(checkOpen);
-            }
-          }, 500);
+          const textElement = contentDiv.querySelector('.text-content');
+          if (textElement) {
+            setupScrollProgress(moduleIdStr, textElement);
+          }
         }
       }, 100);
     });
@@ -609,10 +661,16 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     const btn = document.getElementById(`btn-confirm-${moduleId}`);
     if (!btn || btn.disabled) return;
     
-    // Parar o progresso deste módulo
-    if (progressIntervals[moduleId]) {
-      clearInterval(progressIntervals[moduleId]);
-      delete progressIntervals[moduleId];
+    // Parar tracking deste módulo
+    if (scrollEvents[moduleId]) {
+      if (scrollEvents[moduleId].handler) {
+        window.removeEventListener('scroll', scrollEvents[moduleId].handler);
+        window.removeEventListener('resize', scrollEvents[moduleId].handler);
+      }
+      if (scrollEvents[moduleId].interval) {
+        clearInterval(scrollEvents[moduleId].interval);
+      }
+      delete scrollEvents[moduleId];
     }
     
     const moduleIdStr = String(moduleId);
@@ -808,22 +866,18 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     toast('📄 A gerar PDF...');
     
     try {
-      // Capturar o elemento como imagem com escala adequada
       const canvas = await html2canvas(element, {
         scale: 2,
         backgroundColor: '#ffffff',
         useCORS: true,
-        logging: false,
-        windowWidth: element.scrollWidth,
-        windowHeight: element.scrollHeight
+        logging: false
       });
       
       const imgData = canvas.toDataURL('image/png');
       const { jsPDF } = window.jspdf;
       
-      // Calcular dimensões para A4 vertical
-      const imgWidth = 190; // mm (margem de 10mm de cada lado)
-      const pageHeight = 277; // mm (margem de 10mm em cima e baixo)
+      const imgWidth = 190;
+      const pageHeight = 277;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       
       const pdf = new jsPDF({
@@ -832,22 +886,15 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
         format: 'a4'
       });
       
-      // Centralizar a imagem na página
       const xOffset = (210 - imgWidth) / 2;
-      let yOffset = 0;
       
       if (imgHeight <= pageHeight) {
-        // Se a imagem cabe numa página
-        yOffset = (297 - imgHeight) / 2;
+        const yOffset = (297 - imgHeight) / 2;
         pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgWidth, imgHeight);
       } else {
-        // Se a imagem é maior que uma página
-        let heightLeft = imgHeight;
         let position = 0;
-        
         pdf.addImage(imgData, 'PNG', xOffset, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-        
+        let heightLeft = imgHeight - pageHeight;
         while (heightLeft > 0) {
           position = position - pageHeight;
           pdf.addPage();
@@ -1013,12 +1060,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
       }
       const body = document.getElementById('body-' + id);
       if (body) body.classList.toggle('open');
-      
-      // Quando abrir um módulo, iniciar o progresso se não estiver completo
-      if (body && body.classList.contains('open') && !completedModules[id]) {
-        const tipo = modules.find(m => String(m.id) === id)?.tipo || 'text';
-        startModuleProgress(id, tipo);
-      }
     }
   }
 
