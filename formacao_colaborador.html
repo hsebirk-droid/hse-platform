@@ -470,7 +470,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
       `;
       container.appendChild(block);
       
-      // Carregar conteúdo
       setTimeout(() => {
         const url = module.conteudo?.url || '';
         const contentDiv = document.getElementById(`content-${moduleIdStr}`);
@@ -708,6 +707,8 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
       
       const imgWidth = 190;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const pageHeight = 277;
+      const pageWidth = 210;
       
       const pdf = new jsPDF({
         orientation: 'portrait',
@@ -715,8 +716,8 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
         format: 'a4'
       });
       
-      const xOffset = (210 - imgWidth) / 2;
-      const yOffset = (297 - imgHeight) / 2;
+      const xOffset = (pageWidth - imgWidth) / 2;
+      const yOffset = (pageHeight - imgHeight) / 2;
       
       pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgWidth, imgHeight);
       pdf.save(`certificado_${nomeUser.replace(/\s/g, '_')}.pdf`);
@@ -753,10 +754,10 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
           <title>Certificado - ${nomeUser}</title>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: white; }
-            .cert-container { width: 210mm; margin: 0 auto; }
+            body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: white; font-family: 'DM Sans', sans-serif; }
+            .cert-container { width: 210mm; margin: 0 auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
             .cert-image { width: 100%; height: auto; display: block; }
-            @media print { body { margin: 0; padding: 0; } .cert-container { width: 100%; margin: 0; } }
+            @media print { body { margin: 0; padding: 0; } .cert-container { box-shadow: none; width: 100%; margin: 0; } }
           </style>
         </head>
         <body>
@@ -779,6 +780,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     const certId = 'CERT-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
     const nota = document.getElementById('score-num').textContent;
     
+    // Carregar imagem de fundo do localStorage (configurada no admin)
     let fundoImagem = 'imagens/fundo_certificado.png';
     const certTemplateSalvo = localStorage.getItem('cert_template');
     if (certTemplateSalvo) {
@@ -790,6 +792,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
       } catch(e) {}
     }
     
+    // Garantir caminho absoluto se for relativo
     if (!fundoImagem.startsWith('http') && !fundoImagem.startsWith('data:')) {
       fundoImagem = window.location.origin + window.location.pathname.replace('formacao_colaborador.html', '') + fundoImagem;
     }
@@ -803,29 +806,31 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
           background-repeat: no-repeat;
           width: 100%;
           max-width: 210mm;
+          min-height: 297mm;
           margin: 0 auto;
           position: relative;
           border: none;
           border-radius: 0;
-          padding: 40px;
           box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         ">
-          <div style="position: relative; z-index: 2; text-align: center;">
-            <div style="font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 900; color: #00338D; margin-bottom: 20px;">${escapeHtml(nomeUser)}</div>
-            <div style="font-size: 1.2rem; color: #616365; margin-bottom: 20px;">concluiu com sucesso a formação</div>
-            <div style="font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: #C5A059; margin-bottom: 40px;">${escapeHtml(cursoData.nome)}</div>
-            <div style="display: flex; justify-content: center; gap: 60px; margin-top: 20px; flex-wrap: wrap;">
-              <div style="text-align: center;">
-                <div style="font-size: 0.8rem; color: #616365;">NOTA FINAL</div>
-                <div style="font-size: 1.5rem; font-weight: 700; color: #00338D;">${nota}</div>
-              </div>
-              <div style="text-align: center;">
-                <div style="font-size: 0.8rem; color: #616365;">DATA</div>
-                <div style="font-size: 1rem; font-weight: 600; color: #00338D;">${fmtDate(now)}</div>
-              </div>
-              <div style="text-align: center;">
-                <div style="font-size: 0.8rem; color: #616365;">CERTIFICADO ID</div>
-                <div style="font-family: monospace; font-size: 0.9rem; font-weight: 600; color: #00338D;">${certId}</div>
+          <div style="position: relative; z-index: 2; padding: 40px; min-height: 297mm; display: flex; flex-direction: column; justify-content: center;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <div style="font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 900; color: #00338D; margin-bottom: 20px;">${escapeHtml(nomeUser)}</div>
+              <div style="font-size: 1.2rem; color: #616365; margin-bottom: 20px;">concluiu com sucesso a formação</div>
+              <div style="font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: #C5A059; margin-bottom: 40px;">${escapeHtml(cursoData.nome)}</div>
+              <div style="display: flex; justify-content: center; gap: 60px; margin-top: 20px; flex-wrap: wrap;">
+                <div style="text-align: center;">
+                  <div style="font-size: 0.8rem; color: #616365; text-transform: uppercase; letter-spacing: 1px;">NOTA FINAL</div>
+                  <div style="font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: #00338D;">${nota}</div>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: 0.8rem; color: #616365; text-transform: uppercase; letter-spacing: 1px;">DATA</div>
+                  <div style="font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 600; color: #00338D;">${fmtDate(now)}</div>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: 0.8rem; color: #616365; text-transform: uppercase; letter-spacing: 1px;">CERTIFICADO ID</div>
+                  <div style="font-family: monospace; font-size: 0.9rem; font-weight: 600; color: #00338D;">${certId}</div>
+                </div>
               </div>
             </div>
           </div>
