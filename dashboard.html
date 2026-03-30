@@ -49,13 +49,16 @@ body {
   top: 0;
   z-index: 100;
 }
-.logo h1 {
-  font-size: 1.3rem;
+.logo {
   font-weight: 700;
+  font-size: 1.2rem;
   color: white;
+  line-height: 1.2;
 }
-.logo p {
+.logo span {
   font-size: 0.7rem;
+  font-weight: 400;
+  display: block;
   color: rgba(255,255,255,0.7);
 }
 .header-actions {
@@ -537,8 +540,8 @@ body {
 
 <header class="header">
   <div class="logo">
-    <h1>BIRKENSTOCK</h1>
-    <p>S&CC Portugal · Formação</p>
+    BIRKENSTOCK
+    <span>S&CC Portugal · Formação</span>
   </div>
   <div class="header-actions">
     <button class="notification-btn" id="notificationBtn">
@@ -713,11 +716,13 @@ body {
     } else {
       userProgress = {};
     }
+    console.log("📊 Progresso carregado:", userProgress);
   }
 
   // Salvar progresso do usuário
   function saveUserProgress() {
     localStorage.setItem(`progress_${nomeUser}`, JSON.stringify(userProgress));
+    console.log("💾 Progresso salvo:", userProgress);
   }
 
   // Atualizar estatísticas do usuário
@@ -756,12 +761,16 @@ body {
     return progress && progress.completed === true;
   }
 
-  // Marcar curso como concluído
+  // Marcar curso como concluído (chamado quando volta da formação)
   function markCourseCompleted(cursoId, cursoNome) {
+    console.log("🏆 Marcando curso como concluído:", cursoId, cursoNome);
+    
     if (!userProgress[cursoId]) {
       userProgress[cursoId] = { modulesCompleted: 0, completed: false };
     }
     userProgress[cursoId].completed = true;
+    userProgress[cursoId].completedAt = new Date().toISOString();
+    
     saveUserProgress();
     renderCourses();
     updateUserStats(allCourses);
@@ -937,7 +946,7 @@ body {
               </div>
             ` : `
               <div style="margin-top: 12px; color: var(--success); font-size: 12px;">
-                <i class="fas fa-check-circle"></i> Concluído
+                <i class="fas fa-check-circle"></i> Concluído em ${userProgress[curso.id]?.completedAt ? new Date(userProgress[curso.id].completedAt).toLocaleDateString('pt-PT') : ''}
               </div>
             `}
             <div class="btn-start ${btnClass}">
@@ -1030,7 +1039,7 @@ body {
           </div>
           <div style="flex: 1;">
             <div style="font-weight: 600;">${escapeHtml(curso.nome)}</div>
-            <div style="font-size: 12px; color: var(--birkenstock-gray);">${escapeHtml(curso.duracao || '30 min')}</div>
+            <div style="font-size: 12px; color: var(--birkenstock-gray);">Concluído em ${userProgress[curso.id]?.completedAt ? new Date(userProgress[curso.id].completedAt).toLocaleDateString('pt-PT') : ''}</div>
           </div>
           <button onclick="entrarFormacao('${curso.id}')" style="background: var(--birkenstock-blue); color: white; border: none; padding: 6px 16px; border-radius: 20px; cursor: pointer;">Ver</button>
         </div>
@@ -1054,19 +1063,24 @@ body {
   window.markNotificationRead = markNotificationRead;
 
   // Verificar se voltou de uma formação concluída
-  const cursoConcluido = localStorage.getItem('cursoConcluido');
-  if (cursoConcluido) {
-    const curso = allCourses.find(c => c.id === cursoConcluido);
-    if (curso) {
-      markCourseCompleted(cursoConcluido, curso.nome);
-    } else {
-      markCourseCompleted(cursoConcluido, 'Formação');
+  function verificarCursoConcluido() {
+    const cursoConcluido = localStorage.getItem('cursoConcluido');
+    if (cursoConcluido) {
+      console.log("🎓 Curso concluído detectado:", cursoConcluido);
+      const curso = allCourses.find(c => c.id === cursoConcluido);
+      if (curso) {
+        markCourseCompleted(cursoConcluido, curso.nome);
+      } else {
+        markCourseCompleted(cursoConcluido, 'Formação');
+      }
+      localStorage.removeItem('cursoConcluido');
     }
-    localStorage.removeItem('cursoConcluido');
   }
 
   // Inicializar
-  carregarFormacoes();
+  carregarFormacoes().then(() => {
+    verificarCursoConcluido();
+  });
 </script>
 </body>
 </html>
