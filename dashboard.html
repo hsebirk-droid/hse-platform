@@ -617,7 +617,7 @@ body {
     <h3><i class="fas fa-graduation-cap"></i> As Minhas Formações</h3>
   </div>
 
-  <div id="loading" class="loading" style="text-align: center; padding: 60px;">
+  <div id="loading" style="text-align: center; padding: 60px;">
     <i class="fas fa-spinner fa-spin" style="font-size: 32px; color: var(--birkenstock-blue);"></i>
     <p>A carregar formações...</p>
   </div>
@@ -660,7 +660,7 @@ body {
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, query, orderBy, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAwywvboQgWqkrZlbwrUPdaUq-gLnWM64E",
@@ -679,8 +679,6 @@ body {
   window.getDocs = getDocs;
   window.query = query;
   window.orderBy = orderBy;
-  window.doc = doc;
-  window.getDoc = getDoc;
 </script>
 
 <script>
@@ -875,6 +873,16 @@ body {
     return filtered;
   }
 
+  function escapeHtml(text) {
+    if (!text) return '';
+    return text.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
   // Renderizar cursos
   function renderCourses() {
     const filtered = filterCourses();
@@ -910,10 +918,10 @@ body {
         <div class="course-card" onclick="entrarFormacao('${curso.id}')">
           <div class="course-cover">
             <i class="fas fa-${curso.categoria === 'video' ? 'video' : 'book-open'}"></i>
-            <span class="course-badge">${curso.duracao || '30 min'}</span>
+            <span class="course-badge">${escapeHtml(curso.duracao || '30 min')}</span>
           </div>
           <div class="course-body">
-            <div class="course-category">${curso.categoria || 'Formação'}</div>
+            <div class="course-category">${escapeHtml(curso.categoria || 'Formação')}</div>
             <div class="course-title">${escapeHtml(curso.nome || 'Formação')}</div>
             <div class="course-desc">${escapeHtml(curso.descricao || 'Curso de formação profissional.')}</div>
             <div class="course-meta">
@@ -939,16 +947,6 @@ body {
         </div>
       `;
     }).join('');
-  }
-  
-  function escapeHtml(text) {
-    if (!text) return '';
-    return text.replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
-    });
   }
 
   // Entrar na formação
@@ -1032,7 +1030,7 @@ body {
           </div>
           <div style="flex: 1;">
             <div style="font-weight: 600;">${escapeHtml(curso.nome)}</div>
-            <div style="font-size: 12px; color: var(--birkenstock-gray);">${curso.duracao || '30 min'}</div>
+            <div style="font-size: 12px; color: var(--birkenstock-gray);">${escapeHtml(curso.duracao || '30 min')}</div>
           </div>
           <button onclick="entrarFormacao('${curso.id}')" style="background: var(--birkenstock-blue); color: white; border: none; padding: 6px 16px; border-radius: 20px; cursor: pointer;">Ver</button>
         </div>
@@ -1059,7 +1057,11 @@ body {
   const cursoConcluido = localStorage.getItem('cursoConcluido');
   if (cursoConcluido) {
     const curso = allCourses.find(c => c.id === cursoConcluido);
-    markCourseCompleted(cursoConcluido, curso?.nome || 'Formação');
+    if (curso) {
+      markCourseCompleted(cursoConcluido, curso.nome);
+    } else {
+      markCourseCompleted(cursoConcluido, 'Formação');
+    }
     localStorage.removeItem('cursoConcluido');
   }
 
