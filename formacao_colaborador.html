@@ -220,10 +220,10 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   cursor: pointer;
   font-weight: 600;
   font-size: 1rem;
-  transition: all 0.2s;
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  transition: all 0.2s;
 }
 .result-btn:hover {
   background: var(--birkenstock-blue-dark);
@@ -751,6 +751,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     toast('📄 A gerar PDF...');
     
     try {
+      // Capturar o elemento com alta qualidade
       const canvas = await html2canvas(element, {
         scale: 3,
         backgroundColor: '#ffffff',
@@ -763,28 +764,43 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
       const imgData = canvas.toDataURL('image/png');
       const { jsPDF } = window.jspdf;
       
+      // Criar PDF em formato A4
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
         format: 'a4'
       });
       
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
+      // Dimensões da página A4
+      const pdfWidth = pdf.internal.pageSize.getWidth(); // 210mm
+      const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
+      
+      // Calcular dimensões da imagem para caber na página
       const imgWidth = pdfWidth;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       
-      let position = 0;
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      // Se a imagem for maior que a página, redimensionar para caber
+      let finalHeight = imgHeight;
+      let finalWidth = imgWidth;
+      let yOffset = 0;
       
-      let heightLeft = imgHeight - pdfHeight;
-      while (heightLeft > 0) {
-        position = position - pdfHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pdfHeight;
+      if (imgHeight > pdfHeight) {
+        // Redimensionar para caber na altura
+        finalHeight = pdfHeight;
+        finalWidth = (canvas.width * finalHeight) / canvas.height;
+        yOffset = 0;
+      } else {
+        // Centralizar verticalmente
+        yOffset = (pdfHeight - imgHeight) / 2;
       }
       
+      // Centralizar horizontalmente
+      const xOffset = (pdfWidth - finalWidth) / 2;
+      
+      // Adicionar imagem ao PDF (apenas uma página)
+      pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalWidth, finalHeight);
+      
+      // Guardar PDF
       pdf.save(`certificado_${nomeUser.replace(/\s/g, '_')}.pdf`);
       toast('✅ PDF guardado!');
     } catch (err) {
@@ -819,8 +835,8 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
           <title>Certificado - ${nomeUser}</title>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { margin: 0; padding: 0; background: white; }
-            .cert-image { width: 100%; height: auto; display: block; }
+            body { margin: 0; padding: 0; background: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+            .cert-image { width: 100%; max-width: 210mm; height: auto; display: block; margin: 0 auto; }
             @media print {
               body { margin: 0; padding: 0; }
               .cert-image { page-break-after: avoid; }
@@ -880,8 +896,9 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
           position: relative;
           border: none;
           border-radius: 0;
+          aspect-ratio: 210 / 297;
         ">
-          <div style="position: relative; z-index: 2; padding: 40px; min-height: 297mm; display: flex; flex-direction: column; justify-content: center;">
+          <div style="position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 40px;">
             <div style="text-align: center;">
               <div style="font-family: 'Fraunces', serif; font-size: 2.2rem; font-weight: 900; color: #00338D; margin-bottom: 20px;">${escapeHtml(nomeUser)}</div>
               <div style="font-size: 1.2rem; color: #616365; margin-bottom: 20px;">concluiu com sucesso a formação</div>
