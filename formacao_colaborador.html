@@ -19,6 +19,7 @@
   --warning: #F59E0B;
   --warning-light: #FEF3C7;
   --danger: #EF4444;
+  --danger-bg: #FEE2E2;
   --font-head: 'Fraunces', serif;
   --font-body: 'DM Sans', sans-serif;
 }
@@ -199,6 +200,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   justify-content: center;
   margin: 0 auto 20px;
 }
+.result-score-ring.fail { border-color: var(--danger); background: var(--danger-bg); }
 .score-num { font-size: 2rem; font-weight: 700; color: var(--birkenstock-blue); }
 .toast {
   position: fixed;
@@ -254,6 +256,12 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
 }
 .action-btn-download:hover {
   background: #059669;
+}
+.action-btn-retry {
+  background: #F59E0B;
+}
+.action-btn-retry:hover {
+  background: #D97706;
 }
 
 @media (max-width: 768px) {
@@ -592,11 +600,15 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
           <button class="btn-submit" id="btn-submit" disabled onclick="submitQuiz()">Submeter</button>
         </div>
         <div class="result-screen" id="result-screen">
-          <div class="result-score-ring"><div class="score-num" id="score-num">0%</div></div>
+          <div class="result-score-ring" id="result-ring">
+            <div class="score-num" id="score-num">0%</div>
+          </div>
           <h2 id="result-title"></h2>
           <p id="result-msg"></p>
-          <button class="btn-dl" id="btn-see-cert" onclick="showCertificate()" style="display:none">🏅 Ver Certificado</button>
-          <button class="btn-secondary" id="btn-retry" onclick="retryQuiz()" style="display:none">🔄 Tentar</button>
+          <div class="result-actions">
+            <button class="btn-dl" id="btn-see-cert" onclick="showCertificate()" style="display:none">🏅 Ver Certificado</button>
+            <button class="btn-secondary" id="btn-retry" onclick="retryQuiz()" style="display:none">🔄 Tentar novamente</button>
+          </div>
         </div>
       </div>
     `;
@@ -654,7 +666,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     
     if (passed) {
       document.getElementById('result-title').textContent = '🎉 Aprovado!';
-      document.getElementById('result-msg').textContent = `Acertaste ${score} de ${window.totalPerguntas}`;
+      document.getElementById('result-msg').textContent = `Acertaste ${score} de ${window.totalPerguntas} (${pct}%)`;
       document.getElementById('btn-see-cert').style.display = 'inline-block';
       updateProgress();
       
@@ -669,20 +681,29 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
         toast('✅ Certificado gerado!');
       } catch(e) { console.error(e); }
     } else {
+      document.getElementById('result-ring').classList.add('fail');
       document.getElementById('result-title').textContent = '❌ Não aprovado';
-      document.getElementById('result-msg').textContent = `Obtiveste ${pct}%. Precisas de 70%`;
+      document.getElementById('result-msg').innerHTML = `Obtiveste ${pct}% (${score}/${window.totalPerguntas} corretas).<br>Precisas de pelo menos 70%. Podes tentar novamente.`;
       document.getElementById('btn-retry').style.display = 'inline-block';
+      toast('⚠️ Não atingiu a nota mínima. Tente novamente!', 'error');
     }
   }
 
   function retryQuiz() {
     window.respostas = {};
+    for (let i = 0; i < window.totalPerguntas; i++) {
+      document.querySelectorAll(`#opts-${i} .option-item`).forEach(el => {
+        el.classList.remove('selected', 'correct', 'wrong');
+        el.onclick = () => selectOpt(i, Array.from(el.parentNode.children).indexOf(el));
+      });
+    }
     document.getElementById('quiz-questions').style.display = 'block';
     document.querySelector('.quiz-footer').style.display = 'flex';
     document.getElementById('result-screen').style.display = 'none';
     document.getElementById('btn-submit').disabled = true;
     document.getElementById('quiz-answered').textContent = `0 de ${window.totalPerguntas} respondidas`;
-    document.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
+    document.getElementById('result-ring').classList.remove('fail');
+    toast('🔄 Quiz reiniciado. Boa sorte!');
   }
 
   // ==================== FUNÇÕES DO CERTIFICADO ====================
@@ -729,7 +750,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
             font-family: 'DM Sans', sans-serif; 
             background: white; 
             margin: 0; 
-            padding: 20px;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -741,25 +762,39 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
             margin: 0 auto;
             background: white;
             position: relative;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
           }
           @media print {
-            body { padding: 0; }
-            .cert-print { box-shadow: none; }
+            body { padding: 0; margin: 0; }
+            .cert-print { margin: 0; box-shadow: none; }
           }
         </style>
         <style>
-          ${Array.from(document.styleSheets).reduce((acc, sheet) => {
-            try {
-              const rules = sheet.cssRules || sheet.rules;
-              if (rules) {
-                for (let rule of rules) {
-                  if (rule.cssText) acc += rule.cssText;
-                }
-              }
-            } catch(e) {}
-            return acc;
-          }, '')}
+          /* Copiar estilos do certificado */
+          #certificado-para-pdf {
+            background-image: url('${printContent.style.backgroundImage.match(/url\(["']?(.*?)["']?\)/)?.[1] || ''}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto;
+            position: relative;
+          }
+          .cert-print div[style*="position: relative"] {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            min-height: 297mm;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+          }
+          .cert-print div[style*="text-align: center"] {
+            text-align: center;
+          }
+          .cert-print [style*="font-family: 'Fraunces'"] {
+            font-family: 'Fraunces', serif;
+          }
         </style>
       </head>
       <body>
@@ -770,7 +805,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
           window.onload = function() {
             setTimeout(function() {
               window.print();
-              setTimeout(function() { window.close(); }, 500);
+              setTimeout(function() { window.close(); }, 1000);
             }, 500);
           };
         <\/script>
