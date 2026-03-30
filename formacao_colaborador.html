@@ -206,9 +206,13 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   padding: 40px;
   text-align: center;
   margin-top: 24px;
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
-.cert-name { font-family: var(--font-head); font-size: 1.8rem; font-weight: 900; color: var(--birkenstock-blue); margin: 16px 0; }
-.cert-actions { display: flex; gap: 16px; justify-content: center; margin-top: 24px; }
+.cert-name { font-family: var(--font-head); font-size: 2rem; font-weight: 900; color: var(--birkenstock-blue); margin: 16px 0; }
+.cert-actions { display: flex; gap: 16px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
 .btn-dl, .btn-secondary {
   background: var(--birkenstock-blue);
   color: white;
@@ -216,6 +220,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   padding: 12px 24px;
   border-radius: 30px;
   cursor: pointer;
+  font-weight: 600;
 }
 .btn-secondary { background: white; color: var(--birkenstock-blue); border: 1px solid var(--birkenstock-blue); }
 .toast {
@@ -234,6 +239,23 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
 .toast.show { opacity: 1; }
 .loading { text-align: center; padding: 60px; color: #666; }
 
+@media print {
+  .top-bar, .progress-strip, .cert-actions, .btn-exit, .hero, .toast {
+    display: none !important;
+  }
+  .cert-card {
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    border: none;
+  }
+  body {
+    background: white;
+    padding: 0;
+    margin: 0;
+  }
+}
+
 @media (max-width: 768px) {
   .top-bar { padding: 12px 20px; }
   .hero { padding: 32px 20px; }
@@ -241,6 +263,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   .main { padding: 20px; }
   .section-header { padding: 16px; }
   .section-body { padding: 16px; }
+  .cert-card { width: 100%; min-height: auto; }
 }
 </style>
 </head>
@@ -323,6 +346,16 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
 
   function fmtDate(d) {
     return d.toLocaleDateString('pt-PT');
+  }
+
+  function escapeHtml(text) {
+    if (!text) return '';
+    return text.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
   }
 
   function lerTokenUrl() {
@@ -425,7 +458,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
         <div class="section-header" onclick="toggleSection('${moduleIdStr}')">
           <div class="s-num">${idx + 1}</div>
           <div class="s-info">
-            <div class="s-title">${module.titulo || 'Módulo ' + (idx + 1)}</div>
+            <div class="s-title">${escapeHtml(module.titulo || 'Módulo ' + (idx + 1))}</div>
           </div>
           <div>${isCompleted ? '✅' : '▶'}</div>
         </div>
@@ -586,12 +619,12 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     const questionsDiv = document.getElementById('quiz-questions');
     questionsDiv.innerHTML = perguntas.map((q, idx) => `
       <div class="question">
-        <div class="question-text">${q.texto}</div>
+        <div class="question-text">${escapeHtml(q.texto)}</div>
         <div class="options" id="opts-${idx}">
           ${q.opcoes.map((opt, i) => `
             <div class="option-item" onclick="selectOpt(${idx}, ${i})">
               <div class="option-letter">${String.fromCharCode(65+i)}</div>
-              ${opt}
+              ${escapeHtml(opt)}
             </div>
           `).join('')}
         </div>
@@ -660,30 +693,89 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     document.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
   }
 
+  // ==================== FUNÇÃO SHOW CERTIFICATE COM A4 E IMAGEM DE FUNDO ====================
   function showCertificate() {
+    const now = new Date();
     const certId = 'CERT-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
     const nota = document.getElementById('score-num').textContent;
+    
+    // Carregar a imagem de fundo salva no admin
+    let fundoImagem = 'imagens/fundo_certificado.png';
+    const certTemplateSalvo = localStorage.getItem('cert_template');
+    if (certTemplateSalvo) {
+      try {
+        const template = JSON.parse(certTemplateSalvo);
+        if (template.fundoImagem) {
+          fundoImagem = template.fundoImagem;
+        }
+      } catch(e) {}
+    }
+    
+    // Garantir que o caminho está correto
+    if (!fundoImagem.startsWith('http') && !fundoImagem.startsWith('data:')) {
+      fundoImagem = window.location.origin + window.location.pathname.replace('formacao_colaborador.html', '') + fundoImagem;
+    }
+    
     const certHtml = `
-      <div class="cert-screen" style="display:block; margin-top: 30px;">
-        <div class="cert-card">
-          <h2>Certificado de Formação</h2>
-          <div style="font-size: 1.2rem;">Certifica-se que</div>
-          <div class="cert-name">${nomeUser}</div>
-          <div>concluiu com sucesso a formação</div>
-          <div style="font-size: 1.3rem; font-weight: bold; margin: 16px 0;">${cursoData.nome}</div>
-          <div style="display: flex; justify-content: center; gap: 40px; margin: 20px 0;">
-            <div><strong>Nota:</strong> ${nota}</div>
-            <div><strong>Data:</strong> ${fmtDate(new Date())}</div>
+      <div class="cert-screen" style="display:block; margin-top: 30px; page-break-after: avoid;">
+        <div class="cert-card" style="
+          background-image: url('${fundoImagem}');
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          width: 210mm;
+          min-height: 297mm;
+          margin: 0 auto;
+          position: relative;
+          border: none;
+          border-radius: 0;
+          padding: 0;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        ">
+          <div style="position: relative; z-index: 2; height: 100%; min-height: 297mm; display: flex; flex-direction: column; justify-content: center;">
+            <!-- Nome do colaborador -->
+            <div style="text-align: center; margin-bottom: 30px;">
+              <div style="font-family: 'Fraunces', serif; font-size: 2.5rem; font-weight: 900; color: #00338D; margin-bottom: 20px;">${escapeHtml(nomeUser)}</div>
+              <div style="font-size: 1.2rem; color: #616365; margin-bottom: 20px;">concluiu com sucesso a formação</div>
+              <div style="font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: #C5A059;">${escapeHtml(cursoData.nome)}</div>
+            </div>
+            
+            <!-- Informações adicionais -->
+            <div style="display: flex; justify-content: center; gap: 60px; margin-top: 40px; flex-wrap: wrap;">
+              <div style="text-align: center;">
+                <div style="font-size: 0.8rem; color: #616365; text-transform: uppercase; letter-spacing: 1px;">NOTA FINAL</div>
+                <div style="font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 700; color: #00338D;">${nota}</div>
+              </div>
+              <div style="text-align: center;">
+                <div style="font-size: 0.8rem; color: #616365; text-transform: uppercase; letter-spacing: 1px;">DATA</div>
+                <div style="font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 600; color: #00338D;">${fmtDate(now)}</div>
+              </div>
+              <div style="text-align: center;">
+                <div style="font-size: 0.8rem; color: #616365; text-transform: uppercase; letter-spacing: 1px;">CERTIFICADO ID</div>
+                <div style="font-family: monospace; font-size: 0.9rem; font-weight: 600; color: #00338D;">${certId}</div>
+              </div>
+            </div>
           </div>
-          <div style="font-size: 0.8rem; color: #666;">ID: ${certId}</div>
         </div>
-        <div class="cert-actions">
-          <button class="btn-dl" onclick="window.print()">🖨️ Imprimir</button>
-          <button class="btn-secondary" onclick="window.location.href='dashboard.html'">📊 Voltar</button>
+        <div class="cert-actions" style="text-align: center; margin-top: 20px;">
+          <button class="btn-dl" onclick="window.print()"><i class="fas fa-print"></i> Imprimir Certificado</button>
+          <button class="btn-secondary" onclick="window.location.href='dashboard.html'"><i class="fas fa-home"></i> Voltar ao Dashboard</button>
         </div>
       </div>
     `;
+    
+    // Remover certificado anterior se existir
+    const existingCert = document.getElementById('cert-screen');
+    if (existingCert) existingCert.remove();
+    
     document.getElementById('modules-container').insertAdjacentHTML('beforeend', certHtml);
+    
+    // Scroll para o certificado
+    setTimeout(() => {
+      const certScreen = document.getElementById('cert-screen');
+      if (certScreen) certScreen.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 200);
+    
     toast('🏅 Certificado gerado!');
   }
 
