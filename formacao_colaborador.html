@@ -1,97 +1,437 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Birkenstock S&CC — Formação</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<style>
-:root {
-  --birkenstock-blue: #00338D;
-  --birkenstock-blue-dark: #00277A;
-  --birkenstock-gold: #C5A059;
-  --birkenstock-gray: #616365;
-  --birkenstock-beige: #F7F5F0;
-  --white: #fff;
-  --success: #10B981;
-  --success-bg: #D1FAE5;
-  --warning: #F59E0B;
-  --warning-light: #FEF3C7;
-  --danger: #EF4444;
-  --danger-bg: #FEE2E2;
-  --font-head: 'Fraunces', serif;
-  --font-body: 'DM Sans', sans-serif;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birkenstock S&CC Portugal - Formações</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: var(--birkenstock-beige); font-family: var(--font-body); }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
 
-.top-bar {
-  background: var(--birkenstock-blue);
-  padding: 16px 32px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-  border-bottom: 2px solid var(--birkenstock-gold);
-}
-.top-bar .logo {
-  font-family: var(--font-head);
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: white;
-  line-height: 1.2;
-}
-.top-bar .logo span {
-  font-size: 0.7rem;
-  font-weight: 400;
-  display: block;
-  color: rgba(255,255,255,0.8);
-}
-.deadline-badge {
-  background: rgba(255,255,255,0.15);
-  border-radius: 30px;
-  padding: 6px 16px;
-  font-size: 0.8rem;
-  color: white;
-}
-.user-name {
-  background: rgba(255,255,255,0.15);
-  border-radius: 30px;
-  padding: 6px 16px;
-  font-size: 0.8rem;
-  color: white;
-}
-.btn-exit {
-  background: rgba(255,255,255,0.2);
-  border: none;
-  color: white;
-  padding: 6px 16px;
-  border-radius: 30px;
-  cursor: pointer;
-}
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #1a2632);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
 
-/* Restante do CSS do formacao_colaborador.html igual ao seu atual */
-/* ... (manter o resto do CSS) ... */
-</style>
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .logo p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .btn-sair {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-sair:hover {
+            background-color: #c0392b;
+        }
+
+        /* Container principal */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #ddd;
+            border-top-color: #2c3e50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+
+        /* Cards de formações */
+        .formacoes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 20px;
+        }
+
+        .card-header h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .card-header .data {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-body p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .card-footer {
+            padding: 15px 20px;
+            background: #f9f9f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #eee;
+        }
+
+        .preco {
+            font-size: 24px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .btn-atribuir {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-atribuir:hover {
+            background-color: #2980b9;
+        }
+
+        /* Mensagem de erro */
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #f5c6cb;
+            text-align: center;
+        }
+
+        .btn-retry {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        /* Título da página */
+        .page-title {
+            margin-bottom: 20px;
+        }
+
+        .page-title h2 {
+            font-size: 28px;
+            color: #2c3e50;
+        }
+
+        /* Esconder elementos */
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
+    <div class="header">
+        <div class="logo">
+            <h1>BIRKENSTOCK</h1>
+            <p>S&CC Portugal - Formação</p>
+        </div>
+        <button class="btn-sair" onclick="logout()">Sair</button>
+    </div>
 
-<div class="top-bar">
-  <div class="logo">
-    BIRKENSTOCK
-    <span>S&CC Portugal · Formação</span>
-  </div>
-  <div class="user-name" id="user-name-display">Carregando...</div>
-  <div class="deadline-badge">Prazo: <strong id="prazo-data">---</strong></div>
-  <button class="btn-exit" onclick="sair()">Sair</button>
-</div>
+    <div class="container">
+        <div class="page-title">
+            <h2>📚 Formações Disponíveis</h2>
+        </div>
 
-<!-- Restante do conteúdo do formacao_colaborador.html igual ao seu atual -->
-<!-- ... (manter o resto do HTML e JavaScript) ... -->
+        <!-- Loading -->
+        <div id="loading" class="loading-overlay">
+            <div class="spinner"></div>
+            <div class="loading-text">Carregando formações...</div>
+        </div>
 
+        <!-- Mensagem de erro -->
+        <div id="error-message" class="error-message hidden">
+            <strong>⚠️ Erro ao carregar formações</strong>
+            <p id="error-text">Não foi possível carregar os dados.</p>
+            <button class="btn-retry" onclick="carregarFormacoes()">Tentar novamente</button>
+        </div>
+
+        <!-- Lista de formações -->
+        <div id="formacoes-container" class="formacoes-grid hidden"></div>
+    </div>
+
+    <script>
+        // URL da API - AJUSTAR CONFORME NECESSÁRIO
+        const API_URL = '/api/formacoes'; // Altere para a URL correta da sua API
+        const TOKEN_KEY = 'auth_token'; // Nome do token no localStorage
+
+        // Função para obter token de autenticação
+        function getAuthToken() {
+            return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
+        }
+
+        // Função principal para carregar formações
+        async function carregarFormacoes() {
+            const loading = document.getElementById('loading');
+            const errorDiv = document.getElementById('error-message');
+            const container = document.getElementById('formacoes-container');
+
+            // Mostrar loading, esconder outros
+            loading.classList.remove('hidden');
+            errorDiv.classList.add('hidden');
+            container.classList.add('hidden');
+
+            try {
+                const token = getAuthToken();
+
+                // Chamada à API
+                const response = await fetch(API_URL, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token ? `Bearer ${token}` : ''
+                    }
+                });
+
+                // Verificar se a resposta é OK
+                if (!response.ok) {
+                    throw new Error(`Erro ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                // Verificar se os dados são válidos
+                if (!data || !Array.isArray(data)) {
+                    throw new Error('Dados recebidos em formato inválido');
+                }
+
+                // Renderizar as formações
+                renderizarFormacoes(data);
+
+            } catch (error) {
+                console.error('Erro ao carregar formações:', error);
+                mostrarErro(error.message);
+            } finally {
+                // Esconder loading
+                loading.classList.add('hidden');
+            }
+        }
+
+        // Função para renderizar as formações na tela
+        function renderizarFormacoes(formacoes) {
+            const container = document.getElementById('formacoes-container');
+            
+            if (!formacoes || formacoes.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 50px; background: white; border-radius: 12px;">
+                        <p>📭 Nenhuma formação disponível no momento.</p>
+                    </div>
+                `;
+                container.classList.remove('hidden');
+                return;
+            }
+
+            // Gerar HTML para cada formação
+            container.innerHTML = formacoes.map(formacao => `
+                <div class="card" onclick="detalhesFormacao(${formacao.id})">
+                    <div class="card-header">
+                        <h3>${escapeHtml(formacao.titulo || 'Sem título')}</h3>
+                        <div class="data">
+                            📅 ${formatarData(formacao.data_inicio)} 
+                            ${formacao.data_fim ? ` até ${formatarData(formacao.data_fim)}` : ''}
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p>${escapeHtml(formacao.descricao || 'Sem descrição disponível')}</p>
+                        <div><strong>🎓 Formador:</strong> ${escapeHtml(formacao.formador || 'Não atribuído')}</div>
+                        <div><strong>⏱️ Duração:</strong> ${formacao.duracao || 'A definir'}</div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="preco">€ ${formatarPreco(formacao.preco)}</span>
+                        <button class="btn-atribuir" onclick="event.stopPropagation(); atribuirFormacao(${formacao.id})">
+                            Atribuir
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            container.classList.remove('hidden');
+        }
+
+        // Função para mostrar erro
+        function mostrarErro(mensagem) {
+            const errorDiv = document.getElementById('error-message');
+            const errorText = document.getElementById('error-text');
+            errorText.textContent = mensagem || 'Não foi possível carregar as formações. Verifique sua conexão ou tente novamente mais tarde.';
+            errorDiv.classList.remove('hidden');
+        }
+
+        // Função para ver detalhes da formação
+        function detalhesFormacao(id) {
+            console.log('Ver detalhes da formação:', id);
+            // Implementar navegação para página de detalhes
+            // window.location.href = `/formacao/${id}`;
+            alert(`Ver detalhes da formação ID: ${id}`);
+        }
+
+        // Função para atribuir formação
+        async function atribuirFormacao(id) {
+            console.log('Atribuir formação:', id);
+            
+            try {
+                const token = getAuthToken();
+                
+                const response = await fetch(`/api/formacoes/${id}/atribuir`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token ? `Bearer ${token}` : ''
+                    },
+                    body: JSON.stringify({ colaborador_id: getColaboradorId() })
+                });
+
+                if (response.ok) {
+                    alert('✅ Formação atribuída com sucesso!');
+                    // Recarregar ou atualizar
+                    carregarFormacoes();
+                } else {
+                    const error = await response.json();
+                    alert(`❌ Erro ao atribuir: ${error.mensagem || 'Tente novamente'}`);
+                }
+            } catch (error) {
+                console.error('Erro ao atribuir formação:', error);
+                alert('❌ Erro ao atribuir formação. Verifique sua conexão.');
+            }
+        }
+
+        // Função de logout
+        function logout() {
+            localStorage.removeItem(TOKEN_KEY);
+            sessionStorage.removeItem(TOKEN_KEY);
+            window.location.href = '/login';
+        }
+
+        // Funções utilitárias
+        function formatarData(dataString) {
+            if (!dataString) return 'Data não definida';
+            try {
+                const data = new Date(dataString);
+                return data.toLocaleDateString('pt-PT');
+            } catch {
+                return dataString;
+            }
+        }
+
+        function formatarPreco(preco) {
+            if (preco === undefined || preco === null) return '---';
+            return preco.toFixed(2).replace('.', ',');
+        }
+
+        function escapeHtml(texto) {
+            if (!texto) return '';
+            const div = document.createElement('div');
+            div.textContent = texto;
+            return div.innerHTML;
+        }
+
+        function getColaboradorId() {
+            // Obter ID do colaborador logado
+            return localStorage.getItem('colaborador_id') || '1';
+        }
+
+        // Verificar autenticação ao carregar página
+        function verificarAutenticacao() {
+            const token = getAuthToken();
+            if (!token) {
+                console.log('Utilizador não autenticado');
+                // window.location.href = '/login';
+            }
+        }
+
+        // Inicializar página
+        document.addEventListener('DOMContentLoaded', () => {
+            verificarAutenticacao();
+            carregarFormacoes();
+        });
+    </script>
 </body>
 </html>
