@@ -751,7 +751,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     toast('📄 A gerar PDF...');
     
     try {
-      // Capturar o elemento com alta qualidade
       const canvas = await html2canvas(element, {
         scale: 3,
         backgroundColor: '#ffffff',
@@ -764,43 +763,32 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
       const imgData = canvas.toDataURL('image/png');
       const { jsPDF } = window.jspdf;
       
-      // Criar PDF em formato A4
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
         format: 'a4'
       });
       
-      // Dimensões da página A4
-      const pdfWidth = pdf.internal.pageSize.getWidth(); // 210mm
-      const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
-      
-      // Calcular dimensões da imagem para caber na página
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
       const imgWidth = pdfWidth;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       
-      // Se a imagem for maior que a página, redimensionar para caber
       let finalHeight = imgHeight;
       let finalWidth = imgWidth;
       let yOffset = 0;
       
       if (imgHeight > pdfHeight) {
-        // Redimensionar para caber na altura
         finalHeight = pdfHeight;
         finalWidth = (canvas.width * finalHeight) / canvas.height;
         yOffset = 0;
       } else {
-        // Centralizar verticalmente
         yOffset = (pdfHeight - imgHeight) / 2;
       }
       
-      // Centralizar horizontalmente
       const xOffset = (pdfWidth - finalWidth) / 2;
       
-      // Adicionar imagem ao PDF (apenas uma página)
       pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalWidth, finalHeight);
-      
-      // Guardar PDF
       pdf.save(`certificado_${nomeUser.replace(/\s/g, '_')}.pdf`);
       toast('✅ PDF guardado!');
     } catch (err) {
@@ -864,6 +852,8 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   }
 
   async function showCertificate() {
+    console.log("🔵 showCertificate chamado");
+    
     const now = new Date();
     const certId = 'CERT-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
     const nota = document.getElementById('score-num').textContent;
@@ -882,6 +872,8 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     if (!fundoImagem.startsWith('http') && !fundoImagem.startsWith('data:')) {
       fundoImagem = window.location.origin + window.location.pathname.replace('formacao_colaborador.html', '') + fundoImagem;
     }
+    
+    console.log("🔵 Imagem de fundo:", fundoImagem);
     
     const certHtml = `
       <div class="cert-screen" style="display:block; margin-top: 30px;">
@@ -937,12 +929,23 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     const existingCert = document.getElementById('cert-screen');
     if (existingCert) existingCert.remove();
     
-    document.getElementById('modules-container').insertAdjacentHTML('beforeend', certHtml);
-    
-    setTimeout(() => {
-      const certScreen = document.getElementById('cert-screen');
-      if (certScreen) certScreen.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 200);
+    const modulesContainer = document.getElementById('modules-container');
+    if (modulesContainer) {
+      modulesContainer.insertAdjacentHTML('beforeend', certHtml);
+      console.log("🔵 Certificado inserido no DOM");
+      
+      setTimeout(() => {
+        const certScreen = document.getElementById('cert-screen');
+        if (certScreen) {
+          certScreen.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          console.log("🔵 Scroll para o certificado");
+        } else {
+          console.log("🔴 cert-screen não encontrado");
+        }
+      }, 200);
+    } else {
+      console.log("🔴 modules-container não encontrado");
+    }
     
     toast('🏅 Certificado gerado!');
   }
