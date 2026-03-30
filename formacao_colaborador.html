@@ -401,7 +401,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
 
   function updateProgress() {
     const total = modules.length + 1;
-    let done = modules.filter(m => completedModules[m.id]).length;
+    let done = modules.filter(m => completedModules[String(m.id)]).length;
     if (quizPassed) done++;
     const pct = Math.round((done / total) * 100);
     document.getElementById('prog-fill').style.width = pct + '%';
@@ -413,37 +413,40 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     container.innerHTML = '';
     
     modules.forEach((module, idx) => {
+      const moduleIdStr = String(module.id);
+      const isCompleted = completedModules[moduleIdStr];
+      
       const block = document.createElement('div');
       block.className = 'section-block';
-      if (completedModules[module.id]) block.classList.add('completed');
-      block.id = 'block-' + module.id;
+      if (isCompleted) block.classList.add('completed');
+      block.id = 'block-' + moduleIdStr;
       
       block.innerHTML = `
-        <div class="section-header" onclick="toggleSection('${module.id}')">
+        <div class="section-header" onclick="toggleSection('${moduleIdStr}')">
           <div class="s-num">${idx + 1}</div>
           <div class="s-info">
             <div class="s-title">${module.titulo || 'Módulo ' + (idx + 1)}</div>
           </div>
-          <div>${completedModules[module.id] ? '✅' : '▶'}</div>
+          <div>${isCompleted ? '✅' : '▶'}</div>
         </div>
-        <div class="section-body" id="body-${module.id}">
-          <div id="content-${module.id}">Carregando...</div>
+        <div class="section-body" id="body-${moduleIdStr}">
+          <div id="content-${moduleIdStr}">Carregando...</div>
           <div class="confirm-viewed">
             <span>✅ Confirmar conclusão do módulo</span>
-            <button class="btn-confirm" id="btn-confirm-${module.id}" onclick="confirmModule('${module.id}')">✓ Confirmar</button>
+            <button class="btn-confirm" id="btn-confirm-${moduleIdStr}" onclick="confirmModule('${moduleIdStr}')">✓ Confirmar</button>
           </div>
-          <div id="confirmed-${module.id}" style="display:none; margin-top:10px;" class="confirmed-label">✅ Módulo concluído</div>
+          <div id="confirmed-${moduleIdStr}" style="display:none; margin-top:10px;" class="confirmed-label">✅ Módulo concluído</div>
         </div>
       `;
       container.appendChild(block);
       
       setTimeout(() => {
         const url = module.conteudo?.url || '';
-        const contentDiv = document.getElementById(`content-${module.id}`);
+        const contentDiv = document.getElementById(`content-${moduleIdStr}`);
         
         if (module.tipo === 'text' && module.conteudo?.texto) {
           contentDiv.innerHTML = `<div class="text-content">${module.conteudo.texto}</div>`;
-          document.getElementById(`btn-confirm-${module.id}`).disabled = false;
+          document.getElementById(`btn-confirm-${moduleIdStr}`).disabled = false;
         }
         else if (url) {
           if (url.includes('youtube.com') || url.includes('youtu.be')) {
@@ -452,11 +455,11 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
           } else {
             contentDiv.innerHTML = `<div class="doc-viewer"><iframe src="${url}" class="doc-iframe" allow="autoplay"></iframe></div>`;
           }
-          document.getElementById(`btn-confirm-${module.id}`).disabled = false;
+          document.getElementById(`btn-confirm-${moduleIdStr}`).disabled = false;
         }
         else {
           contentDiv.innerHTML = '<div class="text-content">Conteúdo não disponível.</div>';
-          document.getElementById(`btn-confirm-${module.id}`).disabled = false;
+          document.getElementById(`btn-confirm-${moduleIdStr}`).disabled = false;
         }
       }, 100);
     });
@@ -466,46 +469,52 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
 
   // ==================== FUNÇÃO CONFIRM MODULE CORRIGIDA ====================
   function confirmModule(moduleId) {
-    console.log("🔵 confirmModule chamado para:", moduleId);
+    console.log("🔵 confirmModule chamado para:", moduleId, "tipo:", typeof moduleId);
+    
+    // Converter para string para comparar corretamente
+    const moduleIdStr = String(moduleId);
     
     // Marcar como concluído
-    completedModules[moduleId] = true;
+    completedModules[moduleIdStr] = true;
     
     // Atualizar UI do módulo atual
-    const block = document.getElementById('block-' + moduleId);
+    const block = document.getElementById('block-' + moduleIdStr);
     if (block) block.classList.add('completed');
     
-    const btn = document.getElementById(`btn-confirm-${moduleId}`);
+    const btn = document.getElementById(`btn-confirm-${moduleIdStr}`);
     if (btn) btn.style.display = 'none';
     
-    const confirmedDiv = document.getElementById(`confirmed-${moduleId}`);
+    const confirmedDiv = document.getElementById(`confirmed-${moduleIdStr}`);
     if (confirmedDiv) confirmedDiv.style.display = 'block';
     
     toast('✅ Módulo concluído!');
     updateProgress();
     
     // Fechar o módulo atual
-    const currentBody = document.getElementById(`body-${moduleId}`);
+    const currentBody = document.getElementById(`body-${moduleIdStr}`);
     if (currentBody) {
       currentBody.classList.remove('open');
       console.log("🔵 Módulo atual fechado");
     }
     
-    // Encontrar o índice do módulo atual
-    const idx = modules.findIndex(m => m.id === moduleId);
+    // Encontrar o índice do módulo atual - converter IDs para string
+    const idx = modules.findIndex(m => String(m.id) === moduleIdStr);
     console.log("🔵 Índice:", idx, "Total de módulos:", modules.length);
+    
+    if (idx === -1) {
+      console.log("🔴 ERRO: Módulo não encontrado!");
+      return;
+    }
     
     // Verificar se é o último módulo
     if (idx === modules.length - 1) {
       console.log("🔵 É o ÚLTIMO módulo - abrir avaliação");
-      // ÚLTIMO MÓDULO - DESBLOQUEAR E ABRIR AVALIAÇÃO
       const quizBlock = document.getElementById('block-quiz');
       if (quizBlock) {
         quizBlock.classList.remove('locked');
         const statusQuiz = document.getElementById('status-quiz');
         if (statusQuiz) statusQuiz.innerHTML = '📝';
         
-        // Forçar abertura da avaliação
         const quizBody = document.getElementById('body-quiz');
         if (quizBody) {
           quizBody.classList.add('open');
@@ -513,21 +522,17 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
             quizBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }, 100);
           console.log("🔵 Avaliação aberta");
-        } else {
-          console.log("🔴 ERRO: body-quiz não encontrado");
         }
         toast('📝 Avaliação final desbloqueada!');
       }
     } 
     else {
-      // PRÓXIMO MÓDULO - DESBLOQUEAR E ABRIR
-      const nextModuleId = modules[idx + 1].id;
+      const nextModuleId = String(modules[idx + 1].id);
       console.log("🔵 Abrir próximo módulo:", nextModuleId);
       const nextBlock = document.getElementById(`block-${nextModuleId}`);
       if (nextBlock) {
         nextBlock.classList.remove('locked');
         
-        // Forçar abertura do próximo módulo
         const nextBody = document.getElementById(`body-${nextModuleId}`);
         if (nextBody) {
           nextBody.classList.add('open');
@@ -535,12 +540,8 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
             nextBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }, 100);
           console.log("🔵 Próximo módulo aberto");
-        } else {
-          console.log("🔴 ERRO: body do próximo módulo não encontrado");
         }
         toast('📚 Próximo módulo desbloqueado!');
-      } else {
-        console.log("🔴 ERRO: próximo block não encontrado");
       }
     }
   }
@@ -715,41 +716,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     if (confirm('Sair?')) window.location.href = 'dashboard.html';
   }
 
-  // ==================== TESTE DE BOTÕES ====================
-  function testarBotoes() {
-    console.log("=== TESTE DE BOTÕES ===");
-    const botoes = document.querySelectorAll('.btn-confirm');
-    console.log("Total de botões encontrados:", botoes.length);
-    botoes.forEach(btn => {
-      console.log("Botão encontrado:", btn.id);
-      // Guardar a função original
-      const originalOnclick = btn.onclick;
-      // Substituir para teste
-      btn.onclick = function(e) {
-        e.stopPropagation();
-        console.log("🔴 CLICOU NO BOTÃO:", this.id);
-        alert("Botão clicado! ID: " + this.id);
-        // Chamar a função original
-        const moduleId = this.id.replace('btn-confirm-', '');
-        confirmModule(moduleId);
-      };
-    });
-  }
-
-  // ==================== TESTE DE ELEMENTOS ====================
-  function testarElementos() {
-    console.log("=== TESTE DE ELEMENTOS ===");
-    console.log("modules:", modules.length);
-    modules.forEach((m, idx) => {
-      console.log(`Módulo ${idx+1}:`, m.id, m.titulo);
-      console.log(`  - block-${m.id}:`, document.getElementById(`block-${m.id}`) ? "✅" : "❌");
-      console.log(`  - body-${m.id}:`, document.getElementById(`body-${m.id}`) ? "✅" : "❌");
-      console.log(`  - btn-confirm-${m.id}:`, document.getElementById(`btn-confirm-${m.id}`) ? "✅" : "❌");
-    });
-    console.log("Quiz block:", document.getElementById('block-quiz') ? "✅" : "❌");
-    console.log("Quiz body:", document.getElementById('body-quiz') ? "✅" : "❌");
-  }
-
   window.toggleSection = toggleSection;
   window.selectOpt = selectOpt;
   window.submitQuiz = submitQuiz;
@@ -757,8 +723,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   window.showCertificate = showCertificate;
   window.confirmModule = confirmModule;
   window.sair = sair;
-  window.testarBotoes = testarBotoes;
-  window.testarElementos = testarElementos;
 
   window.addEventListener('load', () => {
     if (!localStorage.getItem('usuarioAtivo')) {
@@ -775,10 +739,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     } else {
       document.getElementById('loading').innerHTML = '❌ Nenhuma formação. <a href="dashboard.html">Voltar</a>';
     }
-    
-    // Chamar testes após carregar
-    setTimeout(testarElementos, 2000);
-    setTimeout(testarBotoes, 2500);
   });
 </script>
 </body>
