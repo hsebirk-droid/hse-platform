@@ -192,17 +192,55 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
 .btn-submit:disabled { background: #ccc; }
 .result-screen { text-align: center; padding: 40px; display: none; }
 .result-score-ring {
-  width: 120px;
-  height: 120px;
-  border: 6px solid var(--birkenstock-blue);
+  width: 140px;
+  height: 140px;
+  border: 8px solid var(--birkenstock-blue);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 20px;
+  margin: 0 auto 24px;
+  background: rgba(0,51,141,0.05);
 }
 .result-score-ring.fail { border-color: var(--danger); background: var(--danger-bg); }
-.score-num { font-size: 2rem; font-weight: 700; color: var(--birkenstock-blue); }
+.score-num { font-family: var(--font-head); font-size: 2.5rem; font-weight: 900; color: var(--birkenstock-blue); }
+.result-actions {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.result-btn {
+  background: var(--birkenstock-blue);
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 40px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.result-btn:hover {
+  background: var(--birkenstock-blue-dark);
+  transform: translateY(-2px);
+}
+.result-btn-retry {
+  background: var(--warning);
+}
+.result-btn-retry:hover {
+  background: #d97706;
+}
+.result-btn-cert {
+  background: var(--success);
+}
+.result-btn-cert:hover {
+  background: #059669;
+}
 .toast {
   position: fixed;
   bottom: 30px;
@@ -234,7 +272,9 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   cursor: pointer;
   font-weight: 600;
   font-size: 1rem;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   margin: 0 10px;
   min-width: 200px;
   transition: all 0.2s;
@@ -267,6 +307,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   .section-header { padding: 16px; }
   .section-body { padding: 16px; }
   .action-btn { padding: 10px 20px; min-width: 160px; font-size: 0.9rem; margin: 5px; }
+  .result-btn { padding: 10px 20px; font-size: 0.9rem; }
 }
 </style>
 </head>
@@ -574,18 +615,15 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
         <div id="quiz-questions"></div>
         <div class="quiz-footer">
           <span id="quiz-answered">0 respondidas</span>
-          <button class="btn-submit" id="btn-submit" disabled onclick="submitQuiz()">Submeter</button>
+          <button class="btn-submit" id="btn-submit" disabled onclick="submitQuiz()">Submeter avaliação</button>
         </div>
         <div class="result-screen" id="result-screen">
           <div class="result-score-ring" id="result-ring">
             <div class="score-num" id="score-num">0%</div>
           </div>
-          <h2 id="result-title"></h2>
-          <p id="result-msg"></p>
-          <div class="result-actions">
-            <button class="btn-dl" id="btn-see-cert" onclick="showCertificate()" style="display:none">🏅 Ver Certificado</button>
-            <button class="btn-secondary" id="btn-retry" onclick="retryQuiz()" style="display:none">🔄 Tentar novamente</button>
-          </div>
+          <h2 id="result-title" style="margin-bottom: 16px;"></h2>
+          <p id="result-msg" style="color: #666;"></p>
+          <div class="result-actions" id="result-actions"></div>
         </div>
       </div>
     `;
@@ -641,10 +679,21 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     rs.style.display = 'block';
     document.getElementById('score-num').textContent = pct + '%';
     
+    const resultActions = document.getElementById('result-actions');
+    resultActions.innerHTML = '';
+    
     if (passed) {
-      document.getElementById('result-title').textContent = '🎉 Aprovado!';
-      document.getElementById('result-msg').innerHTML = `Acertaste ${score} de ${window.totalPerguntas} (${pct}%)`;
-      document.getElementById('btn-see-cert').style.display = 'inline-block';
+      document.getElementById('result-title').innerHTML = '🎉 Parabéns!';
+      document.getElementById('result-title').style.color = 'var(--success)';
+      document.getElementById('result-msg').innerHTML = `Acertaste ${score} de ${window.totalPerguntas} perguntas<br>Obtiveste ${pct}% - Aprovado!`;
+      document.getElementById('result-ring').classList.remove('fail');
+      
+      const certBtn = document.createElement('button');
+      certBtn.className = 'result-btn result-btn-cert';
+      certBtn.innerHTML = '<i class="fas fa-certificate"></i> Ver Certificado';
+      certBtn.onclick = () => showCertificate();
+      resultActions.appendChild(certBtn);
+      
       updateProgress();
       
       try {
@@ -658,10 +707,17 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
         toast('✅ Certificado gerado!');
       } catch(e) { console.error(e); }
     } else {
+      document.getElementById('result-title').innerHTML = '❌ Não aprovado';
+      document.getElementById('result-title').style.color = 'var(--danger)';
+      document.getElementById('result-msg').innerHTML = `Obtiveste ${pct}% (${score}/${window.totalPerguntas} corretas)<br>Precisas de pelo menos 70% para ser aprovado.`;
       document.getElementById('result-ring').classList.add('fail');
-      document.getElementById('result-title').textContent = '❌ Não aprovado';
-      document.getElementById('result-msg').innerHTML = `Obtiveste ${pct}% (${score}/${window.totalPerguntas} corretas).<br>Precisas de pelo menos 70%. Podes tentar novamente.`;
-      document.getElementById('btn-retry').style.display = 'inline-block';
+      
+      const retryBtn = document.createElement('button');
+      retryBtn.className = 'result-btn result-btn-retry';
+      retryBtn.innerHTML = '<i class="fas fa-redo"></i> Tentar novamente';
+      retryBtn.onclick = () => retryQuiz();
+      resultActions.appendChild(retryBtn);
+      
       toast('⚠️ Não atingiu a nota mínima. Tente novamente!');
     }
   }
@@ -696,19 +752,16 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     
     try {
       const canvas = await html2canvas(element, {
-        scale: 2,
+        scale: 3,
         backgroundColor: '#ffffff',
         useCORS: true,
-        logging: false
+        logging: false,
+        windowWidth: element.scrollWidth,
+        windowHeight: element.scrollHeight
       });
       
       const imgData = canvas.toDataURL('image/png');
       const { jsPDF } = window.jspdf;
-      
-      const imgWidth = 190;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      const pageHeight = 277;
-      const pageWidth = 210;
       
       const pdf = new jsPDF({
         orientation: 'portrait',
@@ -716,10 +769,22 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
         format: 'a4'
       });
       
-      const xOffset = (pageWidth - imgWidth) / 2;
-      const yOffset = (pageHeight - imgHeight) / 2;
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = pdfWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
       
-      pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgWidth, imgHeight);
+      let position = 0;
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      
+      let heightLeft = imgHeight - pdfHeight;
+      while (heightLeft > 0) {
+        position = position - pdfHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pdfHeight;
+      }
+      
       pdf.save(`certificado_${nomeUser.replace(/\s/g, '_')}.pdf`);
       toast('✅ PDF guardado!');
     } catch (err) {
@@ -739,7 +804,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     
     try {
       const canvas = await html2canvas(element, {
-        scale: 2,
+        scale: 3,
         backgroundColor: '#ffffff',
         useCORS: true,
         logging: false
@@ -754,16 +819,23 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
           <title>Certificado - ${nomeUser}</title>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: white; font-family: 'DM Sans', sans-serif; }
-            .cert-container { width: 210mm; margin: 0 auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+            body { margin: 0; padding: 0; background: white; }
             .cert-image { width: 100%; height: auto; display: block; }
-            @media print { body { margin: 0; padding: 0; } .cert-container { box-shadow: none; width: 100%; margin: 0; } }
+            @media print {
+              body { margin: 0; padding: 0; }
+              .cert-image { page-break-after: avoid; }
+            }
           </style>
         </head>
         <body>
-          <div class="cert-container"><img src="${imageData}" class="cert-image" alt="Certificado"></div>
+          <img src="${imageData}" class="cert-image" alt="Certificado">
           <script>
-            window.onload = function() { setTimeout(function() { window.print(); setTimeout(function() { window.close(); }, 1000); }, 500); };
+            window.onload = function() { 
+              setTimeout(function() { 
+                window.print(); 
+                setTimeout(function() { window.close(); }, 1000); 
+              }, 500); 
+            };
           <\/script>
         </body>
         </html>
@@ -780,7 +852,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     const certId = 'CERT-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
     const nota = document.getElementById('score-num').textContent;
     
-    // Carregar imagem de fundo do localStorage (configurada no admin)
     let fundoImagem = 'imagens/fundo_certificado.png';
     const certTemplateSalvo = localStorage.getItem('cert_template');
     if (certTemplateSalvo) {
@@ -792,7 +863,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
       } catch(e) {}
     }
     
-    // Garantir caminho absoluto se for relativo
     if (!fundoImagem.startsWith('http') && !fundoImagem.startsWith('data:')) {
       fundoImagem = window.location.origin + window.location.pathname.replace('formacao_colaborador.html', '') + fundoImagem;
     }
@@ -806,18 +876,16 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
           background-repeat: no-repeat;
           width: 100%;
           max-width: 210mm;
-          min-height: 297mm;
           margin: 0 auto;
           position: relative;
           border: none;
           border-radius: 0;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         ">
           <div style="position: relative; z-index: 2; padding: 40px; min-height: 297mm; display: flex; flex-direction: column; justify-content: center;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <div style="font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 900; color: #00338D; margin-bottom: 20px;">${escapeHtml(nomeUser)}</div>
+            <div style="text-align: center;">
+              <div style="font-family: 'Fraunces', serif; font-size: 2.2rem; font-weight: 900; color: #00338D; margin-bottom: 20px;">${escapeHtml(nomeUser)}</div>
               <div style="font-size: 1.2rem; color: #616365; margin-bottom: 20px;">concluiu com sucesso a formação</div>
-              <div style="font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: #C5A059; margin-bottom: 40px;">${escapeHtml(cursoData.nome)}</div>
+              <div style="font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: #C5A059; margin-bottom: 50px;">${escapeHtml(cursoData.nome)}</div>
               <div style="display: flex; justify-content: center; gap: 60px; margin-top: 20px; flex-wrap: wrap;">
                 <div style="text-align: center;">
                   <div style="font-size: 0.8rem; color: #616365; text-transform: uppercase; letter-spacing: 1px;">NOTA FINAL</div>
