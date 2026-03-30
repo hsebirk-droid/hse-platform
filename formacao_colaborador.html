@@ -314,7 +314,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   let nomeUser = localStorage.getItem('usuarioAtivo') || 'Colaborador';
   let cursoData = {};
 
-  function toast(msg) {
+  function toast(msg, type = 'info') {
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.classList.add('show');
@@ -464,63 +464,68 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     renderQuiz();
   }
 
-function confirmModule(moduleId) {
-  completedModules[moduleId] = true;
-  const block = document.getElementById('block-' + moduleId);
-  block.classList.add('completed');
-  
-  // Esconder botão e mostrar confirmado
-  document.getElementById(`btn-confirm-${moduleId}`).style.display = 'none';
-  document.getElementById(`confirmed-${moduleId}`).style.display = 'block';
-  
-  toast('✅ Módulo concluído!');
-  updateProgress();
-  
-  // Fechar o módulo atual
-  const currentBody = document.getElementById(`body-${moduleId}`);
-  if (currentBody) currentBody.classList.remove('open');
-  
-  const idx = modules.findIndex(m => m.id === moduleId);
-  
-  // Verificar se é o último módulo
-  if (idx === modules.length - 1) {
-    // ÚLTIMO MÓDULO - DESBLOQUEAR E ABRIR AVALIAÇÃO
-    const quizBlock = document.getElementById('block-quiz');
-    if (quizBlock) {
-      quizBlock.classList.remove('locked');
-      const statusQuiz = document.getElementById('status-quiz');
-      if (statusQuiz) statusQuiz.innerHTML = '📝';
-      
-      // ABRIR AUTOMATICAMENTE A AVALIAÇÃO
-      setTimeout(() => {
+  // ==================== FUNÇÃO CONFIRM MODULE CORRIGIDA ====================
+  function confirmModule(moduleId) {
+    // Marcar como concluído
+    completedModules[moduleId] = true;
+    
+    // Atualizar UI do módulo atual
+    const block = document.getElementById('block-' + moduleId);
+    block.classList.add('completed');
+    document.getElementById(`btn-confirm-${moduleId}`).style.display = 'none';
+    document.getElementById(`confirmed-${moduleId}`).style.display = 'block';
+    
+    toast('✅ Módulo concluído!');
+    updateProgress();
+    
+    // Fechar o módulo atual
+    const currentBody = document.getElementById(`body-${moduleId}`);
+    if (currentBody) {
+      currentBody.classList.remove('open');
+    }
+    
+    // Encontrar o índice do módulo atual
+    const idx = modules.findIndex(m => m.id === moduleId);
+    
+    // Verificar se é o último módulo
+    if (idx === modules.length - 1) {
+      // ÚLTIMO MÓDULO - DESBLOQUEAR E ABRIR AVALIAÇÃO
+      const quizBlock = document.getElementById('block-quiz');
+      if (quizBlock) {
+        quizBlock.classList.remove('locked');
+        const statusQuiz = document.getElementById('status-quiz');
+        if (statusQuiz) statusQuiz.innerHTML = '📝';
+        
+        // Forçar abertura da avaliação
         const quizBody = document.getElementById('body-quiz');
         if (quizBody) {
           quizBody.classList.add('open');
-          quizBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          setTimeout(() => {
+            quizBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 100);
         }
-      }, 300);
-      toast('📝 Avaliação final desbloqueada!', 'info');
-    }
-  } 
-  else {
-    // PRÓXIMO MÓDULO - DESBLOQUEAR E ABRIR
-    const nextModuleId = modules[idx + 1].id;
-    const nextBlock = document.getElementById(`block-${nextModuleId}`);
-    if (nextBlock) {
-      nextBlock.classList.remove('locked');
-      
-      // ABRIR AUTOMATICAMENTE O PRÓXIMO MÓDULO
-      setTimeout(() => {
+        toast('📝 Avaliação final desbloqueada!');
+      }
+    } 
+    else {
+      // PRÓXIMO MÓDULO - DESBLOQUEAR E ABRIR
+      const nextModuleId = modules[idx + 1].id;
+      const nextBlock = document.getElementById(`block-${nextModuleId}`);
+      if (nextBlock) {
+        nextBlock.classList.remove('locked');
+        
+        // Forçar abertura do próximo módulo
         const nextBody = document.getElementById(`body-${nextModuleId}`);
         if (nextBody) {
           nextBody.classList.add('open');
-          nextBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          setTimeout(() => {
+            nextBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 100);
         }
-      }, 300);
-      toast('📚 Próximo módulo desbloqueado!', 'info');
+        toast('📚 Próximo módulo desbloqueado!');
+      }
     }
   }
-}
 
   function renderQuiz() {
     const container = document.getElementById('modules-container');
@@ -663,21 +668,28 @@ function confirmModule(moduleId) {
     toast('🏅 Certificado gerado!');
   }
 
+  // ==================== FUNÇÃO TOGGLE SECTION CORRIGIDA ====================
   function toggleSection(id) {
     if (id === 'quiz') {
       const block = document.getElementById('block-quiz');
-      if (block.classList.contains('locked')) {
-        toast('Complete os módulos primeiro!', 'error');
+      if (block && block.classList.contains('locked')) {
+        toast('Complete os módulos primeiro!');
         return;
       }
-      document.getElementById('body-quiz').classList.toggle('open');
+      const bodyQuiz = document.getElementById('body-quiz');
+      if (bodyQuiz) {
+        bodyQuiz.classList.toggle('open');
+      }
     } else {
       const block = document.getElementById('block-' + id);
-      if (block.classList.contains('locked')) {
-        toast('Complete o módulo anterior!', 'error');
+      if (block && block.classList.contains('locked')) {
+        toast('Complete o módulo anterior!');
         return;
       }
-      document.getElementById('body-' + id).classList.toggle('open');
+      const body = document.getElementById('body-' + id);
+      if (body) {
+        body.classList.toggle('open');
+      }
     }
   }
 
