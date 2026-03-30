@@ -257,12 +257,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
 .action-btn-download:hover {
   background: #059669;
 }
-.action-btn-retry {
-  background: #F59E0B;
-}
-.action-btn-retry:hover {
-  background: #D97706;
-}
 
 @media (max-width: 768px) {
   .top-bar { padding: 12px 20px; }
@@ -272,28 +266,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   .section-header { padding: 16px; }
   .section-body { padding: 16px; }
   .action-btn { padding: 10px 20px; min-width: 160px; font-size: 0.9rem; margin: 5px; }
-}
-
-@media print {
-  .top-bar, .progress-strip, .hero, .toast, .btn-exit, .section-block, .quiz-intro, .result-screen, .cert-actions {
-    display: none !important;
-  }
-  .cert-screen {
-    display: block !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  #certificado-para-pdf {
-    width: 100% !important;
-    min-height: auto !important;
-    margin: 0 !important;
-    box-shadow: none !important;
-  }
-  body {
-    margin: 0;
-    padding: 0;
-    background: white;
-  }
 }
 </style>
 </head>
@@ -366,6 +338,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   let cursoId = null;
   let nomeUser = localStorage.getItem('usuarioAtivo') || 'Colaborador';
   let cursoData = {};
+  let imagemFundoBase64 = null;
 
   function toast(msg) {
     const t = document.getElementById('toast');
@@ -385,6 +358,24 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
       if (m === '<') return '&lt;';
       if (m === '>') return '&gt;';
       return m;
+    });
+  }
+
+  // Converter imagem para Base64 para impressão
+  async function carregarImagemBase64(url) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = reject;
+      img.src = url;
     });
   }
 
@@ -666,7 +657,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     
     if (passed) {
       document.getElementById('result-title').textContent = '🎉 Aprovado!';
-      document.getElementById('result-msg').textContent = `Acertaste ${score} de ${window.totalPerguntas} (${pct}%)`;
+      document.getElementById('result-msg').innerHTML = `Acertaste ${score} de ${window.totalPerguntas} (${pct}%)`;
       document.getElementById('btn-see-cert').style.display = 'inline-block';
       updateProgress();
       
@@ -685,7 +676,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
       document.getElementById('result-title').textContent = '❌ Não aprovado';
       document.getElementById('result-msg').innerHTML = `Obtiveste ${pct}% (${score}/${window.totalPerguntas} corretas).<br>Precisas de pelo menos 70%. Podes tentar novamente.`;
       document.getElementById('btn-retry').style.display = 'inline-block';
-      toast('⚠️ Não atingiu a nota mínima. Tente novamente!', 'error');
+      toast('⚠️ Não atingiu a nota mínima. Tente novamente!');
     }
   }
 
@@ -734,72 +725,68 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     });
   }
   
-  function imprimirCertificado() {
-    const printContent = document.getElementById('certificado-para-pdf').cloneNode(true);
-    const printWindow = window.open('', '_blank');
+  async function imprimirCertificado() {
+    toast('🖨️ A preparar impressão...');
     
+    // Obter o elemento do certificado
+    const element = document.getElementById('certificado-para-pdf');
+    if (!element) {
+      toast('❌ Erro: certificado não encontrado');
+      return;
+    }
+    
+    // Capturar o elemento como imagem
+    const canvas = await html2canvas(element, {
+      scale: 3,
+      backgroundColor: '#ffffff',
+      useCORS: true,
+      logging: false
+    });
+    
+    const imageData = canvas.toDataURL('image/png');
+    
+    // Criar janela de impressão
+    const printWindow = window.open('', '_blank');
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
       <head>
         <title>Certificado - ${nomeUser}</title>
-        <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
-          body { 
-            font-family: 'DM Sans', sans-serif; 
-            background: white; 
-            margin: 0; 
-            padding: 0;
+          body {
+            margin: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-          }
-          .cert-print {
-            width: 210mm;
-            min-height: 297mm;
-            margin: 0 auto;
             background: white;
-            position: relative;
+          }
+          .cert-container {
+            width: 210mm;
+            margin: 0 auto;
+          }
+          .cert-image {
+            width: 100%;
+            height: auto;
+            display: block;
           }
           @media print {
-            body { padding: 0; margin: 0; }
-            .cert-print { margin: 0; box-shadow: none; }
-          }
-        </style>
-        <style>
-          /* Copiar estilos do certificado */
-          #certificado-para-pdf {
-            background-image: url('${printContent.style.backgroundImage.match(/url\(["']?(.*?)["']?\)/)?.[1] || ''}');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            width: 210mm;
-            min-height: 297mm;
-            margin: 0 auto;
-            position: relative;
-          }
-          .cert-print div[style*="position: relative"] {
-            position: relative;
-            z-index: 2;
-            height: 100%;
-            min-height: 297mm;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-          }
-          .cert-print div[style*="text-align: center"] {
-            text-align: center;
-          }
-          .cert-print [style*="font-family: 'Fraunces'"] {
-            font-family: 'Fraunces', serif;
+            body {
+              margin: 0;
+              padding: 0;
+            }
+            .cert-container {
+              width: 100%;
+              margin: 0;
+            }
           }
         </style>
       </head>
       <body>
-        <div class="cert-print">
-          ${printContent.outerHTML}
+        <div class="cert-container">
+          <img src="${imageData}" class="cert-image" alt="Certificado">
         </div>
         <script>
           window.onload = function() {
@@ -815,7 +802,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     printWindow.document.close();
   }
 
-  function showCertificate() {
+  async function showCertificate() {
     const now = new Date();
     const certId = 'CERT-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
     const nota = document.getElementById('score-num').textContent;
