@@ -151,10 +151,8 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   border-radius: 30px;
   cursor: pointer;
   font-weight: 600;
-  transition: all 0.2s;
 }
-.btn-confirm:hover:not(:disabled) { background: var(--birkenstock-blue-dark); transform: translateY(-2px); }
-.btn-confirm:disabled { background: #ccc; cursor: not-allowed; opacity: 0.6; }
+.btn-confirm:hover { background: var(--birkenstock-blue-dark); }
 .confirmed-label { color: var(--success); background: var(--success-bg); padding: 8px 16px; border-radius: 30px; display: inline-block; }
 .quiz-intro { background: var(--warning-light); padding: 20px; border-radius: 12px; margin: 20px 0; }
 .question { margin-bottom: 24px; }
@@ -261,22 +259,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   background: #059669;
 }
 
-/* Indicador de scroll */
-.scroll-indicator {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: rgba(0,51,141,0.9);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 30px;
-  font-size: 0.8rem;
-  z-index: 1000;
-  display: none;
-  font-weight: bold;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-}
-
 @media (max-width: 768px) {
   .top-bar { padding: 12px 20px; }
   .hero { padding: 32px 20px; }
@@ -323,7 +305,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
 </div>
 
 <div class="toast" id="toast"></div>
-<div class="scroll-indicator" id="scrollIndicator"></div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
@@ -358,8 +339,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   let cursoId = null;
   let nomeUser = localStorage.getItem('usuarioAtivo') || 'Colaborador';
   let cursoData = {};
-  let moduleProgress = {};
-  let scrollEvents = {};
 
   function toast(msg) {
     const t = document.getElementById('toast');
@@ -430,14 +409,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
         modules = data.modulos || [];
         perguntas = data.perguntas || [];
         
-        // Inicializar progresso dos módulos
-        modules.forEach(m => {
-          const mid = String(m.id);
-          if (!moduleProgress[mid]) {
-            moduleProgress[mid] = 0;
-          }
-        });
-        
         document.getElementById('user-name-display').textContent = nomeUser;
         document.getElementById('hero-title').textContent = cursoData.nome;
         document.getElementById('hero-desc').textContent = cursoData.descricao;
@@ -466,109 +437,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     document.getElementById('progress-text').textContent = pct + '%';
   }
 
-  // Atualizar progresso baseado no scroll do conteúdo
-  function setupScrollProgress(moduleIdStr, contentElement) {
-    if (scrollEvents[moduleIdStr]) return;
-    
-    const indicator = document.getElementById('scrollIndicator');
-    
-    const updateProgress = () => {
-      if (completedModules[moduleIdStr]) return;
-      
-      const rect = contentElement.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
-      const totalHeight = rect.height;
-      
-      let percent = 0;
-      if (totalHeight > 0 && visibleHeight > 0) {
-        percent = Math.min(100, Math.max(0, Math.round((visibleHeight / totalHeight) * 100)));
-      }
-      
-      // Acumular progresso baseado na percentagem visualizada
-      if (percent > moduleProgress[moduleIdStr]) {
-        moduleProgress[moduleIdStr] = percent;
-      }
-      
-      // Atualizar barra
-      const fillEl = document.getElementById(`fill-${moduleIdStr}`);
-      const pctEl = document.getElementById(`pct-${moduleIdStr}`);
-      if (fillEl) fillEl.style.width = moduleProgress[moduleIdStr] + '%';
-      if (pctEl) pctEl.textContent = moduleProgress[moduleIdStr] + '%';
-      
-      indicator.textContent = `📖 Progresso: ${moduleProgress[moduleIdStr]}%`;
-      indicator.style.display = 'block';
-      
-      // Quando chegar a 100%, ativar botão
-      if (moduleProgress[moduleIdStr] >= 100) {
-        const btn = document.getElementById(`btn-confirm-${moduleIdStr}`);
-        if (btn && btn.disabled) {
-          btn.disabled = false;
-          toast('✅ Conteúdo completamente visualizado! Pode confirmar a conclusão.');
-          indicator.style.display = 'none';
-        }
-      }
-    };
-    
-    // Atualizar no scroll e resize
-    const handler = () => updateProgress();
-    window.addEventListener('scroll', handler);
-    window.addEventListener('resize', handler);
-    scrollEvents[moduleIdStr] = { handler, interval: setInterval(updateProgress, 500) };
-    
-    updateProgress();
-  }
-
-  // Setup para vídeo - progresso baseado no tempo
-  function setupVideoProgress(moduleIdStr, iframeElement) {
-    if (scrollEvents[moduleIdStr]) return;
-    
-    const indicator = document.getElementById('scrollIndicator');
-    
-    // Tentar aceder ao player do YouTube (funciona apenas se o iframe tiver API)
-    // Como não temos controlo direto, simulamos progresso baseado no tempo de visualização
-    let videoDuration = 60; // duração estimada em segundos
-    let elapsedTime = 0;
-    
-    const interval = setInterval(() => {
-      if (completedModules[moduleIdStr]) {
-        clearInterval(interval);
-        return;
-      }
-      
-      // Verificar se o módulo está aberto
-      const body = document.getElementById(`body-${moduleIdStr}`);
-      if (body && body.classList.contains('open') && moduleProgress[moduleIdStr] < 100) {
-        elapsedTime += 1;
-        let percent = Math.min(100, Math.round((elapsedTime / videoDuration) * 100));
-        
-        if (percent > moduleProgress[moduleIdStr]) {
-          moduleProgress[moduleIdStr] = percent;
-          
-          const fillEl = document.getElementById(`fill-${moduleIdStr}`);
-          const pctEl = document.getElementById(`pct-${moduleIdStr}`);
-          if (fillEl) fillEl.style.width = moduleProgress[moduleIdStr] + '%';
-          if (pctEl) pctEl.textContent = moduleProgress[moduleIdStr] + '%';
-          
-          indicator.textContent = `🎬 Vídeo: ${moduleProgress[moduleIdStr]}%`;
-          indicator.style.display = 'block';
-        }
-        
-        if (moduleProgress[moduleIdStr] >= 100) {
-          const btn = document.getElementById(`btn-confirm-${moduleIdStr}`);
-          if (btn && btn.disabled) {
-            btn.disabled = false;
-            toast('✅ Vídeo visualizado! Pode confirmar a conclusão.');
-            indicator.style.display = 'none';
-          }
-          clearInterval(interval);
-        }
-      }
-    }, 1000);
-    
-    scrollEvents[moduleIdStr] = { interval };
-  }
-
   function renderModules() {
     const container = document.getElementById('modules-container');
     container.innerHTML = '';
@@ -577,7 +445,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
       const moduleIdStr = String(module.id);
       const isCompleted = completedModules[moduleIdStr];
       const isLocked = idx > 0 && !completedModules[String(modules[idx-1]?.id)];
-      const progress = moduleProgress[moduleIdStr] || 0;
       
       const block = document.createElement('div');
       block.className = `section-block ${isLocked && !isCompleted ? 'locked' : ''} ${isCompleted ? 'completed' : ''}`;
@@ -594,62 +461,37 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
         </div>
         <div class="section-body" id="body-${moduleIdStr}">
           <div id="content-${moduleIdStr}" style="min-height: 200px;">Carregando conteúdo...</div>
-          <div class="content-tracker" style="background: #eef2ff; padding: 12px; border-radius: 8px; margin: 16px 0; display: flex; align-items: center; gap: 12px;">
-            <span>📊 Progresso do módulo</span>
-            <div style="flex:1; height: 8px; background: #ddd; border-radius: 4px; overflow: hidden;">
-              <div id="fill-${moduleIdStr}" style="width: ${progress}%; height: 100%; background: #00338D; border-radius: 4px; transition: width 0.3s;"></div>
-            </div>
-            <span id="pct-${moduleIdStr}" style="font-size: 0.8rem; font-weight: bold;">${Math.floor(progress)}%</span>
-          </div>
           <div class="confirm-viewed">
-            <span>✅ Confirmar conclusão do módulo</span>
-            <button class="btn-confirm" id="btn-confirm-${moduleIdStr}" disabled onclick="confirmModule('${moduleIdStr}')">✓ Confirmar e avançar</button>
+            <span>✅ Após visualizar o conteúdo, clique para confirmar</span>
+            <button class="btn-confirm" id="btn-confirm-${moduleIdStr}" onclick="confirmModule('${moduleIdStr}')">✓ Confirmar conclusão</button>
           </div>
           <div id="confirmed-${moduleIdStr}" style="display:none; margin-top:10px;" class="confirmed-label">✅ Módulo concluído</div>
         </div>
       `;
       container.appendChild(block);
       
-      // Carregar conteúdo e configurar tracking
+      // Carregar conteúdo
       setTimeout(() => {
         const url = module.conteudo?.url || '';
         const contentDiv = document.getElementById(`content-${moduleIdStr}`);
         
         if (module.tipo === 'text' && module.conteudo?.texto) {
-          contentDiv.innerHTML = `<div class="text-content" id="text-content-${moduleIdStr}">${module.conteudo.texto}</div>`;
-          const textElement = document.getElementById(`text-content-${moduleIdStr}`);
-          if (textElement) {
-            setupScrollProgress(moduleIdStr, textElement);
-          }
+          contentDiv.innerHTML = `<div class="text-content">${module.conteudo.texto}</div>`;
         }
         else if (url) {
           if (url.includes('youtube.com') || url.includes('youtu.be')) {
             let videoId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
-            contentDiv.innerHTML = `<div class="video-wrap" id="video-wrap-${moduleIdStr}"><iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe></div>`;
-            setupVideoProgress(moduleIdStr);
+            contentDiv.innerHTML = `<div class="video-wrap"><iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe></div>`;
           } else if (url.includes('drive.google.com')) {
-            // Converter link do Google Drive para embed
             let fileId = url.match(/[-\w]{25,}/)?.[0];
             let embedUrl = fileId ? `https://drive.google.com/file/d/${fileId}/preview` : url;
-            contentDiv.innerHTML = `<div class="doc-viewer" id="doc-viewer-${moduleIdStr}"><iframe src="${embedUrl}" class="doc-iframe" allow="autoplay"></iframe></div>`;
-            const docElement = document.getElementById(`doc-viewer-${moduleIdStr}`);
-            if (docElement) {
-              setupScrollProgress(moduleIdStr, docElement);
-            }
+            contentDiv.innerHTML = `<div class="doc-viewer"><iframe src="${embedUrl}" class="doc-iframe" allow="autoplay"></iframe></div>`;
           } else {
-            contentDiv.innerHTML = `<div class="doc-viewer" id="doc-viewer-${moduleIdStr}"><iframe src="${url}" class="doc-iframe" allow="autoplay"></iframe></div>`;
-            const docElement = document.getElementById(`doc-viewer-${moduleIdStr}`);
-            if (docElement) {
-              setupScrollProgress(moduleIdStr, docElement);
-            }
+            contentDiv.innerHTML = `<div class="doc-viewer"><iframe src="${url}" class="doc-iframe" allow="autoplay"></iframe></div>`;
           }
         }
         else {
           contentDiv.innerHTML = '<div class="text-content">Conteúdo não disponível.</div>';
-          const textElement = contentDiv.querySelector('.text-content');
-          if (textElement) {
-            setupScrollProgress(moduleIdStr, textElement);
-          }
         }
       }, 100);
     });
@@ -659,19 +501,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
 
   function confirmModule(moduleId) {
     const btn = document.getElementById(`btn-confirm-${moduleId}`);
-    if (!btn || btn.disabled) return;
-    
-    // Parar tracking deste módulo
-    if (scrollEvents[moduleId]) {
-      if (scrollEvents[moduleId].handler) {
-        window.removeEventListener('scroll', scrollEvents[moduleId].handler);
-        window.removeEventListener('resize', scrollEvents[moduleId].handler);
-      }
-      if (scrollEvents[moduleId].interval) {
-        clearInterval(scrollEvents[moduleId].interval);
-      }
-      delete scrollEvents[moduleId];
-    }
+    if (!btn) return;
     
     const moduleIdStr = String(moduleId);
     completedModules[moduleIdStr] = true;
@@ -877,7 +707,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
       const { jsPDF } = window.jspdf;
       
       const imgWidth = 190;
-      const pageHeight = 277;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       
       const pdf = new jsPDF({
@@ -887,22 +716,9 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
       });
       
       const xOffset = (210 - imgWidth) / 2;
+      const yOffset = (297 - imgHeight) / 2;
       
-      if (imgHeight <= pageHeight) {
-        const yOffset = (297 - imgHeight) / 2;
-        pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgWidth, imgHeight);
-      } else {
-        let position = 0;
-        pdf.addImage(imgData, 'PNG', xOffset, position, imgWidth, imgHeight);
-        let heightLeft = imgHeight - pageHeight;
-        while (heightLeft > 0) {
-          position = position - pageHeight;
-          pdf.addPage();
-          pdf.addImage(imgData, 'PNG', xOffset, position, imgWidth, imgHeight);
-          heightLeft -= pageHeight;
-        }
-      }
-      
+      pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgWidth, imgHeight);
       pdf.save(`certificado_${nomeUser.replace(/\s/g, '_')}.pdf`);
       toast('✅ PDF guardado!');
     } catch (err) {
@@ -991,26 +807,24 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
           position: relative;
           border: none;
           border-radius: 0;
-          padding: 0;
+          padding: 40px;
           box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         ">
-          <div style="position: relative; z-index: 2; padding: 40px; display: flex; flex-direction: column; justify-content: center; min-height: 297mm;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <div style="font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 900; color: #00338D; margin-bottom: 20px;">${escapeHtml(nomeUser)}</div>
-              <div style="font-size: 1.2rem; color: #616365; margin-bottom: 20px;">concluiu com sucesso a formação</div>
-              <div style="font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: #C5A059;">${escapeHtml(cursoData.nome)}</div>
-            </div>
-            <div style="display: flex; justify-content: center; gap: 60px; margin-top: 40px; flex-wrap: wrap;">
+          <div style="position: relative; z-index: 2; text-align: center;">
+            <div style="font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 900; color: #00338D; margin-bottom: 20px;">${escapeHtml(nomeUser)}</div>
+            <div style="font-size: 1.2rem; color: #616365; margin-bottom: 20px;">concluiu com sucesso a formação</div>
+            <div style="font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: #C5A059; margin-bottom: 40px;">${escapeHtml(cursoData.nome)}</div>
+            <div style="display: flex; justify-content: center; gap: 60px; margin-top: 20px; flex-wrap: wrap;">
               <div style="text-align: center;">
-                <div style="font-size: 0.8rem; color: #616365; text-transform: uppercase;">NOTA FINAL</div>
-                <div style="font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: #00338D;">${nota}</div>
+                <div style="font-size: 0.8rem; color: #616365;">NOTA FINAL</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #00338D;">${nota}</div>
               </div>
               <div style="text-align: center;">
-                <div style="font-size: 0.8rem; color: #616365; text-transform: uppercase;">DATA</div>
-                <div style="font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 600; color: #00338D;">${fmtDate(now)}</div>
+                <div style="font-size: 0.8rem; color: #616365;">DATA</div>
+                <div style="font-size: 1rem; font-weight: 600; color: #00338D;">${fmtDate(now)}</div>
               </div>
               <div style="text-align: center;">
-                <div style="font-size: 0.8rem; color: #616365; text-transform: uppercase;">CERTIFICADO ID</div>
+                <div style="font-size: 0.8rem; color: #616365;">CERTIFICADO ID</div>
                 <div style="font-family: monospace; font-size: 0.9rem; font-weight: 600; color: #00338D;">${certId}</div>
               </div>
             </div>
