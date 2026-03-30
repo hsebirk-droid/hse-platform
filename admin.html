@@ -283,17 +283,25 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       <div style="margin-top: 20px;">
         <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
           <h3 style="font-size: 14px;">📦 Módulos</h3>
-          <div><button class="btn-sm btn" onclick="abrirModalModulo('video')">🎬 Vídeo</button><button class="btn-sm btn" onclick="abrirModalModulo('text')">📄 Texto</button><button class="btn-sm btn" onclick="abrirModalModulo('file')">📁 Ficheiro/URL</button></div>
+          <div>
+            <button type="button" class="btn-sm btn" onclick="abrirModalModulo('video')">🎬 Vídeo</button>
+            <button type="button" class="btn-sm btn" onclick="abrirModalModulo('text')">📄 Texto</button>
+            <button type="button" class="btn-sm btn" onclick="abrirModalModulo('file')">📁 Ficheiro/URL</button>
+          </div>
         </div>
-        <div id="modulos-container"></div>
+        <div id="modulos-container" style="background: var(--birkenstock-beige); border-radius: 12px; padding: 16px; min-height: 100px;">
+          <div class="alert alert-info">Nenhum módulo adicionado. Clique nos botões acima para adicionar.</div>
+        </div>
       </div>
       
       <div style="margin-top: 20px;">
         <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
           <h3 style="font-size: 14px;">📝 Perguntas</h3>
-          <button class="btn-sm btn" onclick="abrirModalPergunta()">+ Adicionar</button>
+          <button type="button" class="btn-sm btn" onclick="abrirModalPergunta()">+ Adicionar</button>
         </div>
-        <div id="perguntas-container"></div>
+        <div id="perguntas-container" style="background: var(--birkenstock-beige); border-radius: 12px; padding: 16px;">
+          <div class="alert alert-info">Nenhuma pergunta adicionada.</div>
+        </div>
       </div>
       
       <div class="frow" style="margin-top: 16px;">
@@ -395,42 +403,52 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     <div class="sec-head"><h2>📊 Histórico</h2><div><button class="btn-sm" onclick="exportarHistoricoCSV()">📥 CSV</button><button class="btn-sm" onclick="exportarHistoricoExcel()">📊 Excel</button></div></div>
     <div class="sec-body">
       <div style="overflow-x:auto;">
-         <table>
+        <table>
           <thead>
-             <tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr>
+            <tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr>
           </thead>
           <tbody id="lista-notas"></tbody>
-         </table>
+        </table>
       </div>
       <button id="btn-limpar" class="btn-sm btn-danger">🗑️ Limpar</button>
     </div>
   </div>
 </div>
 
-<div id="modal-modulo" class="modal"><div class="modal-content"><div class="modal-header"><h3 id="modal-modulo-titulo">Módulo</h3><span class="modal-close" onclick="fecharModal('modal-modulo')">&times;</span></div>
-  <div class="fg"><label>Título</label><input type="text" id="modulo-titulo"></div>
-  <div class="fg"><label>Duração</label><input type="text" id="modulo-duracao"></div>
-  <div id="modulo-conteudo-video" style="display:none;"><div class="fg"><label>URL Vídeo</label><input type="text" id="modulo-video-url"></div></div>
-  <div id="modulo-conteudo-texto" style="display:none;"><div class="fg"><label>Conteúdo HTML</label><textarea id="modulo-texto-conteudo" rows="6"></textarea></div></div>
-  <div id="modulo-conteudo-file" style="display:none;">
-    <div class="fg">
-      <label>🔗 URL do Ficheiro (Google Drive, PDF, Imagem, etc.)</label>
-      <input type="text" id="modulo-file-url" placeholder="https://drive.google.com/file/d/.../view  ou  https://...pdf">
-      <small>O conteúdo será exibido diretamente na plataforma</small>
+<div id="modal-modulo" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modal-modulo-titulo">Adicionar Módulo</h3>
+      <span class="modal-close" onclick="fecharModal('modal-modulo')">&times;</span>
     </div>
+    <div class="fg"><label>Título *</label><input type="text" id="modulo-titulo" placeholder="Título do módulo"></div>
+    <div class="fg"><label>Duração</label><input type="text" id="modulo-duracao" placeholder="15 min"></div>
+    <div id="modulo-conteudo-video" style="display:none;">
+      <div class="fg"><label>URL do Vídeo *</label><input type="text" id="modulo-video-url" placeholder="https://www.youtube.com/embed/..."></div>
+    </div>
+    <div id="modulo-conteudo-texto" style="display:none;">
+      <div class="fg"><label>Conteúdo *</label><textarea id="modulo-texto-conteudo" rows="6" placeholder="Digite o conteúdo do módulo..."></textarea></div>
+    </div>
+    <div id="modulo-conteudo-file" style="display:none;">
+      <div class="fg"><label>URL do Ficheiro *</label><input type="text" id="modulo-file-url" placeholder="https://drive.google.com/file/d/.../view  ou  https://...pdf"></div>
+      <small style="color: var(--birkenstock-gray);">O conteúdo será exibido diretamente na plataforma</small>
+    </div>
+    <button class="btn" id="btn-salvar-modulo" style="margin-top:16px;">Salvar Módulo</button>
   </div>
-  <button class="btn" id="btn-salvar-modulo">Salvar</button>
-</div></div>
+</div>
 
-<div id="modal-pergunta" class="modal"><div class="modal-content"><div class="modal-header"><h3>Pergunta</h3><span class="modal-close" onclick="fecharModal('modal-pergunta')">&times;</span></div>
-  <div class="fg"><label>Texto</label><input type="text" id="pergunta-texto"></div>
-  <div class="fg"><label>Opção A</label><input type="text" id="pergunta-opcao-a"></div>
-  <div class="fg"><label>Opção B</label><input type="text" id="pergunta-opcao-b"></div>
-  <div class="fg"><label>Opção C</label><input type="text" id="pergunta-opcao-c"></div>
-  <div class="fg"><label>Opção D</label><input type="text" id="pergunta-opcao-d"></div>
-  <div class="fg"><label>Correta</label><select id="pergunta-correta"><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
-  <button class="btn" id="btn-salvar-pergunta">Salvar</button>
-</div></div>
+<div id="modal-pergunta" class="modal">
+  <div class="modal-content">
+    <div class="modal-header"><h3>Adicionar Pergunta</h3><span class="modal-close" onclick="fecharModal('modal-pergunta')">&times;</span></div>
+    <div class="fg"><label>Texto *</label><input type="text" id="pergunta-texto"></div>
+    <div class="fg"><label>Opção A *</label><input type="text" id="pergunta-opcao-a"></div>
+    <div class="fg"><label>Opção B *</label><input type="text" id="pergunta-opcao-b"></div>
+    <div class="fg"><label>Opção C *</label><input type="text" id="pergunta-opcao-c"></div>
+    <div class="fg"><label>Opção D *</label><input type="text" id="pergunta-opcao-d"></div>
+    <div class="fg"><label>Correta *</label><select id="pergunta-correta"><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+    <button class="btn" id="btn-salvar-pergunta">Salvar</button>
+  </div>
+</div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
@@ -468,7 +486,11 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
 
 <script>
   let adminConfig = JSON.parse(localStorage.getItem('admin_config') || '{"adminPassword":"SSA2024admin"}');
-  let modulos = [], perguntas = [], editandoModuloId = null, editandoPerguntaId = null, moduloTipoAtual = 'video', ficheiroTemp = null;
+  let modulos = [];
+  let perguntas = [];
+  let editandoModuloId = null;
+  let editandoPerguntaId = null;
+  let moduloTipoAtual = 'video';
   let editandoFormacaoId = null;
   let linksGerados = [];
 
@@ -478,26 +500,32 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   // ==================== FUNÇÕES PRINCIPAIS ====================
   
   async function carregarFormacoes() {
-    const q = window.query(window.collection(window.db, 'formacoes'), window.orderBy('dataTimestamp', 'desc'));
-    const querySnapshot = await window.getDocs(q);
-    const cursos = [];
-    querySnapshot.forEach((doc) => { cursos.push({ id: doc.id, ...doc.data() }); });
-    return cursos;
+    try {
+      const q = window.query(window.collection(window.db, 'formacoes'), window.orderBy('dataTimestamp', 'desc'));
+      const querySnapshot = await window.getDocs(q);
+      const cursos = [];
+      querySnapshot.forEach((doc) => { cursos.push({ id: doc.id, ...doc.data() }); });
+      return cursos;
+    } catch(e) { console.error("Erro carregar formações:", e); return []; }
   }
 
   async function carregarColaboradores() {
-    const querySnapshot = await window.getDocs(window.collection(window.db, 'colaboradores'));
-    const colaboradores = [];
-    querySnapshot.forEach((doc) => { colaboradores.push({ id: doc.id, ...doc.data() }); });
-    return colaboradores;
+    try {
+      const querySnapshot = await window.getDocs(window.collection(window.db, 'colaboradores'));
+      const colaboradores = [];
+      querySnapshot.forEach((doc) => { colaboradores.push({ id: doc.id, ...doc.data() }); });
+      return colaboradores;
+    } catch(e) { console.error("Erro carregar colaboradores:", e); return []; }
   }
 
   async function carregarHistorico() {
-    const q = window.query(window.collection(window.db, 'historico'), window.orderBy('dataTimestamp', 'desc'));
-    const querySnapshot = await window.getDocs(q);
-    const historico = [];
-    querySnapshot.forEach((doc) => { historico.push({ id: doc.id, ...doc.data() }); });
-    return historico;
+    try {
+      const q = window.query(window.collection(window.db, 'historico'), window.orderBy('dataTimestamp', 'desc'));
+      const querySnapshot = await window.getDocs(q);
+      const historico = [];
+      querySnapshot.forEach((doc) => { historico.push({ id: doc.id, ...doc.data() }); });
+      return historico;
+    } catch(e) { console.error("Erro carregar histórico:", e); return []; }
   }
 
   async function atualizarDashboard() {
@@ -597,52 +625,226 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     }
   }
 
-  // ==================== MÓDULOS ====================
+  // ==================== MÓDULOS (CORRIGIDOS) ====================
   function abrirModalModulo(tipo) {
-    moduloTipoAtual = tipo; editandoModuloId = null; ficheiroTemp = null;
-    document.getElementById('modal-modulo-titulo').textContent = tipo==='video'?'Vídeo':tipo==='text'?'Texto':'Ficheiro/URL';
-    document.getElementById('modulo-titulo').value = ''; document.getElementById('modulo-duracao').value = '';
-    document.getElementById('modulo-conteudo-video').style.display = tipo==='video'?'block':'none';
-    document.getElementById('modulo-conteudo-texto').style.display = tipo==='text'?'block':'none';
-    document.getElementById('modulo-conteudo-file').style.display = tipo==='file'?'block':'none';
+    moduloTipoAtual = tipo;
+    editandoModuloId = null;
+    
+    // Limpar campos
+    document.getElementById('modulo-titulo').value = '';
+    document.getElementById('modulo-duracao').value = '';
     document.getElementById('modulo-video-url').value = '';
     document.getElementById('modulo-texto-conteudo').value = '';
     document.getElementById('modulo-file-url').value = '';
-    document.getElementById('file-preview-modulo').innerHTML = '';
+    
+    // Mostrar campo correto
+    document.getElementById('modulo-conteudo-video').style.display = tipo === 'video' ? 'block' : 'none';
+    document.getElementById('modulo-conteudo-texto').style.display = tipo === 'text' ? 'block' : 'none';
+    document.getElementById('modulo-conteudo-file').style.display = tipo === 'file' ? 'block' : 'none';
+    
+    // Título do modal
+    const titulos = { video: '🎬 Adicionar Vídeo', text: '📄 Adicionar Texto', file: '📁 Adicionar Ficheiro/URL' };
+    document.getElementById('modal-modulo-titulo').textContent = titulos[tipo];
+    
     document.getElementById('modal-modulo').style.display = 'flex';
   }
   
-  function editarModulo(id) { const m = modulos.find(m=>m.id===id); if(!m) return; editandoModuloId=id; moduloTipoAtual=m.tipo; document.getElementById('modulo-titulo').value=m.titulo; document.getElementById('modulo-duracao').value=m.duracao; document.getElementById('modulo-conteudo-video').style.display=m.tipo==='video'?'block':'none'; document.getElementById('modulo-conteudo-texto').style.display=m.tipo==='text'?'block':'none'; document.getElementById('modulo-conteudo-file').style.display=m.tipo==='file'?'block':'none'; if(m.tipo==='video') document.getElementById('modulo-video-url').value=m.conteudo.url||''; if(m.tipo==='text') document.getElementById('modulo-texto-conteudo').value=m.conteudo.texto||''; if(m.tipo==='file') document.getElementById('modulo-file-url').value=m.conteudo.url||''; document.getElementById('modal-modulo').style.display='flex'; }
-  
-  function uploadFicheiroModulo(files) { if(!files||!files[0]) return; const reader=new FileReader(); reader.onload=e=>{ ficheiroTemp={ id:Date.now(), name:files[0].name, type:files[0].type, size:files[0].size, data:e.target.result }; document.getElementById('file-preview-modulo').innerHTML=`📎 ${files[0].name}`; }; reader.readAsDataURL(files[0]); }
-  
-  function salvarModulo() {
-    const titulo=document.getElementById('modulo-titulo').value.trim(); if(!titulo){ alert('Título obrigatório'); return; }
-    let conteudo={};
-    if(moduloTipoAtual==='video'){ const url=document.getElementById('modulo-video-url').value.trim(); if(!url){ alert('URL obrigatório'); return; } conteudo={url}; }
-    else if(moduloTipoAtual==='text'){ const texto=document.getElementById('modulo-texto-conteudo').value; if(!texto){ alert('Conteúdo obrigatório'); return; } conteudo={texto}; }
-    else{ 
-      const url = document.getElementById('modulo-file-url').value.trim(); 
-      if(!url){ alert('URL do ficheiro obrigatória'); return; } 
-      conteudo={ url: url }; 
-    }
-    const duracao=document.getElementById('modulo-duracao').value.trim()||'15 min';
-    if(editandoModuloId){ const idx=modulos.findIndex(m=>m.id===editandoModuloId); if(idx!==-1) modulos[idx]={...modulos[idx],titulo,tipo:moduloTipoAtual,conteudo,duracao}; }
-    else modulos.push({id:Date.now(),titulo,tipo:moduloTipoAtual,conteudo,duracao});
-    renderModulos(); fecharModal('modal-modulo');
-    alert('✅ Módulo salvo!');
+  function editarModulo(id) {
+    const m = modulos.find(m => m.id === id);
+    if (!m) return;
+    
+    editandoModuloId = id;
+    moduloTipoAtual = m.tipo;
+    
+    document.getElementById('modulo-titulo').value = m.titulo;
+    document.getElementById('modulo-duracao').value = m.duracao;
+    
+    document.getElementById('modulo-conteudo-video').style.display = m.tipo === 'video' ? 'block' : 'none';
+    document.getElementById('modulo-conteudo-texto').style.display = m.tipo === 'text' ? 'block' : 'none';
+    document.getElementById('modulo-conteudo-file').style.display = m.tipo === 'file' ? 'block' : 'none';
+    
+    if (m.tipo === 'video') document.getElementById('modulo-video-url').value = m.conteudo.url || '';
+    if (m.tipo === 'text') document.getElementById('modulo-texto-conteudo').value = m.conteudo.texto || '';
+    if (m.tipo === 'file') document.getElementById('modulo-file-url').value = m.conteudo.url || '';
+    
+    document.getElementById('modal-modulo').style.display = 'flex';
   }
   
-  function removerModulo(id) { if(confirm('Remover módulo?')){ modulos=modulos.filter(m=>m.id!==id); renderModulos(); } }
+  function salvarModulo() {
+    const titulo = document.getElementById('modulo-titulo').value.trim();
+    if (!titulo) { alert('❌ Título obrigatório'); return; }
+    
+    let conteudo = {};
+    
+    if (moduloTipoAtual === 'video') {
+      const url = document.getElementById('modulo-video-url').value.trim();
+      if (!url) { alert('❌ URL do vídeo obrigatória'); return; }
+      conteudo = { url };
+    }
+    else if (moduloTipoAtual === 'text') {
+      const texto = document.getElementById('modulo-texto-conteudo').value.trim();
+      if (!texto) { alert('❌ Conteúdo obrigatório'); return; }
+      conteudo = { texto };
+    }
+    else if (moduloTipoAtual === 'file') {
+      const url = document.getElementById('modulo-file-url').value.trim();
+      if (!url) { alert('❌ URL do ficheiro obrigatória'); return; }
+      conteudo = { url };
+    }
+    
+    const duracao = document.getElementById('modulo-duracao').value.trim() || '15 min';
+    
+    const novoModulo = {
+      id: editandoModuloId || Date.now(),
+      titulo: titulo,
+      tipo: moduloTipoAtual,
+      conteudo: conteudo,
+      duracao: duracao
+    };
+    
+    if (editandoModuloId) {
+      const index = modulos.findIndex(m => m.id === editandoModuloId);
+      if (index !== -1) modulos[index] = novoModulo;
+      editandoModuloId = null;
+    } else {
+      modulos.push(novoModulo);
+    }
+    
+    renderModulos();
+    fecharModal('modal-modulo');
+    alert(`✅ Módulo "${titulo}" adicionado!`);
+  }
   
-  function renderModulos() { const container=document.getElementById('modulos-container'); if(!modulos.length){ container.innerHTML='<div class="alert alert-warning">Nenhum módulo adicionado.</div>'; return; } container.innerHTML=modulos.map((m,idx)=>`<div class="modulo-card"><div class="modulo-header"><div><span style="background:var(--birkenstock-blue);color:white;border-radius:50%;display:inline-block;width:28px;height:28px;text-align:center;line-height:28px;margin-right:10px;">${idx+1}</span><strong>${m.titulo}</strong><div style="font-size:11px;color:var(--birkenstock-gray);">${m.tipo==='video'?'🎬 Vídeo':m.tipo==='text'?'📄 Texto':'📁 Ficheiro'} · ${m.duracao}</div><div style="font-size:10px;color:var(--birkenstock-gray-light);word-break:break-all;">${m.conteudo?.url ? m.conteudo.url.substring(0,50) + (m.conteudo.url.length>50 ? '...' : '') : ''}</div></div><div><button onclick="editarModulo(${m.id})">✏️</button><button onclick="removerModulo(${m.id})">🗑️</button></div></div></div>`).join(''); }
+  function removerModulo(id) {
+    if (confirm('Remover este módulo?')) {
+      modulos = modulos.filter(m => m.id !== id);
+      renderModulos();
+    }
+  }
+  
+  function renderModulos() {
+    const container = document.getElementById('modulos-container');
+    
+    if (!modulos.length) {
+      container.innerHTML = '<div class="alert alert-info">Nenhum módulo adicionado. Clique nos botões acima para adicionar.</div>';
+      return;
+    }
+    
+    container.innerHTML = modulos.map((m, idx) => `
+      <div style="background: var(--bg); border-radius: 8px; margin-bottom: 12px; padding: 12px; border: 1px solid var(--border);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="background: var(--birkenstock-blue); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">${idx + 1}</span>
+            <div>
+              <div style="font-weight: 700;">${escapeHtml(m.titulo)}</div>
+              <div style="font-size: 11px; color: var(--birkenstock-gray);">${m.tipo === 'video' ? '🎬 Vídeo' : m.tipo === 'text' ? '📄 Texto' : '📁 Ficheiro'} · ${m.duracao}</div>
+              ${m.conteudo?.url ? `<div style="font-size: 10px; color: var(--birkenstock-gray); word-break: break-all; margin-top: 4px;">${m.conteudo.url.substring(0, 60)}${m.conteudo.url.length > 60 ? '...' : ''}</div>` : ''}
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button onclick="editarModulo(${m.id})" style="background: var(--info); color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer;">✏️</button>
+            <button onclick="removerModulo(${m.id})" style="background: var(--danger); color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer;">🗑️</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+  
+  function escapeHtml(text) {
+    if (!text) return '';
+    return text.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
 
   // ==================== PERGUNTAS ====================
-  function abrirModalPergunta(){ editandoPerguntaId=null; document.getElementById('pergunta-texto').value=''; document.getElementById('pergunta-opcao-a').value=''; document.getElementById('pergunta-opcao-b').value=''; document.getElementById('pergunta-opcao-c').value=''; document.getElementById('pergunta-opcao-d').value=''; document.getElementById('pergunta-correta').value='A'; document.getElementById('modal-pergunta').style.display='flex'; }
-  function editarPergunta(id){ const p=perguntas.find(p=>p.id===id); if(!p) return; editandoPerguntaId=id; document.getElementById('pergunta-texto').value=p.texto; document.getElementById('pergunta-opcao-a').value=p.opcoes[0]; document.getElementById('pergunta-opcao-b').value=p.opcoes[1]; document.getElementById('pergunta-opcao-c').value=p.opcoes[2]; document.getElementById('pergunta-opcao-d').value=p.opcoes[3]; document.getElementById('pergunta-correta').value=p.correta; document.getElementById('modal-pergunta').style.display='flex'; }
-  function salvarPergunta(){ const texto=document.getElementById('pergunta-texto').value.trim(); if(!texto){ alert('Texto obrigatório'); return; } const opcoes=[document.getElementById('pergunta-opcao-a').value.trim(),document.getElementById('pergunta-opcao-b').value.trim(),document.getElementById('pergunta-opcao-c').value.trim(),document.getElementById('pergunta-opcao-d').value.trim()]; if(opcoes.some(o=>!o)){ alert('Todas opções obrigatórias'); return; } const correta=document.getElementById('pergunta-correta').value; if(editandoPerguntaId){ const idx=perguntas.findIndex(p=>p.id===editandoPerguntaId); if(idx!==-1) perguntas[idx]={...perguntas[idx],texto,opcoes,correta}; }else perguntas.push({id:Date.now(),texto,opcoes,correta}); renderPerguntas(); fecharModal('modal-pergunta'); alert('✅ Pergunta salva!'); }
-  function removerPergunta(id){ if(confirm('Remover pergunta?')){ perguntas=perguntas.filter(p=>p.id!==id); renderPerguntas(); } }
-  function renderPerguntas(){ const container=document.getElementById('perguntas-container'); if(!perguntas.length){ container.innerHTML='<div class="alert alert-warning">Nenhuma pergunta adicionada.</div>'; return; } container.innerHTML=perguntas.map((p,idx)=>`<div class="pergunta-card"><div class="pergunta-header"><div><span style="background:var(--warning);color:white;border-radius:50%;display:inline-block;width:24px;height:24px;text-align:center;line-height:24px;margin-right:8px;">${idx+1}</span><strong>${p.texto}</strong><div style="font-size:11px;">A) ${p.opcoes[0]} | B) ${p.opcoes[1]} | C) ${p.opcoes[2]} | D) ${p.opcoes[3]} | ✓ ${p.correta}</div></div><div><button onclick="editarPergunta(${p.id})">✏️</button><button onclick="removerPergunta(${p.id})">🗑️</button></div></div></div>`).join(''); }
+  function abrirModalPergunta() {
+    editandoPerguntaId = null;
+    document.getElementById('pergunta-texto').value = '';
+    document.getElementById('pergunta-opcao-a').value = '';
+    document.getElementById('pergunta-opcao-b').value = '';
+    document.getElementById('pergunta-opcao-c').value = '';
+    document.getElementById('pergunta-opcao-d').value = '';
+    document.getElementById('pergunta-correta').value = 'A';
+    document.getElementById('modal-pergunta').style.display = 'flex';
+  }
+  
+  function editarPergunta(id) {
+    const p = perguntas.find(p => p.id === id);
+    if (!p) return;
+    editandoPerguntaId = id;
+    document.getElementById('pergunta-texto').value = p.texto;
+    document.getElementById('pergunta-opcao-a').value = p.opcoes[0];
+    document.getElementById('pergunta-opcao-b').value = p.opcoes[1];
+    document.getElementById('pergunta-opcao-c').value = p.opcoes[2];
+    document.getElementById('pergunta-opcao-d').value = p.opcoes[3];
+    document.getElementById('pergunta-correta').value = p.correta;
+    document.getElementById('modal-pergunta').style.display = 'flex';
+  }
+  
+  function salvarPergunta() {
+    const texto = document.getElementById('pergunta-texto').value.trim();
+    if (!texto) { alert('Texto da pergunta obrigatório'); return; }
+    const opcoes = [
+      document.getElementById('pergunta-opcao-a').value.trim(),
+      document.getElementById('pergunta-opcao-b').value.trim(),
+      document.getElementById('pergunta-opcao-c').value.trim(),
+      document.getElementById('pergunta-opcao-d').value.trim()
+    ];
+    if (opcoes.some(o => !o)) { alert('Todas as opções são obrigatórias'); return; }
+    const correta = document.getElementById('pergunta-correta').value;
+    
+    if (editandoPerguntaId) {
+      const idx = perguntas.findIndex(p => p.id === editandoPerguntaId);
+      if (idx !== -1) perguntas[idx] = { ...perguntas[idx], texto, opcoes, correta };
+    } else {
+      perguntas.push({ id: Date.now(), texto, opcoes, correta });
+    }
+    renderPerguntas();
+    fecharModal('modal-pergunta');
+    alert('✅ Pergunta adicionada!');
+  }
+  
+  function removerPergunta(id) {
+    if (confirm('Remover pergunta?')) {
+      perguntas = perguntas.filter(p => p.id !== id);
+      renderPerguntas();
+    }
+  }
+  
+  function renderPerguntas() {
+    const container = document.getElementById('perguntas-container');
+    if (!perguntas.length) {
+      container.innerHTML = '<div class="alert alert-info">Nenhuma pergunta adicionada. Clique em "Adicionar Pergunta".</div>';
+      return;
+    }
+    container.innerHTML = perguntas.map((p, idx) => `
+      <div style="background: var(--bg); border-radius: 8px; margin-bottom: 12px; padding: 12px; border: 1px solid var(--border);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
+          <div style="flex: 1;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <span style="background: var(--warning); color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">${idx + 1}</span>
+              <strong>${escapeHtml(p.texto)}</strong>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; font-size: 12px;">
+              <div>A) ${escapeHtml(p.opcoes[0])}</div>
+              <div>B) ${escapeHtml(p.opcoes[1])}</div>
+              <div>C) ${escapeHtml(p.opcoes[2])}</div>
+              <div>D) ${escapeHtml(p.opcoes[3])}</div>
+            </div>
+            <div style="margin-top: 8px; font-size: 11px; color: var(--success);"><i class="fas fa-check-circle"></i> Correta: ${p.correta}</div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button onclick="editarPergunta(${p.id})" style="background: var(--info); color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer;">✏️</button>
+            <button onclick="removerPergunta(${p.id})" style="background: var(--danger); color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer;">🗑️</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
 
   // ==================== COLABORADORES ====================
   async function renderColabs() {
@@ -819,13 +1021,13 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     try {
       if (editandoFormacaoId) {
         await window.updateDoc(window.doc(window.db, 'formacoes', editandoFormacaoId), novaFormacao);
-        alert(`✅ Formação "${titulo}" atualizada com sucesso!`);
+        alert(`✅ Formação "${titulo}" atualizada!`);
         editandoFormacaoId = null;
         document.getElementById('editando-id').innerHTML = '';
         document.getElementById('btn-cancelar-edicao').style.display = 'none';
       } else {
         await window.addDoc(window.collection(window.db, 'formacoes'), novaFormacao);
-        alert(`✅ Formação "${titulo}" publicada com sucesso!`);
+        alert(`✅ Formação "${titulo}" publicada!`);
       }
       
       document.getElementById('f-titulo').value = ''; 
@@ -844,12 +1046,12 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     }
   }
 
-  // ==================== HISTÓRICO ====================
+  // ==================== HISTÓRICO (CORRIGIDO) ====================
   async function renderHistorico() {
     const historico = await carregarHistorico();
     const tbody = document.getElementById('lista-notas');
     if(!historico.length){ 
-      tbody.innerHTML = '}<td colspan="6" class="empty">Nenhum resultado registado</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="empty">Nenhum resultado registado</td></tr>';
       return; 
     }
     tbody.innerHTML = historico.map(h => `
@@ -864,8 +1066,8 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     `).join('');
   }
   
-  function exportarHistoricoCSV(){ alert('📥 Exportação CSV será implementada em breve.'); }
-  function exportarHistoricoExcel(){ alert('📊 Exportação Excel será implementada em breve.'); }
+  function exportarHistoricoCSV(){ alert('📥 Exportação CSV em breve'); }
+  function exportarHistoricoExcel(){ alert('📊 Exportação Excel em breve'); }
   
   async function limparHistorico(){ 
     if(confirm('Apagar todo o histórico de formações?')){ 
@@ -987,7 +1189,6 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   window.editarPergunta = editarPergunta;
   window.removerPergunta = removerPergunta;
   window.removerColab = removerColab;
-  window.uploadFicheiroModulo = uploadFicheiroModulo;
   window.copiarLinkIndividual = copiarLinkIndividual;
   window.copiarTodosLinks = copiarTodosLinks;
   window.enviarEmailsMassa = enviarEmailsMassa;
