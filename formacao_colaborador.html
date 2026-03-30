@@ -240,19 +240,58 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
 .loading { text-align: center; padding: 60px; color: #666; }
 
 @media print {
-  .top-bar, .progress-strip, .cert-actions, .btn-exit, .hero, .toast {
+  /* Esconder tudo exceto o certificado */
+  .top-bar, 
+  .progress-strip, 
+  .hero, 
+  .toast, 
+  .btn-exit,
+  .section-block,
+  .quiz-intro,
+  .result-screen,
+  .cert-actions,
+  .btn-dl,
+  .btn-secondary,
+  .main > div:not(.cert-screen) {
     display: none !important;
   }
-  .cert-card {
-    margin: 0;
-    padding: 0;
-    box-shadow: none;
-    border: none;
+  
+  /* Garantir que o certificado aparece */
+  .cert-screen {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
   }
+  
+  .cert-card {
+    width: 100% !important;
+    min-height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background-size: cover !important;
+  }
+  
   body {
     background: white;
-    padding: 0;
     margin: 0;
+    padding: 0;
+  }
+  
+  /* Esconder tudo que está fora do certificado */
+  body * {
+    visibility: hidden;
+  }
+  
+  .cert-screen, .cert-screen * {
+    visibility: visible;
   }
 }
 
@@ -500,7 +539,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     renderQuiz();
   }
 
-  // ==================== FUNÇÃO CONFIRM MODULE CORRIGIDA ====================
+  // ==================== FUNÇÃO CONFIRM MODULE ====================
   function confirmModule(moduleId) {
     console.log("🔵 confirmModule chamado para:", moduleId, "tipo:", typeof moduleId);
     
@@ -693,7 +732,21 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     document.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
   }
 
-  // ==================== FUNÇÃO SHOW CERTIFICATE COM A4 E IMAGEM DE FUNDO ====================
+  // ==================== FUNÇÃO IMPRIMIR CERTIFICADO ====================
+  function imprimirCertificado() {
+    const certificado = document.querySelector('.cert-screen');
+    if (certificado) {
+      const originalBody = document.body.innerHTML;
+      document.body.innerHTML = certificado.outerHTML;
+      window.print();
+      document.body.innerHTML = originalBody;
+      window.location.reload();
+    } else {
+      window.print();
+    }
+  }
+
+  // ==================== FUNÇÃO SHOW CERTIFICATE COM A4 E BOTÕES CORRIGIDOS ====================
   function showCertificate() {
     const now = new Date();
     const certId = 'CERT-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
@@ -757,9 +810,37 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
             </div>
           </div>
         </div>
-        <div class="cert-actions" style="text-align: center; margin-top: 20px;">
-          <button class="btn-dl" onclick="window.print()"><i class="fas fa-print"></i> Imprimir Certificado</button>
-          <button class="btn-secondary" onclick="window.location.href='dashboard.html'"><i class="fas fa-home"></i> Voltar ao Dashboard</button>
+        <div class="cert-actions" style="text-align: center; margin-top: 20px; padding: 20px;">
+          <button class="btn-dl" onclick="imprimirCertificado()" style="
+            background: #00338D; 
+            color: white; 
+            border: none; 
+            padding: 14px 32px; 
+            border-radius: 40px; 
+            cursor: pointer; 
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-block;
+            margin: 0 10px;
+            min-width: 200px;
+          ">
+            <i class="fas fa-print"></i> Imprimir Certificado
+          </button>
+          <button class="btn-secondary" onclick="window.location.href='dashboard.html'" style="
+            background: white; 
+            color: #00338D; 
+            border: 2px solid #00338D; 
+            padding: 14px 32px; 
+            border-radius: 40px; 
+            cursor: pointer; 
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-block;
+            margin: 0 10px;
+            min-width: 200px;
+          ">
+            <i class="fas fa-home"></i> Voltar ao Dashboard
+          </button>
         </div>
       </div>
     `;
@@ -815,6 +896,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   window.showCertificate = showCertificate;
   window.confirmModule = confirmModule;
   window.sair = sair;
+  window.imprimirCertificado = imprimirCertificado;
 
   window.addEventListener('load', () => {
     if (!localStorage.getItem('usuarioAtivo')) {
