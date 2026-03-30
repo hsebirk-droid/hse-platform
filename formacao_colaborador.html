@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Birkenstock S&CC — Formação</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 :root {
   --birkenstock-blue: #00338D;
@@ -687,29 +687,30 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
 
   // ==================== FUNÇÕES DO CERTIFICADO ====================
   
-  function gerarPDF() {
+  function descarregarComoImagem() {
     const element = document.getElementById('certificado-para-pdf');
     if (!element) {
       toast('❌ Erro: elemento do certificado não encontrado');
       return;
     }
     
-    toast('📄 A gerar PDF...');
+    toast('📸 A gerar imagem...');
     
-    const opt = {
-      margin: [0, 0, 0, 0],
-      filename: `certificado_${nomeUser.replace(/\s/g, '_')}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, letterRendering: true, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    
-    html2pdf().set(opt).from(element).save()
-      .then(() => toast('✅ PDF guardado!'))
-      .catch(err => {
-        console.error(err);
-        toast('❌ Erro ao gerar PDF');
-      });
+    html2canvas(element, {
+      scale: 3,
+      backgroundColor: '#ffffff',
+      useCORS: true,
+      logging: false
+    }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = `certificado_${nomeUser.replace(/\s/g, '_')}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      toast('✅ Imagem guardada!');
+    }).catch(err => {
+      console.error(err);
+      toast('❌ Erro ao gerar imagem');
+    });
   }
   
   function imprimirCertificado() {
@@ -838,8 +839,8 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
           </div>
         </div>
         <div class="cert-actions">
-          <button class="action-btn action-btn-download" onclick="gerarPDF()">
-            <i class="fas fa-download"></i> Descarregar PDF
+          <button class="action-btn action-btn-download" onclick="descarregarComoImagem()">
+            <i class="fas fa-download"></i> Descarregar como Imagem
           </button>
           <button class="action-btn" onclick="imprimirCertificado()">
             <i class="fas fa-print"></i> Imprimir Certificado
@@ -895,7 +896,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   window.showCertificate = showCertificate;
   window.confirmModule = confirmModule;
   window.sair = sair;
-  window.gerarPDF = gerarPDF;
+  window.descarregarComoImagem = descarregarComoImagem;
   window.imprimirCertificado = imprimirCertificado;
 
   window.addEventListener('load', () => {
