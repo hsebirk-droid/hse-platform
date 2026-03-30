@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birkenstock S&CC — Minhas Formações</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+:root {
+  --birkenstock-blue: #00338D;
+  --birkenstock-blue-dark: #00277A;
+  --birkenstock-gold: #C5A059;
+  --birkenstock-gray: #616365;
+  --birkenstock-beige: #F7F5F0;
+  --bg: #F4F7F9;
+  --border: #E5E7EB;
+  --white: #fff;
+  --success: #10B981;
+  --success-bg: #D1FAE5;
+  --warning: #F59E0B;
+  --warning-bg: #FEF3C7;
+  --danger: #EF4444;
+  --info: #3B82F6;
+  --info-bg: #DBEAFE;
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--birkenstock-beige);
+  color: #111827;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  background: var(--birkenstock-blue);
+  padding: 12px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--birkenstock-gold);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo h1 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: white;
+}
+.logo p {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.7);
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.notification-btn {
+  position: relative;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 8px;
+}
+.notification-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--birkenstock-gold);
+  color: var(--birkenstock-blue);
+  font-size: 10px;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,0.1);
+  padding: 6px 12px;
+  border-radius: 40px;
+  cursor: pointer;
+}
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  background: var(--birkenstock-gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--birkenstock-blue);
+  font-weight: bold;
+}
+.user-name {
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.logout-btn {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+}
+.logout-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+/* Main Container */
+.main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+/* Welcome Section */
+.welcome-section {
+  background: linear-gradient(135deg, var(--birkenstock-blue), var(--birkenstock-blue-dark));
+  border-radius: 24px;
+  padding: 32px;
+  margin-bottom: 32px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+.welcome-section::after {
+  content: '🎓';
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  font-size: 80px;
+  opacity: 0.1;
+}
+.welcome-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+.welcome-section p {
+  opacity: 0.9;
+  margin-bottom: 20px;
+}
+.stats-grid {
+  display: flex;
+  gap: 24px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.stat-card {
+  background: rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 16px 24px;
+  backdrop-filter: blur(10px);
+  min-width: 120px;
+}
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+}
+.stat-label {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+/* Search & Filters */
+.search-section {
+  margin-bottom: 32px;
+}
+.search-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.search-input {
+  flex: 1;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.2s;
+}
+.search-input:focus {
+  border-color: var(--birkenstock-blue);
+  box-shadow: 0 0 0 3px rgba(0,51,141,0.1);
+}
+.filter-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.filter-btn {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  padding: 8px 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.filter-btn.active {
+  background: var(--birkenstock-blue);
+  color: white;
+  border-color: var(--birkenstock-blue);
+}
+.filter-btn:hover:not(.active) {
+  background: var(--bg);
+}
+
+/* Courses Grid */
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.section-title h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--birkenstock-blue);
+}
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+.course-card {
+  background: var(--white);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: all 0.3s;
+  cursor: pointer;
+  border: 1px solid var(--border);
+}
+.course-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+.course-cover {
+  height: 120px;
+  background: linear-gradient(135deg, var(--birkenstock-blue), var(--birkenstock-blue-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.course-cover i {
+  font-size: 48px;
+  color: rgba(255,255,255,0.9);
+}
+.course-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--birkenstock-gold);
+  color: var(--birkenstock-blue);
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: bold;
+}
+.course-body {
+  padding: 20px;
+}
+.course-category {
+  font-size: 11px;
+  color: var(--birkenstock-gold);
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.course-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--birkenstock-blue);
+  margin-bottom: 8px;
+}
+.course-desc {
+  font-size: 0.85rem;
+  color: var(--birkenstock-gray);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+.course-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--birkenstock-gray);
+}
+.course-progress {
+  margin-top: 12px;
+}
+.progress-bar {
+  height: 6px;
+  background: var(--bg);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--success);
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+.progress-text {
+  font-size: 11px;
+  color: var(--birkenstock-gray);
+  margin-top: 4px;
+  text-align: right;
+}
+.btn-start {
+  display: block;
+  background: var(--birkenstock-blue);
+  color: white;
+  text-align: center;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 16px;
+  transition: all 0.2s;
+}
+.btn-start:hover {
+  background: var(--birkenstock-blue-dark);
+}
+.btn-continue {
+  background: var(--warning);
+}
+.btn-continue:hover {
+  background: #d97706;
+}
+.btn-completed {
+  background: var(--success);
+}
+.btn-completed:hover {
+  background: #059669;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--white);
+  border-radius: 24px;
+  grid-column: 1/-1;
+}
+.empty-state-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+.empty-state h4 {
+  font-size: 1.2rem;
+  color: var(--birkenstock-blue);
+  margin-bottom: 8px;
+}
+.empty-state p {
+  color: var(--birkenstock-gray);
+}
+
+/* Notifications Panel */
+.notifications-panel {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  width: 320px;
+  background: var(--white);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  display: none;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.notifications-panel.show {
+  display: block;
+}
+.notifications-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+}
+.notification-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.notification-item:hover {
+  background: var(--bg);
+}
+.notification-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--birkenstock-blue);
+}
+.notification-time {
+  font-size: 0.7rem;
+  color: var(--birkenstock-gray);
+  margin-top: 4px;
+}
+
+/* User Menu Dropdown */
+.user-dropdown {
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  background: var(--white);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  width: 240px;
+  display: none;
+  z-index: 1000;
+}
+.user-dropdown.show {
+  display: block;
+}
+.dropdown-item {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.dropdown-item:hover {
+  background: var(--bg);
+}
+.dropdown-item i {
+  width: 20px;
+  color: var(--birkenstock-gray);
+}
+.dropdown-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 8px 0;
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+.modal.show {
+  display: flex;
+}
+.modal-content {
+  background: var(--white);
+  border-radius: 24px;
+  max-width: 500px;
+  width: 90%;
+  padding: 32px;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.modal-close {
+  cursor: pointer;
+  font-size: 24px;
+  color: var(--birkenstock-gray);
+}
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  background: var(--birkenstock-gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 20px;
+  color: var(--birkenstock-blue);
+}
+.profile-field {
+  margin-bottom: 16px;
+}
+.profile-field label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--birkenstock-gray);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
+}
+.profile-field p {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .header { padding: 12px 20px; }
+  .main-container { padding: 20px 16px; }
+  .welcome-section { padding: 24px; }
+  .welcome-section h2 { font-size: 1.3rem; }
+  .stats-grid { gap: 12px; }
+  .stat-card { padding: 12px 16px; }
+  .courses-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <h1>BIRKENSTOCK</h1>
+    <p>S&CC Portugal · Formação</p>
+  </div>
+  <div class="header-actions">
+    <button class="notification-btn" id="notificationBtn">
+      <i class="fas fa-bell"></i>
+      <span class="notification-badge" id="notificationBadge">0</span>
+    </button>
+    <div class="user-menu" id="userMenuBtn">
+      <div class="user-avatar" id="userAvatar">👤</div>
+      <span class="user-name" id="userNameDisplay">Carregando...</span>
+      <i class="fas fa-chevron-down" style="color: white; font-size: 12px;"></i>
+    </div>
+    <button class="logout-btn" onclick="fazerLogout()">Sair</button>
+  </div>
+</header>
+
+<!-- User Dropdown -->
+<div class="user-dropdown" id="userDropdown">
+  <div class="dropdown-item" onclick="openProfileModal()">
+    <i class="fas fa-user"></i>
+    <span>Meu Perfil</span>
+  </div>
+  <div class="dropdown-item" onclick="openCompletedModal()">
+    <i class="fas fa-check-circle"></i>
+    <span>Formações Concluídas</span>
+  </div>
+  <div class="dropdown-divider"></div>
+  <div class="dropdown-item" onclick="fazerLogout()">
+    <i class="fas fa-sign-out-alt"></i>
+    <span>Sair</span>
+  </div>
+</div>
+
+<!-- Notifications Panel -->
+<div class="notifications-panel" id="notificationsPanel">
+  <div class="notifications-header">
+    <i class="fas fa-bell"></i> Notificações
+  </div>
+  <div id="notificationsList"></div>
+</div>
+
+<main class="main-container">
+  <!-- Welcome Section -->
+  <div class="welcome-section">
+    <h2 id="welcomeMessage">Bem-vindo de volta! 👋</h2>
+    <p>Continue a sua jornada de aprendizagem e desenvolva novas competências.</p>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="coursesCompleted">0</div>
+        <div class="stat-label">Formações concluídas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="coursesInProgress">0</div>
+        <div class="stat-label">Em progresso</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="certificatesCount">0</div>
+        <div class="stat-label">Certificados</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search & Filters -->
+  <div class="search-section">
+    <div class="search-bar">
+      <input type="text" class="search-input" id="searchInput" placeholder="Pesquisar formações...">
+    </div>
+    <div class="filter-buttons" id="filterButtons">
+      <button class="filter-btn active" data-filter="all">Todas</button>
+      <button class="filter-btn" data-filter="em_andamento">Em andamento</button>
+      <button class="filter-btn" data-filter="concluidas">Concluídas</button>
+    </div>
+  </div>
+
+  <!-- Courses Section -->
+  <div class="section-title">
+    <h3><i class="fas fa-graduation-cap"></i> As Minhas Formações</h3>
+  </div>
+
+  <div id="loading" class="loading" style="text-align: center; padding: 60px;">
+    <i class="fas fa-spinner fa-spin" style="font-size: 32px; color: var(--birkenstock-blue);"></i>
+    <p>A carregar formações...</p>
+  </div>
+  <div class="courses-grid" id="coursesGrid" style="display: none;"></div>
+</main>
+
+<!-- Profile Modal -->
+<div class="modal" id="profileModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Meu Perfil</h3>
+      <span class="modal-close" onclick="closeProfileModal()">&times;</span>
+    </div>
+    <div class="profile-avatar" id="profileAvatar">👤</div>
+    <div class="profile-field">
+      <label>Nome</label>
+      <p id="profileName">-</p>
+    </div>
+    <div class="profile-field">
+      <label>Email</label>
+      <p id="profileEmail">-</p>
+    </div>
+    <div class="profile-field">
+      <label>Membro desde</label>
+      <p id="profileSince">-</p>
+    </div>
+  </div>
+</div>
+
+<!-- Completed Courses Modal -->
+<div class="modal" id="completedModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3><i class="fas fa-check-circle"></i> Formações Concluídas</h3>
+      <span class="modal-close" onclick="closeCompletedModal()">&times;</span>
+    </div>
+    <div id="completedList" style="max-height: 400px; overflow-y: auto;"></div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, query, orderBy, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAwywvboQgWqkrZlbwrUPdaUq-gLnWM64E",
+    authDomain: "plataforma-ssa-3130e.firebaseapp.com",
+    projectId: "plataforma-ssa-3130e",
+    storageBucket: "plataforma-ssa-3130e.firebasestorage.app",
+    messagingSenderId: "850671249674",
+    appId: "1:850671249674:web:53a115408f8006745c32f3"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.db = db;
+  window.collection = collection;
+  window.getDocs = getDocs;
+  window.query = query;
+  window.orderBy = orderBy;
+  window.doc = doc;
+  window.getDoc = getDoc;
+</script>
+
+<script>
+  let allCourses = [];
+  let userProgress = {};
+  let currentFilter = 'all';
+  let searchTerm = '';
+  let notifications = [];
+
+  const nomeUser = localStorage.getItem('usuarioAtivo') || 'Colaborador';
+  const userInitial = nomeUser.charAt(0).toUpperCase();
+
+  // Elementos DOM
+  const loadingDiv = document.getElementById('loading');
+  const coursesGrid = document.getElementById('coursesGrid');
+  const searchInput = document.getElementById('searchInput');
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  const userNameDisplay = document.getElementById('userNameDisplay');
+  const userAvatar = document.getElementById('userAvatar');
+  const welcomeMessage = document.getElementById('welcomeMessage');
+
+  // Inicializar UI
+  userNameDisplay.textContent = nomeUser;
+  userAvatar.textContent = userInitial;
+  welcomeMessage.innerHTML = `Bem-vindo de volta, ${nomeUser}! 👋`;
+
+  // Carregar progresso do usuário do localStorage
+  function loadUserProgress() {
+    const saved = localStorage.getItem(`progress_${nomeUser}`);
+    if (saved) {
+      userProgress = JSON.parse(saved);
+    } else {
+      userProgress = {};
+    }
+  }
+
+  // Salvar progresso do usuário
+  function saveUserProgress() {
+    localStorage.setItem(`progress_${nomeUser}`, JSON.stringify(userProgress));
+  }
+
+  // Atualizar estatísticas do usuário
+  function updateUserStats(cursos) {
+    let completed = 0;
+    let inProgress = 0;
+
+    cursos.forEach(curso => {
+      const progress = userProgress[curso.id];
+      if (progress && progress.completed === true) {
+        completed++;
+      } else if (progress && progress.modulesCompleted > 0) {
+        inProgress++;
+      }
+    });
+
+    document.getElementById('coursesCompleted').textContent = completed;
+    document.getElementById('coursesInProgress').textContent = inProgress;
+    document.getElementById('certificatesCount').textContent = completed;
+  }
+
+  // Calcular progresso do curso
+  function calculateCourseProgress(curso) {
+    const progress = userProgress[curso.id];
+    if (progress && progress.completed) return 100;
+    if (progress && progress.modulesCompleted) {
+      const totalModules = curso.modulos?.length || 1;
+      return Math.round((progress.modulesCompleted / totalModules) * 100);
+    }
+    return 0;
+  }
+
+  // Verificar se curso foi concluído
+  function isCourseCompleted(cursoId) {
+    const progress = userProgress[cursoId];
+    return progress && progress.completed === true;
+  }
+
+  // Marcar curso como concluído
+  function markCourseCompleted(cursoId, cursoNome) {
+    if (!userProgress[cursoId]) {
+      userProgress[cursoId] = { modulesCompleted: 0, completed: false };
+    }
+    userProgress[cursoId].completed = true;
+    saveUserProgress();
+    renderCourses();
+    updateUserStats(allCourses);
+    addNotification(`🎉 Parabéns! Concluiu a formação "${cursoNome}"!`);
+  }
+
+  // Adicionar notificação
+  function addNotification(message) {
+    notifications.unshift({
+      id: Date.now(),
+      message: message,
+      time: new Date().toLocaleString('pt-PT'),
+      read: false
+    });
+    updateNotificationBadge();
+    renderNotifications();
+  }
+
+  function updateNotificationBadge() {
+    const unread = notifications.filter(n => !n.read).length;
+    const badge = document.getElementById('notificationBadge');
+    if (badge) {
+      badge.textContent = unread;
+      badge.style.display = unread > 0 ? 'flex' : 'none';
+    }
+  }
+
+  function renderNotifications() {
+    const container = document.getElementById('notificationsList');
+    if (!container) return;
+    
+    if (notifications.length === 0) {
+      container.innerHTML = '<div class="notification-item">Sem notificações</div>';
+      return;
+    }
+    
+    container.innerHTML = notifications.slice(0, 10).map(n => `
+      <div class="notification-item" onclick="markNotificationRead(${n.id})">
+        <div class="notification-title">${n.message}</div>
+        <div class="notification-time">${n.time}</div>
+      </div>
+    `).join('');
+  }
+
+  function markNotificationRead(id) {
+    const notification = notifications.find(n => n.id === id);
+    if (notification) notification.read = true;
+    updateNotificationBadge();
+    renderNotifications();
+  }
+
+  // Carregar formações do Firebase
+  async function carregarFormacoes() {
+    loadingDiv.style.display = 'block';
+    coursesGrid.style.display = 'none';
+    
+    try {
+      const q = window.query(window.collection(window.db, 'formacoes'), window.orderBy('dataTimestamp', 'desc'));
+      const querySnapshot = await window.getDocs(q);
+      
+      allCourses = [];
+      querySnapshot.forEach((doc) => {
+        allCourses.push({ id: doc.id, ...doc.data() });
+      });
+      
+      loadUserProgress();
+      updateUserStats(allCourses);
+      renderCourses();
+      
+      loadingDiv.style.display = 'none';
+      coursesGrid.style.display = 'grid';
+      
+      if (!localStorage.getItem(`welcome_${nomeUser}`)) {
+        addNotification(`Bem-vindo à plataforma de formação! Explore os cursos disponíveis.`);
+        localStorage.setItem(`welcome_${nomeUser}`, 'true');
+      }
+      
+    } catch(error) {
+      console.error('Erro:', error);
+      loadingDiv.innerHTML = '❌ Erro ao carregar formações.';
+    }
+  }
+
+  // Filtrar cursos
+  function filterCourses() {
+    let filtered = [...allCourses];
+    
+    filtered = filtered.filter(curso => {
+      const progress = calculateCourseProgress(curso);
+      const completed = progress === 100;
+      
+      switch(currentFilter) {
+        case 'concluidas':
+          return completed;
+        case 'em_andamento':
+          return progress > 0 && progress < 100;
+        default:
+          return true;
+      }
+    });
+    
+    if (searchTerm) {
+      filtered = filtered.filter(curso => 
+        curso.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        curso.descricao?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    return filtered;
+  }
+
+  // Renderizar cursos
+  function renderCourses() {
+    const filtered = filterCourses();
+    
+    if (filtered.length === 0) {
+      coursesGrid.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">📚</div>
+          <h4>Nenhuma formação encontrada</h4>
+          <p>Tente ajustar os filtros ou aguarde novas atribuições.</p>
+        </div>
+      `;
+      return;
+    }
+    
+    coursesGrid.innerHTML = filtered.map(curso => {
+      const progress = calculateCourseProgress(curso);
+      const completed = progress === 100;
+      const modulesCount = curso.modulos?.length || 0;
+      const isStarted = progress > 0 && !completed;
+      
+      let btnText = '📖 Iniciar';
+      let btnClass = '';
+      if (completed) {
+        btnText = '🎓 Ver Certificado';
+        btnClass = 'btn-completed';
+      } else if (isStarted) {
+        btnText = '▶ Continuar';
+        btnClass = 'btn-continue';
+      }
+      
+      return `
+        <div class="course-card" onclick="entrarFormacao('${curso.id}')">
+          <div class="course-cover">
+            <i class="fas fa-${curso.categoria === 'video' ? 'video' : 'book-open'}"></i>
+            <span class="course-badge">${curso.duracao || '30 min'}</span>
+          </div>
+          <div class="course-body">
+            <div class="course-category">${curso.categoria || 'Formação'}</div>
+            <div class="course-title">${escapeHtml(curso.nome || 'Formação')}</div>
+            <div class="course-desc">${escapeHtml(curso.descricao || 'Curso de formação profissional.')}</div>
+            <div class="course-meta">
+              <span><i class="fas fa-layer-group"></i> ${modulesCount} módulos</span>
+              <span><i class="fas fa-question-circle"></i> ${curso.perguntas?.length || 0} questões</span>
+            </div>
+            ${!completed ? `
+              <div class="course-progress">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${progress}%"></div>
+                </div>
+                <div class="progress-text">${progress}% concluído</div>
+              </div>
+            ` : `
+              <div style="margin-top: 12px; color: var(--success); font-size: 12px;">
+                <i class="fas fa-check-circle"></i> Concluído
+              </div>
+            `}
+            <div class="btn-start ${btnClass}">
+              ${btnText}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+  
+  function escapeHtml(text) {
+    if (!text) return '';
+    return text.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  // Entrar na formação
+  function entrarFormacao(cursoId) {
+    localStorage.setItem('cursoAtualId', cursoId);
+    window.location.href = 'formacao_colaborador.html';
+  }
+
+  // Fazer logout
+  function fazerLogout() {
+    if(confirm('Deseja sair da plataforma?')) {
+      localStorage.removeItem('usuarioAtivo');
+      localStorage.removeItem('cursoAtualId');
+      window.location.href = 'login.html';
+    }
+  }
+
+  // Event listeners para filtros
+  searchInput.addEventListener('input', (e) => {
+    searchTerm = e.target.value;
+    renderCourses();
+  });
+  
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      renderCourses();
+    });
+  });
+
+  // User menu dropdown
+  const userMenuBtn = document.getElementById('userMenuBtn');
+  const userDropdown = document.getElementById('userDropdown');
+  const notificationBtn = document.getElementById('notificationBtn');
+  const notificationsPanel = document.getElementById('notificationsPanel');
+
+  userMenuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    userDropdown.classList.toggle('show');
+    notificationsPanel.classList.remove('show');
+  });
+
+  notificationBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    notificationsPanel.classList.toggle('show');
+    userDropdown.classList.remove('show');
+  });
+
+  document.addEventListener('click', () => {
+    userDropdown.classList.remove('show');
+    notificationsPanel.classList.remove('show');
+  });
+
+  // Modal functions
+  function openProfileModal() {
+    document.getElementById('profileModal').classList.add('show');
+    document.getElementById('profileName').textContent = nomeUser;
+    document.getElementById('profileEmail').textContent = `${nomeUser}@birkenstock.pt`;
+    document.getElementById('profileSince').textContent = '2024';
+  }
+  
+  function closeProfileModal() {
+    document.getElementById('profileModal').classList.remove('show');
+  }
+  
+  function openCompletedModal() {
+    const modal = document.getElementById('completedModal');
+    const completedList = document.getElementById('completedList');
+    
+    const completedCourses = allCourses.filter(curso => isCourseCompleted(curso.id));
+    
+    if (completedCourses.length === 0) {
+      completedList.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--birkenstock-gray);">Nenhuma formação concluída ainda.</div>';
+    } else {
+      completedList.innerHTML = completedCourses.map(curso => `
+        <div style="display: flex; align-items: center; gap: 16px; padding: 12px; border-bottom: 1px solid var(--border);">
+          <div style="width: 40px; height: 40px; background: var(--success-bg); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-check-circle" style="color: var(--success); font-size: 20px;"></i>
+          </div>
+          <div style="flex: 1;">
+            <div style="font-weight: 600;">${escapeHtml(curso.nome)}</div>
+            <div style="font-size: 12px; color: var(--birkenstock-gray);">${curso.duracao || '30 min'}</div>
+          </div>
+          <button onclick="entrarFormacao('${curso.id}')" style="background: var(--birkenstock-blue); color: white; border: none; padding: 6px 16px; border-radius: 20px; cursor: pointer;">Ver</button>
+        </div>
+      `).join('');
+    }
+    
+    modal.classList.add('show');
+  }
+  
+  function closeCompletedModal() {
+    document.getElementById('completedModal').classList.remove('show');
+  }
+
+  // Expor funções globalmente
+  window.entrarFormacao = entrarFormacao;
+  window.fazerLogout = fazerLogout;
+  window.openProfileModal = openProfileModal;
+  window.closeProfileModal = closeProfileModal;
+  window.openCompletedModal = openCompletedModal;
+  window.closeCompletedModal = closeCompletedModal;
+  window.markNotificationRead = markNotificationRead;
+
+  // Verificar se voltou de uma formação concluída
+  const cursoConcluido = localStorage.getItem('cursoConcluido');
+  if (cursoConcluido) {
+    const curso = allCourses.find(c => c.id === cursoConcluido);
+    markCourseCompleted(cursoConcluido, curso?.nome || 'Formação');
+    localStorage.removeItem('cursoConcluido');
+  }
+
+  // Inicializar
+  carregarFormacoes();
+</script>
+</body>
+</html>
