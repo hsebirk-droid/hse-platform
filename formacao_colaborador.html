@@ -704,7 +704,22 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   window.showCertificate = showCertificate;
   window.confirmModule = confirmModule;
   window.sair = sair;
+// Função para testar se os elementos existem
+function testarElementos() {
+  console.log("=== TESTE DE ELEMENTOS ===");
+  console.log("modules:", modules.length);
+  modules.forEach((m, idx) => {
+    console.log(`Módulo ${idx+1}:`, m.id, m.titulo);
+    console.log(`  - block-${m.id}:`, document.getElementById(`block-${m.id}`) ? "✅" : "❌");
+    console.log(`  - body-${m.id}:`, document.getElementById(`body-${m.id}`) ? "✅" : "❌");
+    console.log(`  - btn-confirm-${m.id}:`, document.getElementById(`btn-confirm-${m.id}`) ? "✅" : "❌");
+  });
+  console.log("Quiz block:", document.getElementById('block-quiz') ? "✅" : "❌");
+  console.log("Quiz body:", document.getElementById('body-quiz') ? "✅" : "❌");
+}
 
+// Chamar após carregar os módulos
+setTimeout(testarElementos, 2000);
   window.addEventListener('load', () => {
     if (!localStorage.getItem('usuarioAtivo')) {
       window.location.href = 'login.html';
