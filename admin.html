@@ -403,12 +403,12 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     <div class="sec-head"><h2>📊 Histórico</h2><div><button class="btn-sm" onclick="exportarHistoricoCSV()">📥 CSV</button><button class="btn-sm" onclick="exportarHistoricoExcel()">📊 Excel</button></div></div>
     <div class="sec-body">
       <div style="overflow-x:auto;">
-        <table>
+         <table>
           <thead>
-            <tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr>
+             <tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr>
           </thead>
           <tbody id="lista-notas"></tbody>
-        </table>
+         </table>
       </div>
       <button id="btn-limpar" class="btn-sm btn-danger">🗑️ Limpar</button>
     </div>
@@ -430,8 +430,11 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       <div class="fg"><label>Conteúdo *</label><textarea id="modulo-texto-conteudo" rows="6" placeholder="Digite o conteúdo do módulo..."></textarea></div>
     </div>
     <div id="modulo-conteudo-file" style="display:none;">
-      <div class="fg"><label>URL do Ficheiro *</label><input type="text" id="modulo-file-url" placeholder="https://drive.google.com/file/d/.../view  ou  https://...pdf"></div>
-      <small style="color: var(--birkenstock-gray);">O conteúdo será exibido diretamente na plataforma</small>
+      <div class="fg">
+        <label>🔗 URL do Ficheiro (Google Drive, PDF, Imagem, etc.)</label>
+        <input type="text" id="modulo-file-url" placeholder="https://drive.google.com/file/d/.../view  ou  https://...pdf">
+        <small style="color: var(--birkenstock-gray);">O sistema converte automaticamente links do Google Drive para visualização direta.</small>
+      </div>
     </div>
     <button class="btn" id="btn-salvar-modulo" style="margin-top:16px;">Salvar Módulo</button>
   </div>
@@ -497,6 +500,40 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   const defaultCert = { fundoImagem: "imagens/fundo_certificado.png", titulo: "Certificado de Formação", texto: "Certifica-se que {{nome}} concluiu {{formacao}} com {{nota}}.\nEmitido em {{data}}.", rodape: "Direção de Formação" };
   let certTemplate = JSON.parse(localStorage.getItem('cert_template') || JSON.stringify(defaultCert));
 
+  // ==================== FUNÇÃO ESCAPE HTML ====================
+  function escapeHtml(text) {
+    if (!text) return '';
+    return text.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  // ==================== FUNÇÃO PARA CONVERTER LINK DO GOOGLE DRIVE ====================
+  function converterLinkGoogleDrive(url) {
+    if (!url) return url;
+    if (!url.includes('drive.google.com')) return url;
+    
+    let fileId = null;
+    let match = url.match(/\/file\/d\/([^\/]+)/);
+    if (match) fileId = match[1];
+    if (!fileId) {
+        match = url.match(/[?&]id=([^&]+)/);
+        if (match) fileId = match[1];
+    }
+    if (!fileId) {
+        match = url.match(/\/d\/([^\/]+)/);
+        if (match) fileId = match[1];
+    }
+    
+    if (fileId) {
+        return `https://drive.google.com/file/d/${fileId}/preview`;
+    }
+    return url.replace('/view', '/preview').replace('?usp=sharing', '');
+  }
+
   // ==================== FUNÇÕES PRINCIPAIS ====================
   
   async function carregarFormacoes() {
@@ -537,7 +574,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       <div class="dash-card"><div class="dash-icon" style="background:var(--success-bg)">📚</div><div class="dash-info"><h3>${cursos.length}</h3><p>Formações</p></div></div>
       <div class="dash-card"><div class="dash-icon" style="background:var(--purple-bg)">🏅</div><div class="dash-info"><h3>${historico.length}</h3><p>Certificados</p></div></div>`;
     const recentes = historico.slice(0,5);
-    document.getElementById('recent-activities').innerHTML = recentes.length ? recentes.map(h => `<div class="item-card"><div class="item-card-info"><strong>${h.nome}</strong> concluiu "${h.curso}" com ${h.nota}</div><div class="item-card-meta">${h.data}</div></div>`).join('') : '<div class="empty">Sem atividades recentes.</div>';
+    document.getElementById('recent-activities').innerHTML = recentes.length ? recentes.map(h => `<div class="item-card"><div class="item-card-info"><strong>${escapeHtml(h.nome)}</strong> concluiu "${escapeHtml(h.curso)}" com ${escapeHtml(h.nota)}</div><div class="item-card-meta">${escapeHtml(h.data)}</div></div>`).join('') : '<div class="empty">Sem atividades recentes.</div>';
   }
 
   async function renderFormacoesLista() {
@@ -547,7 +584,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     container.innerHTML = cursos.map(curso => `
       <div class="item-card">
         <div class="item-card-info">
-          <div class="item-card-title">📘 ${curso.nome}</div>
+          <div class="item-card-title">📘 ${escapeHtml(curso.nome)}</div>
           <div class="item-card-meta">${curso.modulos?.length || 0} módulos · ${curso.perguntas?.length || 0} perguntas</div>
         </div>
         <div class="item-card-actions">
@@ -586,9 +623,9 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     
     content.innerHTML = `
       <div style="text-align:center;padding:20px;border:2px solid var(--birkenstock-gold);border-radius:16px;${fundoStyle} min-height:300px;">
-        <h2 style="color:var(--birkenstock-blue);">${titulo}</h2>
+        <h2 style="color:var(--birkenstock-blue);">${escapeHtml(titulo)}</h2>
         <div style="margin:20px 0;">${texto.replace(/\n/g,'<br>')}</div>
-        <div style="margin-top:20px; font-size:12px;">${rodape}</div>
+        <div style="margin-top:20px; font-size:12px;">${escapeHtml(rodape)}</div>
       </div>
     `;
     preview.style.display = 'block';
@@ -625,24 +662,21 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     }
   }
 
-  // ==================== MÓDULOS (CORRIGIDOS) ====================
+  // ==================== MÓDULOS ====================
   function abrirModalModulo(tipo) {
     moduloTipoAtual = tipo;
     editandoModuloId = null;
     
-    // Limpar campos
     document.getElementById('modulo-titulo').value = '';
     document.getElementById('modulo-duracao').value = '';
     document.getElementById('modulo-video-url').value = '';
     document.getElementById('modulo-texto-conteudo').value = '';
     document.getElementById('modulo-file-url').value = '';
     
-    // Mostrar campo correto
     document.getElementById('modulo-conteudo-video').style.display = tipo === 'video' ? 'block' : 'none';
     document.getElementById('modulo-conteudo-texto').style.display = tipo === 'text' ? 'block' : 'none';
     document.getElementById('modulo-conteudo-file').style.display = tipo === 'file' ? 'block' : 'none';
     
-    // Título do modal
     const titulos = { video: '🎬 Adicionar Vídeo', text: '📄 Adicionar Texto', file: '📁 Adicionar Ficheiro/URL' };
     document.getElementById('modal-modulo-titulo').textContent = titulos[tipo];
     
@@ -687,9 +721,10 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       conteudo = { texto };
     }
     else if (moduloTipoAtual === 'file') {
-      const url = document.getElementById('modulo-file-url').value.trim();
+      let url = document.getElementById('modulo-file-url').value.trim();
       if (!url) { alert('❌ URL do ficheiro obrigatória'); return; }
-      conteudo = { url };
+      url = converterLinkGoogleDrive(url);
+      conteudo = { url: url };
     }
     
     const duracao = document.getElementById('modulo-duracao').value.trim() || '15 min';
@@ -730,15 +765,28 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       return;
     }
     
-    container.innerHTML = modulos.map((m, idx) => `
+    container.innerHTML = modulos.map((m, idx) => {
+      let urlPreview = '';
+      if (m.conteudo?.url) {
+        let url = m.conteudo.url;
+        if (url.includes('drive.google.com')) {
+          urlPreview = '📁 Google Drive';
+        } else if (url.includes('youtube.com')) {
+          urlPreview = '🎬 YouTube';
+        } else if (url.match(/\.(jpg|jpeg|png|gif|pdf)$/i)) {
+          urlPreview = '📄 Documento';
+        } else {
+          urlPreview = '🔗 Link';
+        }
+      }
+      return `
       <div style="background: var(--bg); border-radius: 8px; margin-bottom: 12px; padding: 12px; border: 1px solid var(--border);">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
           <div style="display: flex; align-items: center; gap: 12px;">
             <span style="background: var(--birkenstock-blue); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">${idx + 1}</span>
             <div>
               <div style="font-weight: 700;">${escapeHtml(m.titulo)}</div>
-              <div style="font-size: 11px; color: var(--birkenstock-gray);">${m.tipo === 'video' ? '🎬 Vídeo' : m.tipo === 'text' ? '📄 Texto' : '📁 Ficheiro'} · ${m.duracao}</div>
-              ${m.conteudo?.url ? `<div style="font-size: 10px; color: var(--birkenstock-gray); word-break: break-all; margin-top: 4px;">${m.conteudo.url.substring(0, 60)}${m.conteudo.url.length > 60 ? '...' : ''}</div>` : ''}
+              <div style="font-size: 11px; color: var(--birkenstock-gray);">${m.tipo === 'video' ? '🎬 Vídeo' : m.tipo === 'text' ? '📄 Texto' : '📁 Ficheiro'} · ${m.duracao} ${urlPreview ? '· ' + urlPreview : ''}</div>
             </div>
           </div>
           <div style="display: flex; gap: 8px;">
@@ -747,17 +795,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
           </div>
         </div>
       </div>
-    `).join('');
-  }
-  
-  function escapeHtml(text) {
-    if (!text) return '';
-    return text.replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
-    });
+    `}).join('');
   }
 
   // ==================== PERGUNTAS ====================
@@ -854,8 +892,8 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     container.innerHTML = colaboradores.map((c) => `
       <div class="item-card">
         <div class="item-card-info">
-          <strong>${c.user}</strong>
-          <div class="item-card-meta">${c.email || 'sem email'}</div>
+          <strong>${escapeHtml(c.user)}</strong>
+          <div class="item-card-meta">${escapeHtml(c.email || 'sem email')}</div>
         </div>
         <div class="item-card-actions">
           <button onclick="removerColab('${c.id}')" style="color:var(--danger)">🗑️ Remover</button>
@@ -927,8 +965,8 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   async function atualizarSelectores() {
     const cursos = await carregarFormacoes();
     const colaboradores = await carregarColaboradores();
-    document.getElementById('atribuir-curso').innerHTML = '<option value="">Selecione uma formação</option>' + cursos.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
-    document.getElementById('colab-selector-grid').innerHTML = colaboradores.map(c => `<label class="colab-check"><input type="checkbox" value="${c.user}" data-email="${c.email || ''}" data-nome="${c.user}"> ${c.user} ${c.email ? '(' + c.email + ')' : ''}</label>`).join('');
+    document.getElementById('atribuir-curso').innerHTML = '<option value="">Selecione uma formação</option>' + cursos.map(c => `<option value="${c.id}">${escapeHtml(c.nome)}</option>`).join('');
+    document.getElementById('colab-selector-grid').innerHTML = colaboradores.map(c => `<label class="colab-check"><input type="checkbox" value="${c.user}" data-email="${c.email || ''}" data-nome="${c.user}"> ${escapeHtml(c.user)} ${c.email ? '(' + escapeHtml(c.email) + ')' : ''}</label>`).join('');
   }
   
   function selecionarTodos(){ 
@@ -964,7 +1002,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
     document.getElementById('links-list').innerHTML = linksGerados.map(l => `
       <div class="item-card" style="flex-direction: column; align-items: stretch;">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-          <div><strong>${l.nome || l.user}</strong> ${l.email ? `<span style="font-size:11px;">(${l.email})</span>` : ''}</div>
+          <div><strong>${escapeHtml(l.nome || l.user)}</strong> ${l.email ? `<span style="font-size:11px;">(${escapeHtml(l.email)})</span>` : ''}</div>
           <div><button class="btn-sm" onclick="copiarLinkIndividual('${l.link}')">📋 Copiar</button></div>
         </div>
         <div style="margin-top: 8px; padding: 8px; background: var(--bg); border-radius: 6px; font-size: 11px; word-break: break-all;">${l.link}</div>
@@ -1055,14 +1093,14 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       return; 
     }
     tbody.innerHTML = historico.map(h => `
-      <tr>
-        <td><strong>${h.nome}</strong></td>
-        <td>${h.email || '-'}</td>
-        <td>${h.curso}</td>
-        <td>${h.data}</td>
-        <td><span class="badge badge-success">${h.nota}</span></td>
-        <td><button class="btn-sm" onclick="alert('Certificado de ${h.nome}')">📄 Ver</button></td>
-      </tr>
+       <tr>
+         <td><strong>${escapeHtml(h.nome)}</strong></td>
+         <td>${escapeHtml(h.email || '-')}</td>
+         <td>${escapeHtml(h.curso)}</td>
+         <td>${escapeHtml(h.data)}</td>
+         <td><span class="badge badge-success">${escapeHtml(h.nota)}</span></td>
+         <td><button class="btn-sm" onclick="alert('Certificado de ${escapeHtml(h.nome)}')">📄 Ver</button></td>
+       </tr>
     `).join('');
   }
   
@@ -1142,7 +1180,7 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
       editandoFormacaoId = id;
       renderModulos();
       renderPerguntas();
-      document.getElementById('editando-id').innerHTML = `✏️ Editando: ${data.nome}`;
+      document.getElementById('editando-id').innerHTML = `✏️ Editando: ${escapeHtml(data.nome)}`;
       document.getElementById('btn-cancelar-edicao').style.display = 'inline-block';
       switchTab('formacao');
     }
@@ -1203,6 +1241,8 @@ th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-tra
   window.checkPasswordStrength = checkPasswordStrength;
   window.exportarHistoricoCSV = exportarHistoricoCSV;
   window.exportarHistoricoExcel = exportarHistoricoExcel;
+  window.converterLinkGoogleDrive = converterLinkGoogleDrive;
+  window.escapeHtml = escapeHtml;
 </script>
 </body>
 </html>
