@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Birkenstock S&CC — Formação</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 :root {
@@ -150,8 +151,10 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   border-radius: 30px;
   cursor: pointer;
   font-weight: 600;
+  transition: all 0.2s;
 }
-.btn-confirm:disabled { background: #ccc; cursor: not-allowed; }
+.btn-confirm:hover:not(:disabled) { background: var(--birkenstock-blue-dark); transform: translateY(-2px); }
+.btn-confirm:disabled { background: #ccc; cursor: not-allowed; opacity: 0.6; }
 .confirmed-label { color: var(--success); background: var(--success-bg); padding: 8px 16px; border-radius: 30px; display: inline-block; }
 .quiz-intro { background: var(--warning-light); padding: 20px; border-radius: 12px; margin: 20px 0; }
 .question { margin-bottom: 24px; }
@@ -338,7 +341,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   let cursoId = null;
   let nomeUser = localStorage.getItem('usuarioAtivo') || 'Colaborador';
   let cursoData = {};
-  let imagemFundoBase64 = null;
 
   function toast(msg) {
     const t = document.getElementById('toast');
@@ -358,24 +360,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
       if (m === '<') return '&lt;';
       if (m === '>') return '&gt;';
       return m;
-    });
-  }
-
-  // Converter imagem para Base64 para impressão
-  async function carregarImagemBase64(url) {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = 'Anonymous';
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
-        resolve(canvas.toDataURL('image/png'));
-      };
-      img.onerror = reject;
-      img.src = url;
     });
   }
 
@@ -455,6 +439,19 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     document.getElementById('progress-text').textContent = pct + '%';
   }
 
+  // Função para marcar módulo como visualizado (ativa o botão)
+  function marcarComoVisualizado(moduleId) {
+    const btn = document.getElementById(`btn-confirm-${moduleId}`);
+    if (btn) {
+      btn.disabled = false;
+      btn.style.opacity = '1';
+    }
+    const fillEl = document.getElementById(`fill-${moduleId}`);
+    const pctEl = document.getElementById(`pct-${moduleId}`);
+    if (fillEl) fillEl.style.width = '100%';
+    if (pctEl) pctEl.textContent = '100%';
+  }
+
   function renderModules() {
     const container = document.getElementById('modules-container');
     container.innerHTML = '';
@@ -462,10 +459,10 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     modules.forEach((module, idx) => {
       const moduleIdStr = String(module.id);
       const isCompleted = completedModules[moduleIdStr];
+      const isLocked = idx > 0 && !completedModules[String(modules[idx-1]?.id)];
       
       const block = document.createElement('div');
-      block.className = 'section-block';
-      if (isCompleted) block.classList.add('completed');
+      block.className = `section-block ${isLocked && !isCompleted ? 'locked' : ''} ${isCompleted ? 'completed' : ''}`;
       block.id = 'block-' + moduleIdStr;
       
       block.innerHTML = `
@@ -473,40 +470,64 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
           <div class="s-num">${idx + 1}</div>
           <div class="s-info">
             <div class="s-title">${escapeHtml(module.titulo || 'Módulo ' + (idx + 1))}</div>
+            <div class="s-meta" style="font-size: 0.75rem; color: #666; margin-top: 4px;">${module.tipo === 'video' ? '🎬 Vídeo' : module.tipo === 'text' ? '📄 Texto' : '📁 Conteúdo'}</div>
           </div>
-          <div>${isCompleted ? '✅' : '▶'}</div>
+          <div>${isCompleted ? '✅' : (isLocked ? '🔒' : '▶')}</div>
         </div>
         <div class="section-body" id="body-${moduleIdStr}">
-          <div id="content-${moduleIdStr}">Carregando...</div>
+          <div id="content-${moduleIdStr}" style="min-height: 200px;">Carregando conteúdo...</div>
+          <div class="content-tracker" style="background: #eef2ff; padding: 12px; border-radius: 8px; margin: 16px 0; display: flex; align-items: center; gap: 12px;">
+            <span>📊 Progresso do módulo</span>
+            <div style="flex:1; height: 6px; background: #ddd; border-radius: 3px; overflow: hidden;">
+              <div id="fill-${moduleIdStr}" style="width: 0%; height: 100%; background: #00338D; border-radius: 3px; transition: width 0.3s;"></div>
+            </div>
+            <span id="pct-${moduleIdStr}" style="font-size: 0.8rem; font-weight: bold;">0%</span>
+          </div>
           <div class="confirm-viewed">
             <span>✅ Confirmar conclusão do módulo</span>
-            <button class="btn-confirm" id="btn-confirm-${moduleIdStr}" onclick="confirmModule('${moduleIdStr}')">✓ Confirmar</button>
+            <button class="btn-confirm" id="btn-confirm-${moduleIdStr}" disabled onclick="confirmModule('${moduleIdStr}')">✓ Confirmar e avançar</button>
           </div>
           <div id="confirmed-${moduleIdStr}" style="display:none; margin-top:10px;" class="confirmed-label">✅ Módulo concluído</div>
         </div>
       `;
       container.appendChild(block);
       
+      // Carregar conteúdo e ativar botão após visualização
       setTimeout(() => {
         const url = module.conteudo?.url || '';
         const contentDiv = document.getElementById(`content-${moduleIdStr}`);
         
         if (module.tipo === 'text' && module.conteudo?.texto) {
           contentDiv.innerHTML = `<div class="text-content">${module.conteudo.texto}</div>`;
-          document.getElementById(`btn-confirm-${moduleIdStr}`).disabled = false;
+          // Para texto, ativar imediatamente após carregar (já está visível)
+          setTimeout(() => marcarComoVisualizado(moduleIdStr), 500);
         }
         else if (url) {
           if (url.includes('youtube.com') || url.includes('youtu.be')) {
             let videoId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
             contentDiv.innerHTML = `<div class="video-wrap"><iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe></div>`;
+            // Para vídeos, simular progresso após 10 segundos
+            let progress = 0;
+            const interval = setInterval(() => {
+              progress += 10;
+              const fillEl = document.getElementById(`fill-${moduleIdStr}`);
+              const pctEl = document.getElementById(`pct-${moduleIdStr}`);
+              if (fillEl) fillEl.style.width = Math.min(progress, 100) + '%';
+              if (pctEl) pctEl.textContent = Math.min(progress, 100) + '%';
+              if (progress >= 100) {
+                clearInterval(interval);
+                marcarComoVisualizado(moduleIdStr);
+              }
+            }, 1000);
           } else {
             contentDiv.innerHTML = `<div class="doc-viewer"><iframe src="${url}" class="doc-iframe" allow="autoplay"></iframe></div>`;
+            // Para documentos, ativar após 5 segundos (tempo de leitura)
+            setTimeout(() => marcarComoVisualizado(moduleIdStr), 5000);
           }
-          document.getElementById(`btn-confirm-${moduleIdStr}`).disabled = false;
         }
         else {
           contentDiv.innerHTML = '<div class="text-content">Conteúdo não disponível.</div>';
-          document.getElementById(`btn-confirm-${moduleIdStr}`).disabled = false;
+          setTimeout(() => marcarComoVisualizado(moduleIdStr), 500);
         }
       }, 100);
     });
@@ -515,14 +536,16 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   }
 
   function confirmModule(moduleId) {
+    const btn = document.getElementById(`btn-confirm-${moduleId}`);
+    if (!btn || btn.disabled) return;
+    
     const moduleIdStr = String(moduleId);
     completedModules[moduleIdStr] = true;
     
     const block = document.getElementById('block-' + moduleIdStr);
     if (block) block.classList.add('completed');
     
-    const btn = document.getElementById(`btn-confirm-${moduleIdStr}`);
-    if (btn) btn.style.display = 'none';
+    btn.style.display = 'none';
     
     const confirmedDiv = document.getElementById(`confirmed-${moduleIdStr}`);
     if (confirmedDiv) confirmedDiv.style.display = 'block';
@@ -699,107 +722,74 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
 
   // ==================== FUNÇÕES DO CERTIFICADO ====================
   
-  function descarregarComoImagem() {
+  function descarregarPDF() {
     const element = document.getElementById('certificado-para-pdf');
     if (!element) {
       toast('❌ Erro: elemento do certificado não encontrado');
       return;
     }
     
-    toast('📸 A gerar imagem...');
+    toast('📄 A gerar PDF...');
     
-    html2canvas(element, {
-      scale: 3,
-      backgroundColor: '#ffffff',
-      useCORS: true,
-      logging: false
-    }).then(canvas => {
-      const link = document.createElement('a');
-      link.download = `certificado_${nomeUser.replace(/\s/g, '_')}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      toast('✅ Imagem guardada!');
-    }).catch(err => {
-      console.error(err);
-      toast('❌ Erro ao gerar imagem');
-    });
+    const opt = {
+      margin: [0, 0, 0, 0],
+      filename: `certificado_${nomeUser.replace(/\s/g, '_')}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, letterRendering: true, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    
+    html2pdf().set(opt).from(element).save()
+      .then(() => toast('✅ PDF guardado!'))
+      .catch(err => {
+        console.error(err);
+        toast('❌ Erro ao gerar PDF');
+      });
   }
   
-  async function imprimirCertificado() {
-    toast('🖨️ A preparar impressão...');
-    
-    // Obter o elemento do certificado
+  function imprimirCertificado() {
     const element = document.getElementById('certificado-para-pdf');
     if (!element) {
       toast('❌ Erro: certificado não encontrado');
       return;
     }
     
-    // Capturar o elemento como imagem
-    const canvas = await html2canvas(element, {
-      scale: 3,
+    toast('🖨️ A preparar impressão...');
+    
+    html2canvas(element, {
+      scale: 2,
       backgroundColor: '#ffffff',
       useCORS: true,
       logging: false
+    }).then(canvas => {
+      const imageData = canvas.toDataURL('image/png');
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Certificado - ${nomeUser}</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: white; }
+            .cert-container { width: 210mm; margin: 0 auto; }
+            .cert-image { width: 100%; height: auto; display: block; }
+            @media print { body { margin: 0; padding: 0; } .cert-container { width: 100%; margin: 0; } }
+          </style>
+        </head>
+        <body>
+          <div class="cert-container"><img src="${imageData}" class="cert-image" alt="Certificado"></div>
+          <script>
+            window.onload = function() { setTimeout(function() { window.print(); setTimeout(function() { window.close(); }, 1000); }, 500); };
+          <\/script>
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
+    }).catch(err => {
+      console.error(err);
+      toast('❌ Erro ao preparar impressão');
     });
-    
-    const imageData = canvas.toDataURL('image/png');
-    
-    // Criar janela de impressão
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Certificado - ${nomeUser}</title>
-        <style>
-          * { margin: 0; padding: 0; box-sizing: border-box; }
-          body {
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: white;
-          }
-          .cert-container {
-            width: 210mm;
-            margin: 0 auto;
-          }
-          .cert-image {
-            width: 100%;
-            height: auto;
-            display: block;
-          }
-          @media print {
-            body {
-              margin: 0;
-              padding: 0;
-            }
-            .cert-container {
-              width: 100%;
-              margin: 0;
-            }
-          }
-        </style>
-      </head>
-      <body>
-        <div class="cert-container">
-          <img src="${imageData}" class="cert-image" alt="Certificado">
-        </div>
-        <script>
-          window.onload = function() {
-            setTimeout(function() {
-              window.print();
-              setTimeout(function() { window.close(); }, 1000);
-            }, 500);
-          };
-        <\/script>
-      </body>
-      </html>
-    `);
-    printWindow.document.close();
   }
 
   async function showCertificate() {
@@ -861,8 +851,8 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
           </div>
         </div>
         <div class="cert-actions">
-          <button class="action-btn action-btn-download" onclick="descarregarComoImagem()">
-            <i class="fas fa-download"></i> Descarregar como Imagem
+          <button class="action-btn action-btn-download" onclick="descarregarPDF()">
+            <i class="fas fa-file-pdf"></i> Descarregar PDF
           </button>
           <button class="action-btn" onclick="imprimirCertificado()">
             <i class="fas fa-print"></i> Imprimir Certificado
@@ -918,7 +908,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   window.showCertificate = showCertificate;
   window.confirmModule = confirmModule;
   window.sair = sair;
-  window.descarregarComoImagem = descarregarComoImagem;
+  window.descarregarPDF = descarregarPDF;
   window.imprimirCertificado = imprimirCertificado;
 
   window.addEventListener('load', () => {
