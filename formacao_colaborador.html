@@ -466,14 +466,20 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
 
   // ==================== FUNÇÃO CONFIRM MODULE CORRIGIDA ====================
   function confirmModule(moduleId) {
+    console.log("🔵 confirmModule chamado para:", moduleId);
+    
     // Marcar como concluído
     completedModules[moduleId] = true;
     
     // Atualizar UI do módulo atual
     const block = document.getElementById('block-' + moduleId);
-    block.classList.add('completed');
-    document.getElementById(`btn-confirm-${moduleId}`).style.display = 'none';
-    document.getElementById(`confirmed-${moduleId}`).style.display = 'block';
+    if (block) block.classList.add('completed');
+    
+    const btn = document.getElementById(`btn-confirm-${moduleId}`);
+    if (btn) btn.style.display = 'none';
+    
+    const confirmedDiv = document.getElementById(`confirmed-${moduleId}`);
+    if (confirmedDiv) confirmedDiv.style.display = 'block';
     
     toast('✅ Módulo concluído!');
     updateProgress();
@@ -482,13 +488,16 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     const currentBody = document.getElementById(`body-${moduleId}`);
     if (currentBody) {
       currentBody.classList.remove('open');
+      console.log("🔵 Módulo atual fechado");
     }
     
     // Encontrar o índice do módulo atual
     const idx = modules.findIndex(m => m.id === moduleId);
+    console.log("🔵 Índice:", idx, "Total de módulos:", modules.length);
     
     // Verificar se é o último módulo
     if (idx === modules.length - 1) {
+      console.log("🔵 É o ÚLTIMO módulo - abrir avaliação");
       // ÚLTIMO MÓDULO - DESBLOQUEAR E ABRIR AVALIAÇÃO
       const quizBlock = document.getElementById('block-quiz');
       if (quizBlock) {
@@ -503,6 +512,9 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
           setTimeout(() => {
             quizBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }, 100);
+          console.log("🔵 Avaliação aberta");
+        } else {
+          console.log("🔴 ERRO: body-quiz não encontrado");
         }
         toast('📝 Avaliação final desbloqueada!');
       }
@@ -510,6 +522,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     else {
       // PRÓXIMO MÓDULO - DESBLOQUEAR E ABRIR
       const nextModuleId = modules[idx + 1].id;
+      console.log("🔵 Abrir próximo módulo:", nextModuleId);
       const nextBlock = document.getElementById(`block-${nextModuleId}`);
       if (nextBlock) {
         nextBlock.classList.remove('locked');
@@ -521,8 +534,13 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
           setTimeout(() => {
             nextBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }, 100);
+          console.log("🔵 Próximo módulo aberto");
+        } else {
+          console.log("🔴 ERRO: body do próximo módulo não encontrado");
         }
         toast('📚 Próximo módulo desbloqueado!');
+      } else {
+        console.log("🔴 ERRO: próximo block não encontrado");
       }
     }
   }
@@ -668,7 +686,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     toast('🏅 Certificado gerado!');
   }
 
-  // ==================== FUNÇÃO TOGGLE SECTION CORRIGIDA ====================
+  // ==================== FUNÇÃO TOGGLE SECTION ====================
   function toggleSection(id) {
     if (id === 'quiz') {
       const block = document.getElementById('block-quiz');
@@ -697,6 +715,41 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     if (confirm('Sair?')) window.location.href = 'dashboard.html';
   }
 
+  // ==================== TESTE DE BOTÕES ====================
+  function testarBotoes() {
+    console.log("=== TESTE DE BOTÕES ===");
+    const botoes = document.querySelectorAll('.btn-confirm');
+    console.log("Total de botões encontrados:", botoes.length);
+    botoes.forEach(btn => {
+      console.log("Botão encontrado:", btn.id);
+      // Guardar a função original
+      const originalOnclick = btn.onclick;
+      // Substituir para teste
+      btn.onclick = function(e) {
+        e.stopPropagation();
+        console.log("🔴 CLICOU NO BOTÃO:", this.id);
+        alert("Botão clicado! ID: " + this.id);
+        // Chamar a função original
+        const moduleId = this.id.replace('btn-confirm-', '');
+        confirmModule(moduleId);
+      };
+    });
+  }
+
+  // ==================== TESTE DE ELEMENTOS ====================
+  function testarElementos() {
+    console.log("=== TESTE DE ELEMENTOS ===");
+    console.log("modules:", modules.length);
+    modules.forEach((m, idx) => {
+      console.log(`Módulo ${idx+1}:`, m.id, m.titulo);
+      console.log(`  - block-${m.id}:`, document.getElementById(`block-${m.id}`) ? "✅" : "❌");
+      console.log(`  - body-${m.id}:`, document.getElementById(`body-${m.id}`) ? "✅" : "❌");
+      console.log(`  - btn-confirm-${m.id}:`, document.getElementById(`btn-confirm-${m.id}`) ? "✅" : "❌");
+    });
+    console.log("Quiz block:", document.getElementById('block-quiz') ? "✅" : "❌");
+    console.log("Quiz body:", document.getElementById('body-quiz') ? "✅" : "❌");
+  }
+
   window.toggleSection = toggleSection;
   window.selectOpt = selectOpt;
   window.submitQuiz = submitQuiz;
@@ -704,22 +757,9 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   window.showCertificate = showCertificate;
   window.confirmModule = confirmModule;
   window.sair = sair;
-// Função para testar se os elementos existem
-function testarElementos() {
-  console.log("=== TESTE DE ELEMENTOS ===");
-  console.log("modules:", modules.length);
-  modules.forEach((m, idx) => {
-    console.log(`Módulo ${idx+1}:`, m.id, m.titulo);
-    console.log(`  - block-${m.id}:`, document.getElementById(`block-${m.id}`) ? "✅" : "❌");
-    console.log(`  - body-${m.id}:`, document.getElementById(`body-${m.id}`) ? "✅" : "❌");
-    console.log(`  - btn-confirm-${m.id}:`, document.getElementById(`btn-confirm-${m.id}`) ? "✅" : "❌");
-  });
-  console.log("Quiz block:", document.getElementById('block-quiz') ? "✅" : "❌");
-  console.log("Quiz body:", document.getElementById('body-quiz') ? "✅" : "❌");
-}
+  window.testarBotoes = testarBotoes;
+  window.testarElementos = testarElementos;
 
-// Chamar após carregar os módulos
-setTimeout(testarElementos, 2000);
   window.addEventListener('load', () => {
     if (!localStorage.getItem('usuarioAtivo')) {
       window.location.href = 'login.html';
@@ -735,6 +775,10 @@ setTimeout(testarElementos, 2000);
     } else {
       document.getElementById('loading').innerHTML = '❌ Nenhuma formação. <a href="dashboard.html">Voltar</a>';
     }
+    
+    // Chamar testes após carregar
+    setTimeout(testarElementos, 2000);
+    setTimeout(testarBotoes, 2500);
   });
 </script>
 </body>
