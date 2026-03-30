@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Birkenstock S&CC — Formação</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <style>
 :root {
   --birkenstock-blue: #00338D;
@@ -239,60 +240,44 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
 .toast.show { opacity: 1; }
 .loading { text-align: center; padding: 60px; color: #666; }
 
-@media print {
-  /* Esconder tudo exceto o certificado */
-  .top-bar, 
-  .progress-strip, 
-  .hero, 
-  .toast, 
-  .btn-exit,
-  .section-block,
-  .quiz-intro,
-  .result-screen,
-  .cert-actions,
-  .btn-dl,
-  .btn-secondary,
-  .main > div:not(.cert-screen) {
-    display: none !important;
-  }
-  
-  /* Garantir que o certificado aparece */
-  .cert-screen {
-    display: block !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-  }
-  
-  .cert-card {
-    width: 100% !important;
-    min-height: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    box-shadow: none !important;
-    border: none !important;
-    border-radius: 0 !important;
-    background-size: cover !important;
-  }
-  
-  body {
-    background: white;
-    margin: 0;
-    padding: 0;
-  }
-  
-  /* Esconder tudo que está fora do certificado */
-  body * {
-    visibility: hidden;
-  }
-  
-  .cert-screen, .cert-screen * {
-    visibility: visible;
-  }
+/* Botões de ação do certificado */
+.cert-actions {
+  text-align: center;
+  margin-top: 20px;
+  padding: 20px;
+}
+.action-btn {
+  background: #00338D;
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 40px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  display: inline-block;
+  margin: 0 10px;
+  min-width: 200px;
+  transition: all 0.2s;
+}
+.action-btn:hover {
+  background: #00277A;
+  transform: translateY(-2px);
+}
+.action-btn-secondary {
+  background: white;
+  color: #00338D;
+  border: 2px solid #00338D;
+}
+.action-btn-secondary:hover {
+  background: #00338D;
+  color: white;
+}
+.action-btn-download {
+  background: #10B981;
+}
+.action-btn-download:hover {
+  background: #059669;
 }
 
 @media (max-width: 768px) {
@@ -303,6 +288,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   .section-header { padding: 16px; }
   .section-body { padding: 16px; }
   .cert-card { width: 100%; min-height: auto; }
+  .action-btn { padding: 10px 20px; min-width: 160px; font-size: 0.9rem; margin: 5px; }
 }
 </style>
 </head>
@@ -539,17 +525,10 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     renderQuiz();
   }
 
-  // ==================== FUNÇÃO CONFIRM MODULE ====================
   function confirmModule(moduleId) {
-    console.log("🔵 confirmModule chamado para:", moduleId, "tipo:", typeof moduleId);
-    
-    // Converter para string para comparar corretamente
     const moduleIdStr = String(moduleId);
-    
-    // Marcar como concluído
     completedModules[moduleIdStr] = true;
     
-    // Atualizar UI do módulo atual
     const block = document.getElementById('block-' + moduleIdStr);
     if (block) block.classList.add('completed');
     
@@ -562,25 +541,12 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     toast('✅ Módulo concluído!');
     updateProgress();
     
-    // Fechar o módulo atual
     const currentBody = document.getElementById(`body-${moduleIdStr}`);
-    if (currentBody) {
-      currentBody.classList.remove('open');
-      console.log("🔵 Módulo atual fechado");
-    }
+    if (currentBody) currentBody.classList.remove('open');
     
-    // Encontrar o índice do módulo atual - converter IDs para string
     const idx = modules.findIndex(m => String(m.id) === moduleIdStr);
-    console.log("🔵 Índice:", idx, "Total de módulos:", modules.length);
     
-    if (idx === -1) {
-      console.log("🔴 ERRO: Módulo não encontrado!");
-      return;
-    }
-    
-    // Verificar se é o último módulo
     if (idx === modules.length - 1) {
-      console.log("🔵 É o ÚLTIMO módulo - abrir avaliação");
       const quizBlock = document.getElementById('block-quiz');
       if (quizBlock) {
         quizBlock.classList.remove('locked');
@@ -593,14 +559,12 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
           setTimeout(() => {
             quizBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }, 100);
-          console.log("🔵 Avaliação aberta");
         }
         toast('📝 Avaliação final desbloqueada!');
       }
     } 
     else {
       const nextModuleId = String(modules[idx + 1].id);
-      console.log("🔵 Abrir próximo módulo:", nextModuleId);
       const nextBlock = document.getElementById(`block-${nextModuleId}`);
       if (nextBlock) {
         nextBlock.classList.remove('locked');
@@ -611,7 +575,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
           setTimeout(() => {
             nextBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }, 100);
-          console.log("🔵 Próximo módulo aberto");
         }
         toast('📚 Próximo módulo desbloqueado!');
       }
@@ -732,27 +695,89 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     document.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
   }
 
-  // ==================== FUNÇÃO IMPRIMIR CERTIFICADO ====================
-  function imprimirCertificado() {
-    const certificado = document.querySelector('.cert-screen');
-    if (certificado) {
-      const originalBody = document.body.innerHTML;
-      document.body.innerHTML = certificado.outerHTML;
-      window.print();
-      document.body.innerHTML = originalBody;
-      window.location.reload();
-    } else {
-      window.print();
+  // ==================== FUNÇÕES DO CERTIFICADO ====================
+  
+  function gerarPDF() {
+    const element = document.getElementById('certificado-para-pdf');
+    if (!element) {
+      toast('Erro ao gerar PDF', 'error');
+      return;
     }
+    
+    toast('📄 A gerar PDF...', 'info');
+    
+    const opt = {
+      margin: [0, 0, 0, 0],
+      filename: `certificado_${nomeUser.replace(/\s/g, '_')}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, letterRendering: true, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    
+    html2pdf().set(opt).from(element).save().then(() => {
+      toast('✅ PDF gerado com sucesso!', 'success');
+    }).catch(err => {
+      console.error('Erro ao gerar PDF:', err);
+      toast('❌ Erro ao gerar PDF', 'error');
+    });
+  }
+  
+  function imprimirCertificado() {
+    const element = document.getElementById('certificado-para-pdf');
+    if (!element) {
+      toast('Erro ao imprimir', 'error');
+      return;
+    }
+    
+    const originalTitle = document.title;
+    document.title = `Certificado - ${nomeUser}`;
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Certificado - ${nomeUser}</title>
+          <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font-family: 'DM Sans', sans-serif; background: white; margin: 0; padding: 0; }
+            .cert-print { width: 210mm; min-height: 297mm; margin: 0 auto; background: white; }
+            ${Array.from(document.styleSheets).reduce((acc, sheet) => {
+              try {
+                const rules = sheet.cssRules || sheet.rules;
+                if (rules) {
+                  for (let rule of rules) {
+                    if (rule.cssText) acc += rule.cssText;
+                  }
+                }
+              } catch(e) {}
+              return acc;
+            }, '')}
+            .cert-actions { display: none !important; }
+            @media print {
+              body { margin: 0; padding: 0; }
+              .cert-print { margin: 0; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="cert-print">
+            ${element.outerHTML}
+          </div>
+          <script>
+            window.onload = function() { window.print(); window.close(); };
+          <\/script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
   }
 
-  // ==================== FUNÇÃO SHOW CERTIFICATE COM A4 E BOTÕES CORRIGIDOS ====================
   function showCertificate() {
     const now = new Date();
     const certId = 'CERT-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
     const nota = document.getElementById('score-num').textContent;
     
-    // Carregar a imagem de fundo salva no admin
     let fundoImagem = 'imagens/fundo_certificado.png';
     const certTemplateSalvo = localStorage.getItem('cert_template');
     if (certTemplateSalvo) {
@@ -764,14 +789,13 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
       } catch(e) {}
     }
     
-    // Garantir que o caminho está correto
     if (!fundoImagem.startsWith('http') && !fundoImagem.startsWith('data:')) {
       fundoImagem = window.location.origin + window.location.pathname.replace('formacao_colaborador.html', '') + fundoImagem;
     }
     
     const certHtml = `
       <div class="cert-screen" style="display:block; margin-top: 30px; page-break-after: avoid;">
-        <div class="cert-card" style="
+        <div id="certificado-para-pdf" style="
           background-image: url('${fundoImagem}');
           background-size: cover;
           background-position: center;
@@ -810,48 +834,25 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
             </div>
           </div>
         </div>
-        <div class="cert-actions" style="text-align: center; margin-top: 20px; padding: 20px;">
-          <button class="btn-dl" onclick="imprimirCertificado()" style="
-            background: #00338D; 
-            color: white; 
-            border: none; 
-            padding: 14px 32px; 
-            border-radius: 40px; 
-            cursor: pointer; 
-            font-weight: 600;
-            font-size: 1rem;
-            display: inline-block;
-            margin: 0 10px;
-            min-width: 200px;
-          ">
+        <div class="cert-actions">
+          <button class="action-btn action-btn-download" onclick="gerarPDF()">
+            <i class="fas fa-download"></i> Descarregar PDF
+          </button>
+          <button class="action-btn" onclick="imprimirCertificado()">
             <i class="fas fa-print"></i> Imprimir Certificado
           </button>
-          <button class="btn-secondary" onclick="window.location.href='dashboard.html'" style="
-            background: white; 
-            color: #00338D; 
-            border: 2px solid #00338D; 
-            padding: 14px 32px; 
-            border-radius: 40px; 
-            cursor: pointer; 
-            font-weight: 600;
-            font-size: 1rem;
-            display: inline-block;
-            margin: 0 10px;
-            min-width: 200px;
-          ">
+          <button class="action-btn action-btn-secondary" onclick="window.location.href='dashboard.html'">
             <i class="fas fa-home"></i> Voltar ao Dashboard
           </button>
         </div>
       </div>
     `;
     
-    // Remover certificado anterior se existir
     const existingCert = document.getElementById('cert-screen');
     if (existingCert) existingCert.remove();
     
     document.getElementById('modules-container').insertAdjacentHTML('beforeend', certHtml);
     
-    // Scroll para o certificado
     setTimeout(() => {
       const certScreen = document.getElementById('cert-screen');
       if (certScreen) certScreen.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -860,7 +861,6 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
     toast('🏅 Certificado gerado!');
   }
 
-  // ==================== FUNÇÃO TOGGLE SECTION ====================
   function toggleSection(id) {
     if (id === 'quiz') {
       const block = document.getElementById('block-quiz');
@@ -896,6 +896,7 @@ body { background: var(--birkenstock-beige); font-family: var(--font-body); }
   window.showCertificate = showCertificate;
   window.confirmModule = confirmModule;
   window.sair = sair;
+  window.gerarPDF = gerarPDF;
   window.imprimirCertificado = imprimirCertificado;
 
   window.addEventListener('load', () => {
