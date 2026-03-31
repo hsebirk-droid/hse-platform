@@ -71,11 +71,11 @@
   </div>
 </div>
 
-<!-- Toast notification (será criado dinamicamente pelo JS se necessário) -->
+<!-- Toast notification -->
 <div id="toast" class="toast"></div>
 
 <script type="module">
-  import { loginColaborador, loginAdmin, getCurrentUser } from './js/auth.js';
+  import { loginColaborador, loginAdmin } from './js/auth.js';
   import { showToast } from './js/utils.js';
 
   // ============================================
@@ -173,7 +173,6 @@
     isLoggingIn = true;
     setLoading(btnAdmin, true, 'Entrar como Gestor');
     
-    // Pequeno delay para feedback visual
     setTimeout(() => {
       if (loginAdmin(pass)) {
         showToast('✅ Acesso administrativo concedido!');
@@ -212,29 +211,7 @@
   }
 
   // ============================================
-  // EVENT LISTENERS
-  // ============================================
-  
-  btnColab.addEventListener('click', handleLoginColaborador);
-  btnAdmin.addEventListener('click', handleLoginAdmin);
-  tabColab.addEventListener('click', switchToColab);
-  tabAdmin.addEventListener('click', switchToAdmin);
-  
-  // Enter key handlers
-  inputPassColab.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') handleLoginColaborador();
-  });
-  
-  inputPassAdmin.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') handleLoginAdmin();
-  });
-  
-  inputUser.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') inputPassColab.focus();
-  });
-
-  // ============================================
-  // EVENT LISTENERS
+  // EVENT LISTENERS (APENAS UMA VEZ)
   // ============================================
   
   btnColab.addEventListener('click', handleLoginColaborador);
