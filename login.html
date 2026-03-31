@@ -234,19 +234,27 @@
   });
 
   // ============================================
-  // VERIFICAR SE JÁ ESTÁ LOGADO
+  // EVENT LISTENERS
   // ============================================
   
-  const currentUser = getCurrentUser();
-  if (currentUser) {
-    // Se já está logado, redirecionar para a página apropriada
-    if (currentUser.type === 'admin') {
-      window.location.href = 'admin.html';
-    } else if (currentUser.type === 'colaborador') {
-      window.location.href = 'dashboard.html';
-    }
-  }
+  btnColab.addEventListener('click', handleLoginColaborador);
+  btnAdmin.addEventListener('click', handleLoginAdmin);
+  tabColab.addEventListener('click', switchToColab);
+  tabAdmin.addEventListener('click', switchToAdmin);
   
+  // Enter key handlers
+  inputPassColab.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleLoginColaborador();
+  });
+  
+  inputPassAdmin.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleLoginAdmin();
+  });
+  
+  inputUser.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') inputPassColab.focus();
+  });
+
   // Focar no campo de utilizador ao carregar a página
   inputUser.focus();
 </script>
