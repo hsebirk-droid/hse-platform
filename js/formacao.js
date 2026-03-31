@@ -16,6 +16,29 @@ let cursoData = {};
 
 // Inicialização
 export async function initFormacao() {
+  // 1º: Verificar se há token na URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get('token');
+  
+  if (token) {
+    // Se há token, criamos sessão com os dados do token
+    try {
+      const decoded = atob(token);
+      const dados = JSON.parse(decoded);
+      
+      // Guarda o nome do colaborador na sessão
+      localStorage.setItem('usuarioAtivo', dados.user);
+      localStorage.setItem('cursoAtualId', dados.cursoId);
+      
+      // Carrega a formação diretamente
+      await carregarFormacao(dados.cursoId);
+      return;
+    } catch(e) {
+      console.error('Token inválido');
+    }
+  }
+  
+  // 2º: Se não há token, verificar login normal
   if (!checkAuth()) return;
   
   const user = getCurrentUser();
@@ -23,6 +46,9 @@ export async function initFormacao() {
     window.location.href = 'login.html';
     return;
   }
+  
+  // ... resto do código
+}
   
   nomeUser = user.name;
   document.getElementById('user-name-display').textContent = nomeUser;
