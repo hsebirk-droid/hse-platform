@@ -1,176 +1,128 @@
-// ============================================
-// DASHBOARD - VERSÃO SIMPLES
-// ============================================
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard | Birkenstock S&CC Portugal</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
 
-import { db, collection, query, orderBy, onSnapshot } from './firebase-config.js';
-import { escapeHtml, formatDate, showToast, checkAuth } from './utils.js';
-import { getCurrentUser, logout } from './auth.js';
-
-let allCourses = [];
-let userProgress = {};
-
-// Inicialização
-export async function initDashboard() {
-  console.log("Dashboard iniciado");
-  
-  if (!checkAuth()) return;
-  
-  const user = getCurrentUser();
-  if (!user || user.type !== 'colaborador') {
-    window.location.href = 'login.html';
-    return;
-  }
-  
-  document.getElementById('userNameDisplay').textContent = user.name;
-  document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
-  document.getElementById('welcomeMessage').innerHTML = `Bem-vindo de volta, ${user.name}! 👋`;
-  
-  // Carregar progresso
-  const saved = localStorage.getItem(`progress_${user.name}`);
-  if (saved) userProgress = JSON.parse(saved);
-  
-  // Carregar formações
-  await loadCourses();
-  
-  // Configurar eventos
-  setupEventListeners();
-}
-
-// Carregar formações
-async function loadCourses() {
-  const loadingDiv = document.getElementById('loading');
-  const coursesGrid = document.getElementById('coursesGrid');
-  
-  loadingDiv.style.display = 'block';
-  coursesGrid.style.display = 'none';
-  
-  try {
-    const unsubscribe = onSnapshot(
-      query(collection(db, 'formacoes'), orderBy('dataTimestamp', 'desc')),
-      (snapshot) => {
-        allCourses = [];
-        snapshot.forEach((doc) => {
-          allCourses.push({ id: doc.id, ...doc.data() });
-        });
-        
-        console.log("Formações carregadas:", allCourses.length);
-        updateStats();
-        renderCourses();
-        
-        loadingDiv.style.display = 'none';
-        coursesGrid.style.display = 'grid';
-      },
-      (error) => {
-        console.error("Erro:", error);
-        loadingDiv.innerHTML = '❌ Erro ao carregar formações.';
-      }
-    );
-  } catch(e) {
-    console.error("Erro:", e);
-    loadingDiv.innerHTML = '❌ Erro ao carregar formações.';
-  }
-}
-
-// Atualizar estatísticas
-function updateStats() {
-  let completed = 0;
-  let inProgress = 0;
-  
-  allCourses.forEach(curso => {
-    if (userProgress[curso.id]?.completed) completed++;
-    else if (userProgress[curso.id]?.modulesCompleted > 0) inProgress++;
-  });
-  
-  document.getElementById('coursesCompleted').textContent = completed;
-  document.getElementById('coursesInProgress').textContent = inProgress;
-  document.getElementById('certificatesCount').textContent = completed;
-}
-
-// Calcular progresso
-function getProgress(curso) {
-  const p = userProgress[curso.id];
-  if (p?.completed) return 100;
-  if (p?.modulesCompleted) {
-    const total = curso.modulos?.length || 1;
-    return Math.round((p.modulesCompleted / total) * 100);
-  }
-  return 0;
-}
-
-// Renderizar cursos
-function renderCourses() {
-  const grid = document.getElementById('coursesGrid');
-  const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
-  const filter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
-  
-  let filtered = allCourses.filter(curso => {
-    if (searchTerm && !curso.nome?.toLowerCase().includes(searchTerm)) return false;
-    
-    const progress = getProgress(curso);
-    if (filter === 'concluidas') return progress === 100;
-    if (filter === 'em_andamento') return progress > 0 && progress < 100;
-    return true;
-  });
-  
-  if (filtered.length === 0) {
-    grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📚</div><h4>Nenhuma formação</h4><p>Tente ajustar os filtros.</p></div>`;
-    return;
-  }
-  
-  grid.innerHTML = filtered.map(curso => {
-    const progress = getProgress(curso);
-    const completed = progress === 100;
-    const btnText = completed ? '🎓 Ver Certificado' : (progress > 0 ? '▶ Continuar' : '📖 Iniciar');
-    const btnClass = completed ? 'btn-completed' : (progress > 0 ? 'btn-continue' : '');
-    
-    return `
-      <div class="course-card" onclick="window.entrarFormacao('${curso.id}')">
-        <div class="course-cover">
-          <i class="fas fa-book-open"></i>
-          <span class="course-badge">${escapeHtml(curso.duracao || '30 min')}</span>
+<header class="dashboard-header">
+  <div class="header-logo">
+    <div class="logo-text">BIRKENSTOCK</div>
+    <small>S&CC Portugal · Formação</small>
+  </div>
+  <div class="header-actions">
+    <div class="notification-wrapper">
+      <button class="icon-btn" id="notificationBtn">
+        <i class="fas fa-bell"></i>
+        <span class="notification-badge" id="notificationBadge" style="display:none;">0</span>
+      </button>
+      <div class="notifications-panel" id="notificationsPanel">
+        <div class="notifications-header">
+          <span>Notificações</span>
         </div>
-        <div class="course-body">
-          <div class="course-title">${escapeHtml(curso.nome)}</div>
-          <div class="course-desc">${escapeHtml((curso.descricao || '').substring(0, 100))}</div>
-          <div class="course-meta">
-            <span>📦 ${curso.modulos?.length || 0} módulos</span>
-            <span>📝 ${curso.perguntas?.length || 0} questões</span>
-          </div>
-          ${!completed ? `<div class="course-progress"><div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div><div class="progress-text">${progress}%</div></div>` : ''}
-          <div class="btn-start ${btnClass}">${btnText}</div>
-        </div>
+        <div id="notificationsList"></div>
       </div>
-    `;
-  }).join('');
-}
+    </div>
+    <div class="user-menu" id="userMenuBtn">
+      <div class="user-avatar" id="userAvatar"></div>
+      <span class="user-name" id="userNameDisplay"></span>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="user-dropdown" id="userDropdown">
+      <div class="dropdown-item" onclick="window.openProfileModal()">
+        <i class="fas fa-user"></i> Meu Perfil
+      </div>
+      <div class="dropdown-item" onclick="window.openCompletedModal()">
+        <i class="fas fa-check-circle"></i> Formações Concluídas
+      </div>
+      <div class="dropdown-divider"></div>
+      <div class="dropdown-item logout-item" id="logoutBtn">
+        <i class="fas fa-sign-out-alt"></i> Sair
+      </div>
+    </div>
+  </div>
+</header>
 
-// Entrar na formação
-window.entrarFormacao = (id) => {
-  localStorage.setItem('cursoAtualId', id);
-  window.location.href = 'formacao_colaborador.html';
-};
+<div class="main-container">
+  <div class="welcome-section">
+    <h2 id="welcomeMessage">Bem-vindo de volta! 👋</h2>
+    <p>Continue a sua jornada de aprendizagem e desenvolvimento profissional.</p>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="coursesCompleted">0</div>
+        <div class="stat-label">Formações Concluídas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="coursesInProgress">0</div>
+        <div class="stat-label">Em Andamento</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="certificatesCount">0</div>
+        <div class="stat-label">Certificados</div>
+      </div>
+    </div>
+  </div>
 
-// Configurar eventos
-function setupEventListeners() {
-  const searchInput = document.getElementById('searchInput');
-  if (searchInput) {
-    searchInput.addEventListener('input', () => renderCourses());
-  }
-  
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderCourses();
-    });
-  });
-  
-  document.querySelector('.logout-btn')?.addEventListener('click', logout);
-}
+  <div class="search-section">
+    <div class="search-bar">
+      <input type="text" class="search-input" id="searchInput" placeholder="🔍 Pesquisar formações...">
+      <div class="filter-buttons">
+        <button class="filter-btn active" data-filter="all">Todas</button>
+        <button class="filter-btn" data-filter="em_andamento">Em Andamento</button>
+        <button class="filter-btn" data-filter="concluidas">Concluídas</button>
+      </div>
+    </div>
+  </div>
 
-// Iniciar
-document.addEventListener('DOMContentLoaded', () => {
-  initDashboard();
-});
+  <div class="section-title">
+    <h3><i class="fas fa-graduation-cap"></i> Minhas Formações</h3>
+  </div>
 
-window.entrarFormacao = entrarFormacao;
+  <div id="loading" class="loading">📚 A carregar formações...</div>
+  <div id="coursesGrid" class="courses-grid" style="display:none;"></div>
+</div>
+
+<!-- Modais -->
+<div id="profileModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Meu Perfil</h3>
+      <span class="modal-close" onclick="window.closeProfileModal()">&times;</span>
+    </div>
+    <div class="profile-avatar" id="profileAvatar"></div>
+    <div class="profile-field">
+      <label>Nome</label>
+      <p id="profileName"></p>
+    </div>
+    <div class="profile-field">
+      <label>Email</label>
+      <p id="profileEmail"></p>
+    </div>
+    <div class="profile-field">
+      <label>Membro desde</label>
+      <p id="profileSince"></p>
+    </div>
+  </div>
+</div>
+
+<div id="completedModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>🏆 Formações Concluídas</h3>
+      <span class="modal-close" onclick="window.closeCompletedModal()">&times;</span>
+    </div>
+    <div id="completedList"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script type="module" src="js/dashboard.js"></script>
+</body>
+</html>
