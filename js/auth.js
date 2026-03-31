@@ -1,11 +1,6 @@
 import { db, collection, getDocs, query, where } from './firebase-config.js';
-import { showToast, checkAuth } from './utils.js';
+import { showToast } from './utils.js';
 
-// ============================================
-// AUTENTICAÇÃO
-// ============================================
-
-// Login do colaborador
 export async function loginColaborador(user, pass) {
   try {
     const q = query(collection(db, 'colaboradores'), where('user', '==', user.toLowerCase().trim()));
@@ -28,7 +23,6 @@ export async function loginColaborador(user, pass) {
   }
 }
 
-// Login do administrador
 export function loginAdmin(password) {
   const ADMIN_PASS = 'SSA2024admin';
   if (password === ADMIN_PASS) {
@@ -38,7 +32,6 @@ export function loginAdmin(password) {
   return false;
 }
 
-// Verificar sessão atual
 export function getCurrentUser() {
   const colaborador = localStorage.getItem('usuarioAtivo');
   const admin = localStorage.getItem('usuarioAdmin');
@@ -47,12 +40,10 @@ export function getCurrentUser() {
   return null;
 }
 
-// Verificar se é admin
 export function isAdmin() {
   return localStorage.getItem('usuarioAdmin') !== null;
 }
 
-// Logout
 export function logout() {
   if (confirm('Deseja sair da plataforma?')) {
     localStorage.removeItem('usuarioAtivo');
