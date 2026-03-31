@@ -37,7 +37,6 @@ body {
   min-height: 100vh;
 }
 
-/* Header */
 .header {
   background: var(--birkenstock-blue);
   padding: 12px 32px;
@@ -129,14 +128,12 @@ body {
   background: rgba(255,255,255,0.3);
 }
 
-/* Main Container */
 .main-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 32px 24px;
 }
 
-/* Welcome Section */
 .welcome-section {
   background: linear-gradient(135deg, var(--birkenstock-blue), var(--birkenstock-blue-dark));
   border-radius: 24px;
@@ -184,7 +181,6 @@ body {
   opacity: 0.8;
 }
 
-/* Search & Filters */
 .search-section {
   margin-bottom: 32px;
 }
@@ -202,7 +198,6 @@ body {
   padding: 12px 20px;
   font-size: 1rem;
   outline: none;
-  transition: all 0.2s;
 }
 .search-input:focus {
   border-color: var(--birkenstock-blue);
@@ -220,7 +215,6 @@ body {
   padding: 8px 20px;
   font-size: 0.85rem;
   cursor: pointer;
-  transition: all 0.2s;
 }
 .filter-btn.active {
   background: var(--birkenstock-blue);
@@ -231,7 +225,6 @@ body {
   background: var(--bg);
 }
 
-/* Courses Grid */
 .section-title {
   display: flex;
   justify-content: space-between;
@@ -346,7 +339,6 @@ body {
   font-size: 0.85rem;
   font-weight: 600;
   margin-top: 16px;
-  transition: all 0.2s;
 }
 .btn-start:hover {
   background: var(--birkenstock-blue-dark);
@@ -363,8 +355,6 @@ body {
 .btn-completed:hover {
   background: #059669;
 }
-
-/* Empty State */
 .empty-state {
   text-align: center;
   padding: 60px 20px;
@@ -384,8 +374,6 @@ body {
 .empty-state p {
   color: var(--birkenstock-gray);
 }
-
-/* Notifications Panel */
 .notifications-panel {
   position: fixed;
   top: 70px;
@@ -411,7 +399,6 @@ body {
   padding: 12px 16px;
   border-bottom: 1px solid var(--border);
   cursor: pointer;
-  transition: background 0.2s;
 }
 .notification-item:hover {
   background: var(--bg);
@@ -426,8 +413,6 @@ body {
   color: var(--birkenstock-gray);
   margin-top: 4px;
 }
-
-/* User Menu Dropdown */
 .user-dropdown {
   position: absolute;
   top: 60px;
@@ -448,7 +433,6 @@ body {
   align-items: center;
   gap: 12px;
   cursor: pointer;
-  transition: background 0.2s;
 }
 .dropdown-item:hover {
   background: var(--bg);
@@ -462,8 +446,6 @@ body {
   background: var(--border);
   margin: 8px 0;
 }
-
-/* Modal */
 .modal {
   display: none;
   position: fixed;
@@ -557,7 +539,6 @@ body {
   </div>
 </header>
 
-<!-- User Dropdown -->
 <div class="user-dropdown" id="userDropdown">
   <div class="dropdown-item" onclick="openProfileModal()">
     <i class="fas fa-user"></i>
@@ -574,7 +555,6 @@ body {
   </div>
 </div>
 
-<!-- Notifications Panel -->
 <div class="notifications-panel" id="notificationsPanel">
   <div class="notifications-header">
     <i class="fas fa-bell"></i> Notificações
@@ -583,7 +563,6 @@ body {
 </div>
 
 <main class="main-container">
-  <!-- Welcome Section -->
   <div class="welcome-section">
     <h2 id="welcomeMessage">Bem-vindo de volta! 👋</h2>
     <p>Continue a sua jornada de aprendizagem e desenvolva novas competências.</p>
@@ -603,7 +582,6 @@ body {
     </div>
   </div>
 
-  <!-- Search & Filters -->
   <div class="search-section">
     <div class="search-bar">
       <input type="text" class="search-input" id="searchInput" placeholder="Pesquisar formações...">
@@ -615,7 +593,6 @@ body {
     </div>
   </div>
 
-  <!-- Courses Section -->
   <div class="section-title">
     <h3><i class="fas fa-graduation-cap"></i> As Minhas Formações</h3>
   </div>
@@ -627,7 +604,6 @@ body {
   <div class="courses-grid" id="coursesGrid" style="display: none;"></div>
 </main>
 
-<!-- Profile Modal -->
 <div class="modal" id="profileModal">
   <div class="modal-content">
     <div class="modal-header">
@@ -650,7 +626,6 @@ body {
   </div>
 </div>
 
-<!-- Completed Courses Modal -->
 <div class="modal" id="completedModal">
   <div class="modal-content">
     <div class="modal-header">
@@ -694,7 +669,6 @@ body {
   const nomeUser = localStorage.getItem('usuarioAtivo') || 'Colaborador';
   const userInitial = nomeUser.charAt(0).toUpperCase();
 
-  // Elementos DOM
   const loadingDiv = document.getElementById('loading');
   const coursesGrid = document.getElementById('coursesGrid');
   const searchInput = document.getElementById('searchInput');
@@ -703,12 +677,10 @@ body {
   const userAvatar = document.getElementById('userAvatar');
   const welcomeMessage = document.getElementById('welcomeMessage');
 
-  // Inicializar UI
   userNameDisplay.textContent = nomeUser;
   userAvatar.textContent = userInitial;
   welcomeMessage.innerHTML = `Bem-vindo de volta, ${nomeUser}! 👋`;
 
-  // Carregar progresso do usuário do localStorage
   function loadUserProgress() {
     const saved = localStorage.getItem(`progress_${nomeUser}`);
     if (saved) {
@@ -719,17 +691,14 @@ body {
     console.log("📊 Progresso carregado:", userProgress);
   }
 
-  // Salvar progresso do usuário
   function saveUserProgress() {
     localStorage.setItem(`progress_${nomeUser}`, JSON.stringify(userProgress));
     console.log("💾 Progresso salvo:", userProgress);
   }
 
-  // Atualizar estatísticas do usuário
   function updateUserStats(cursos) {
     let completed = 0;
     let inProgress = 0;
-
     cursos.forEach(curso => {
       const progress = userProgress[curso.id];
       if (progress && progress.completed === true) {
@@ -738,13 +707,11 @@ body {
         inProgress++;
       }
     });
-
     document.getElementById('coursesCompleted').textContent = completed;
     document.getElementById('coursesInProgress').textContent = inProgress;
     document.getElementById('certificatesCount').textContent = completed;
   }
 
-  // Calcular progresso do curso
   function calculateCourseProgress(curso) {
     const progress = userProgress[curso.id];
     if (progress && progress.completed) return 100;
@@ -755,29 +722,24 @@ body {
     return 0;
   }
 
-  // Verificar se curso foi concluído
   function isCourseCompleted(cursoId) {
     const progress = userProgress[cursoId];
     return progress && progress.completed === true;
   }
 
-  // Marcar curso como concluído (chamado quando volta da formação)
   function markCourseCompleted(cursoId, cursoNome) {
     console.log("🏆 Marcando curso como concluído:", cursoId, cursoNome);
-    
     if (!userProgress[cursoId]) {
       userProgress[cursoId] = { modulesCompleted: 0, completed: false };
     }
     userProgress[cursoId].completed = true;
     userProgress[cursoId].completedAt = new Date().toISOString();
-    
     saveUserProgress();
     renderCourses();
     updateUserStats(allCourses);
     addNotification(`🎉 Parabéns! Concluiu a formação "${cursoNome}"!`);
   }
 
-  // Adicionar notificação
   function addNotification(message) {
     notifications.unshift({
       id: Date.now(),
@@ -801,12 +763,10 @@ body {
   function renderNotifications() {
     const container = document.getElementById('notificationsList');
     if (!container) return;
-    
     if (notifications.length === 0) {
       container.innerHTML = '<div class="notification-item">Sem notificações</div>';
       return;
     }
-    
     container.innerHTML = notifications.slice(0, 10).map(n => `
       <div class="notification-item" onclick="markNotificationRead(${n.id})">
         <div class="notification-title">${n.message}</div>
@@ -822,63 +782,48 @@ body {
     renderNotifications();
   }
 
-  // Carregar formações do Firebase
   async function carregarFormacoes() {
     loadingDiv.style.display = 'block';
     coursesGrid.style.display = 'none';
-    
     try {
       const q = window.query(window.collection(window.db, 'formacoes'), window.orderBy('dataTimestamp', 'desc'));
       const querySnapshot = await window.getDocs(q);
-      
       allCourses = [];
       querySnapshot.forEach((doc) => {
         allCourses.push({ id: doc.id, ...doc.data() });
       });
-      
       loadUserProgress();
       updateUserStats(allCourses);
       renderCourses();
-      
       loadingDiv.style.display = 'none';
       coursesGrid.style.display = 'grid';
-      
       if (!localStorage.getItem(`welcome_${nomeUser}`)) {
         addNotification(`Bem-vindo à plataforma de formação! Explore os cursos disponíveis.`);
         localStorage.setItem(`welcome_${nomeUser}`, 'true');
       }
-      
     } catch(error) {
       console.error('Erro:', error);
       loadingDiv.innerHTML = '❌ Erro ao carregar formações.';
     }
   }
 
-  // Filtrar cursos
   function filterCourses() {
     let filtered = [...allCourses];
-    
     filtered = filtered.filter(curso => {
       const progress = calculateCourseProgress(curso);
       const completed = progress === 100;
-      
       switch(currentFilter) {
-        case 'concluidas':
-          return completed;
-        case 'em_andamento':
-          return progress > 0 && progress < 100;
-        default:
-          return true;
+        case 'concluidas': return completed;
+        case 'em_andamento': return progress > 0 && progress < 100;
+        default: return true;
       }
     });
-    
     if (searchTerm) {
       filtered = filtered.filter(curso => 
         curso.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         curso.descricao?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-    
     return filtered;
   }
 
@@ -892,10 +837,8 @@ body {
     });
   }
 
-  // Renderizar cursos
   function renderCourses() {
     const filtered = filterCourses();
-    
     if (filtered.length === 0) {
       coursesGrid.innerHTML = `
         <div class="empty-state">
@@ -906,13 +849,11 @@ body {
       `;
       return;
     }
-    
     coursesGrid.innerHTML = filtered.map(curso => {
       const progress = calculateCourseProgress(curso);
       const completed = progress === 100;
       const modulesCount = curso.modulos?.length || 0;
       const isStarted = progress > 0 && !completed;
-      
       let btnText = '📖 Iniciar';
       let btnClass = '';
       if (completed) {
@@ -922,7 +863,6 @@ body {
         btnText = '▶ Continuar';
         btnClass = 'btn-continue';
       }
-      
       return `
         <div class="course-card" onclick="entrarFormacao('${curso.id}')">
           <div class="course-cover">
@@ -958,13 +898,11 @@ body {
     }).join('');
   }
 
-  // Entrar na formação
   function entrarFormacao(cursoId) {
     localStorage.setItem('cursoAtualId', cursoId);
     window.location.href = 'formacao_colaborador.html';
   }
 
-  // Fazer logout
   function fazerLogout() {
     if(confirm('Deseja sair da plataforma?')) {
       localStorage.removeItem('usuarioAtivo');
@@ -973,7 +911,20 @@ body {
     }
   }
 
-  // Event listeners para filtros
+  function verificarCursoConcluido() {
+    const cursoConcluido = localStorage.getItem('cursoConcluido');
+    if (cursoConcluido) {
+      console.log("🎓 Curso concluído detectado:", cursoConcluido);
+      const curso = allCourses.find(c => c.id === cursoConcluido);
+      if (curso) {
+        markCourseCompleted(cursoConcluido, curso.nome);
+      } else {
+        markCourseCompleted(cursoConcluido, 'Formação');
+      }
+      localStorage.removeItem('cursoConcluido');
+    }
+  }
+
   searchInput.addEventListener('input', (e) => {
     searchTerm = e.target.value;
     renderCourses();
@@ -988,7 +939,6 @@ body {
     });
   });
 
-  // User menu dropdown
   const userMenuBtn = document.getElementById('userMenuBtn');
   const userDropdown = document.getElementById('userDropdown');
   const notificationBtn = document.getElementById('notificationBtn');
@@ -1011,7 +961,6 @@ body {
     notificationsPanel.classList.remove('show');
   });
 
-  // Modal functions
   function openProfileModal() {
     document.getElementById('profileModal').classList.add('show');
     document.getElementById('profileName').textContent = nomeUser;
@@ -1026,9 +975,7 @@ body {
   function openCompletedModal() {
     const modal = document.getElementById('completedModal');
     const completedList = document.getElementById('completedList');
-    
     const completedCourses = allCourses.filter(curso => isCourseCompleted(curso.id));
-    
     if (completedCourses.length === 0) {
       completedList.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--birkenstock-gray);">Nenhuma formação concluída ainda.</div>';
     } else {
@@ -1045,7 +992,6 @@ body {
         </div>
       `).join('');
     }
-    
     modal.classList.add('show');
   }
   
@@ -1053,7 +999,6 @@ body {
     document.getElementById('completedModal').classList.remove('show');
   }
 
-  // Expor funções globalmente
   window.entrarFormacao = entrarFormacao;
   window.fazerLogout = fazerLogout;
   window.openProfileModal = openProfileModal;
@@ -1062,22 +1007,6 @@ body {
   window.closeCompletedModal = closeCompletedModal;
   window.markNotificationRead = markNotificationRead;
 
-  // Verificar se voltou de uma formação concluída
-  function verificarCursoConcluido() {
-    const cursoConcluido = localStorage.getItem('cursoConcluido');
-    if (cursoConcluido) {
-      console.log("🎓 Curso concluído detectado:", cursoConcluido);
-      const curso = allCourses.find(c => c.id === cursoConcluido);
-      if (curso) {
-        markCourseCompleted(cursoConcluido, curso.nome);
-      } else {
-        markCourseCompleted(cursoConcluido, 'Formação');
-      }
-      localStorage.removeItem('cursoConcluido');
-    }
-  }
-
-  // Inicializar
   carregarFormacoes().then(() => {
     verificarCursoConcluido();
   });
