@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birkenstock S&CC — Painel Administrativo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root {
+  --birkenstock-blue: #00338D;
+  --birkenstock-blue-dark: #00277A;
+  --birkenstock-gold: #C5A059;
+  --birkenstock-gray: #616365;
+  --birkenstock-beige: #F7F5F0;
+  --bg: #F4F7F9;
+  --border: #D7DEED;
+  --white: #fff;
+  --success: #16a34a;
+  --success-bg: #dcfce7;
+  --danger: #dc2626;
+  --danger-bg: #fee2e2;
+  --warning: #f59e0b;
+  --warning-bg: #fef3c7;
+  --info: #3b82f6;
+  --info-bg: #dbeafe;
+  --purple: #8b5cf6;
+  --purple-bg: #ede9fe;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'DM Sans', sans-serif; background: var(--birkenstock-beige); color: #1a1a1a; }
+
+header {
+  background: var(--birkenstock-blue);
+  padding: 13px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--birkenstock-gold);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+header .logo-text {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: white;
+  line-height: 1.2;
+}
+header .logo-text small {
+  font-size: 0.7rem;
+  font-weight: 400;
+  display: block;
+  color: rgba(255,255,255,0.7);
+}
+.btn-sair {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 6px;
+  color: rgba(255,255,255,.7);
+  padding: 7px 16px;
+  cursor: pointer;
+}
+.btn-sair:hover { border-color: rgba(255,255,255,.7); color: #fff; }
+
+.container { max-width: 1400px; margin: 0 auto; padding: 32px 24px; }
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+.dash-card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.dash-card:hover { transform: translateY(-2px); }
+.dash-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+.dash-info h3 { font-size: 24px; font-weight: 700; }
+.dash-info p { font-size: 12px; color: var(--birkenstock-gray); }
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  background: var(--white);
+  padding: 8px 16px;
+  border-radius: 12px;
+  flex-wrap: wrap;
+  overflow-x: auto;
+}
+.tab {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--birkenstock-gray);
+  cursor: pointer;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+.tab.active { background: var(--birkenstock-blue); color: white; }
+.tab:hover:not(.active) { background: var(--bg); color: var(--birkenstock-blue); }
+
+.sec { background: var(--white); border-radius: 12px; margin-bottom: 28px; display: none; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.sec.active { display: block; }
+.sec-head { background: var(--birkenstock-blue); padding: 16px 24px; border-radius: 12px 12px 0 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.sec-head h2 { color: #fff; font-size: 15px; font-weight: 700; text-transform: uppercase; }
+.sec-body { padding: 24px; }
+
+.fg { margin-bottom: 16px; }
+.fg label { display: block; font-size: 11px; font-weight: 700; color: var(--birkenstock-blue); margin-bottom: 5px; text-transform: uppercase; }
+.fg input, .fg select, .fg textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 14px;
+  outline: none;
+}
+.fg input:focus { border-color: var(--birkenstock-blue); }
+.frow { display: flex; gap: 16px; flex-wrap: wrap; }
+.frow .fg { flex: 1; min-width: 200px; }
+
+.btn { background: var(--birkenstock-blue); color: #fff; border: none; border-radius: 8px; padding: 12px 20px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; }
+.btn:hover { background: var(--birkenstock-blue-dark); }
+.btn-sm { width: auto; padding: 8px 16px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
+.btn-success { background: var(--success); }
+.btn-danger { background: var(--danger); }
+.btn-warning { background: var(--warning); }
+
+.item-list { margin-top: 16px; border-top: 1px solid var(--border); padding-top: 16px; max-height: 500px; overflow-y: auto; }
+.item-card { background: var(--bg); border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.item-card:hover { background: #eef2ff; }
+.item-card-info { flex: 1; }
+.item-card-title { font-weight: 700; font-size: 14px; }
+.item-card-meta { font-size: 11px; color: var(--birkenstock-gray); margin-top: 4px; }
+.item-card-actions { display: flex; gap: 8px; }
+
+.colab-selector { background: var(--bg); padding: 16px; border-radius: 8px; margin-bottom: 16px; }
+.colab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin-top: 12px; max-height: 300px; overflow-y: auto; }
+.colab-check { display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 6px; background: white; cursor: pointer; }
+.colab-check:hover { background: var(--info-bg); }
+
+.modulo-card, .pergunta-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+.modulo-header, .pergunta-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.modulo-titulo { font-weight: 700; color: var(--birkenstock-blue); }
+
+.cert-editor { background: var(--bg); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+.cert-preview { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 40px; margin-top: 20px; }
+.placeholder-badge { background: var(--info-bg); color: var(--info); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-family: monospace; cursor: pointer; display: inline-block; margin: 4px; }
+
+.password-strength { height: 4px; margin-top: 6px; border-radius: 2px; background: #e2e8f0; }
+.strength-weak { background: var(--danger); width: 33%; }
+.strength-medium { background: var(--warning); width: 66%; }
+.strength-strong { background: var(--success); width: 100%; }
+
+.alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; }
+.alert-info { background: var(--info-bg); color: var(--info); }
+.alert-warning { background: var(--warning-bg); color: var(--warning); }
+
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+th { font-size: 11px; font-weight: 700; color: var(--birkenstock-gray); text-transform: uppercase; }
+.empty { text-align: center; padding: 40px; color: var(--birkenstock-gray); }
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: var(--white);
+  border-radius: 16px;
+  max-width: 700px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 24px;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-close { cursor: pointer; font-size: 24px; color: var(--birkenstock-gray); }
+
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge-success { background: var(--success-bg); color: var(--success); }
+
+@media (max-width: 768px) {
+  .container { padding: 20px 16px; }
+  .sec-body { padding: 16px; }
+  .tabs { padding: 8px; }
+  .tab { padding: 8px 12px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-text">
+    BIRKENSTOCK
+    <small>S&CC Portugal · Formação</small>
+  </div>
+  <button class="btn-sair" onclick="location.href='index.html'">Sair</button>
+</header>
+
+<div class="container">
+  <div class="dashboard-grid" id="dashboard-grid"></div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="dashboard">📊 Dashboard</button>
+    <button class="tab" data-tab="lista-formacoes">📚 Formações</button>
+    <button class="tab" data-tab="formacao">🎓 Criar Formação</button>
+    <button class="tab" data-tab="atribuir">📨 Atribuir</button>
+    <button class="tab" data-tab="certificado">🏅 Certificado</button>
+    <button class="tab" data-tab="colaboradores">👥 Colaboradores</button>
+    <button class="tab" data-tab="seguranca">🔐 Segurança</button>
+    <button class="tab" data-tab="historico">📊 Histórico</button>
+  </div>
+
+  <div class="sec active" id="sec-dashboard">
+    <div class="sec-head"><h2>📈 Visão Geral</h2></div>
+    <div class="sec-body"><div id="recent-activities" class="item-list"></div></div>
+  </div>
+
+  <div class="sec" id="sec-lista-formacoes">
+    <div class="sec-head"><h2>📚 Gestão de Formações</h2></div>
+    <div class="sec-body"><div id="formacoes-list" class="item-list"></div></div>
+  </div>
+
+  <div class="sec" id="sec-formacao">
+    <div class="sec-head"><h2>🎓 Criar Nova Formação</h2><div id="editando-id" style="color:white;font-size:12px;"></div></div>
+    <div class="sec-body">
+      <div class="frow">
+        <div class="fg"><label>Título *</label><input type="text" id="f-titulo" placeholder="Ex: Atendimento ao Cliente"></div>
+        <div class="fg"><label>Duração</label><input type="text" id="f-duracao" placeholder="45 minutos"></div>
+      </div>
+      <div class="fg"><label>Descrição</label><textarea id="f-descricao" rows="2"></textarea></div>
+      
+      <div style="margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+          <h3 style="font-size: 14px;">📦 Módulos</h3>
+          <div>
+            <button type="button" class="btn-sm btn" onclick="abrirModalModulo('video')">🎬 Vídeo</button>
+            <button type="button" class="btn-sm btn" onclick="abrirModalModulo('text')">📄 Texto</button>
+            <button type="button" class="btn-sm btn" onclick="abrirModalModulo('file')">📁 Ficheiro/URL</button>
+          </div>
+        </div>
+        <div id="modulos-container"></div>
+      </div>
+      
+      <div style="margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+          <h3 style="font-size: 14px;">📝 Perguntas</h3>
+          <button type="button" class="btn-sm btn" onclick="abrirModalPergunta()">+ Adicionar</button>
+        </div>
+        <div id="perguntas-container"></div>
+      </div>
+      
+      <div class="frow" style="margin-top: 16px;">
+        <button class="btn" id="btn-publicar">📌 Publicar Formação</button>
+        <button class="btn-warning btn" id="btn-cancelar-edicao" style="display:none;">✖️ Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" id="sec-atribuir">
+    <div class="sec-head">
+      <h2>📨 Atribuir Formações</h2>
+      <div>
+        <button class="btn-sm btn-success" onclick="enviarEmailsMassa()"><i class="fas fa-envelope"></i> Enviar Emails</button>
+        <button class="btn-sm btn-warning" onclick="copiarTodosLinks()"><i class="fas fa-copy"></i> Copiar Links</button>
+      </div>
+    </div>
+    <div class="sec-body">
+      <div class="frow">
+        <div class="fg"><label>Formação</label><select id="atribuir-curso"></select></div>
+        <div class="fg"><label>Prazo</label><input type="date" id="atribuir-prazo"></div>
+      </div>
+      <div class="colab-selector">
+        <label>👥 Colaboradores</label>
+        <div id="colab-selector-grid" class="colab-grid"></div>
+        <div style="margin-top:12px;">
+          <button class="btn-sm btn" onclick="selecionarTodos()">Selecionar Todos</button>
+          <button class="btn-sm btn" onclick="deselecionarTodos()">Limpar</button>
+        </div>
+      </div>
+      <div class="frow" style="margin-top:16px;">
+        <button class="btn-success btn" id="btn-gerar-links" onclick="gerarLinksMassa()"><i class="fas fa-link"></i> Gerar Links</button>
+      </div>
+      <div id="links-gerados" style="display:none;margin-top:20px;"><div id="links-list" class="item-list"></div></div>
+    </div>
+  </div>
+
+  <div class="sec" id="sec-certificado">
+    <div class="sec-head"><h2>🏅 Editor de Certificado</h2></div>
+    <div class="sec-body">
+      <div class="cert-editor">
+        <div class="fg">
+          <label>🖼️ Imagem de Fundo (URL)</label>
+          <input type="text" id="cert-fundo-imagem" placeholder="https://... ou imagens/fundo_certificado.png" value="imagens/fundo_certificado.png">
+          <small>Cole o link da imagem que será usada como fundo do certificado</small>
+        </div>
+        <div class="fg"><label>📝 Título</label><input type="text" id="cert-titulo" placeholder="Certificado de Formação"></div>
+        <div class="fg"><label>📄 Texto Principal</label><textarea id="cert-texto" rows="4" placeholder="Certifica-se que {{nome}} concluiu {{formacao}} com {{nota}}"></textarea></div>
+        <div class="fg"><label>📌 Rodapé</label><textarea id="cert-rodape" rows="2" placeholder="Direção de Formação"></textarea></div>
+        <div class="cert-placeholders">
+          <span class="placeholder-badge" onclick="inserirPlaceholder('{{nome}}')">{{nome}}</span>
+          <span class="placeholder-badge" onclick="inserirPlaceholder('{{formacao}}')">{{formacao}}</span>
+          <span class="placeholder-badge" onclick="inserirPlaceholder('{{data}}')">{{data}}</span>
+          <span class="placeholder-badge" onclick="inserirPlaceholder('{{nota}}')">{{nota}}</span>
+          <span class="placeholder-badge" onclick="inserirPlaceholder('{{validade}}')">{{validade}}</span>
+          <span class="placeholder-badge" onclick="inserirPlaceholder('{{certificado_id}}')">{{certificado_id}}</span>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:16px;">
+          <button class="btn-sm btn" onclick="previewCertificado()">👁️ Pré-visualizar</button>
+          <button class="btn-sm btn-success" onclick="salvarTemplateCertificado()">💾 Salvar</button>
+          <button class="btn-sm btn-warning" onclick="resetTemplateCertificado()">↺ Restaurar</button>
+        </div>
+      </div>
+      <div id="cert-preview" class="cert-preview" style="display:none;"><div id="cert-preview-content"></div><button class="btn-sm" onclick="document.getElementById('cert-preview').style.display='none'">Fechar</button></div>
+    </div>
+  </div>
+
+  <div class="sec" id="sec-colaboradores">
+    <div class="sec-head"><h2>👥 Colaboradores</h2></div>
+    <div class="sec-body">
+      <div class="frow">
+        <div class="fg"><label>Utilizador</label><input type="text" id="u-nome" placeholder="nome.apelido"></div>
+        <div class="fg"><label>Email</label><input type="email" id="u-email"></div>
+        <div class="fg"><label>Password</label><input type="password" id="u-pass"></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>Importar CSV</label><input type="file" id="import-csv" accept=".csv" onchange="importColaboradores(this.files)"></div>
+        <div class="fg"><button class="btn-sm btn" onclick="downloadModeloCSV()">📥 Modelo CSV</button></div>
+      </div>
+      <button class="btn" id="btn-save-user">Criar Colaborador</button>
+      <div id="colab-list" class="item-list"></div>
+    </div>
+  </div>
+
+  <div class="sec" id="sec-seguranca">
+    <div class="sec-head"><h2>🔐 Segurança</h2></div>
+    <div class="sec-body">
+      <div class="frow">
+        <div class="fg"><label>Password Atual</label><input type="password" id="admin-pass-atual"></div>
+        <div class="fg"><label>Nova Password</label><input type="password" id="admin-pass-nova" onkeyup="checkPasswordStrength(this.value)"></div>
+        <div class="fg"><label>Confirmar</label><input type="password" id="admin-pass-confirm"></div>
+      </div>
+      <div id="password-strength" class="password-strength"></div>
+      <button class="btn-sm btn" onclick="alterarPasswordAdmin()">🔄 Alterar Password</button>
+    </div>
+  </div>
+
+  <div class="sec" id="sec-historico">
+    <div class="sec-head"><h2>📊 Histórico</h2><div><button class="btn-sm" onclick="exportarHistoricoCSV()">📥 CSV</button><button class="btn-sm" onclick="exportarHistoricoExcel()">📊 Excel</button></div></div>
+    <div class="sec-body">
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr>
+          </thead>
+          <tbody id="lista-notas"></tbody>
+         </table>
+      </div>
+      <button id="btn-limpar" class="btn-sm btn-danger">🗑️ Limpar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-modulo" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modal-modulo-titulo">Adicionar Módulo</h3>
+      <span class="modal-close" onclick="fecharModal('modal-modulo')">&times;</span>
+    </div>
+    <div class="fg"><label>Título *</label><input type="text" id="modulo-titulo"></div>
+    <div class="fg"><label>Duração</label><input type="text" id="modulo-duracao" placeholder="15 min"></div>
+    <div id="modulo-conteudo-video" style="display:none;">
+      <div class="fg"><label>URL do Vídeo *</label><input type="text" id="modulo-video-url" placeholder="https://www.youtube.com/embed/..."></div>
+    </div>
+    <div id="modulo-conteudo-texto" style="display:none;">
+      <div class="fg"><label>Conteúdo *</label><textarea id="modulo-texto-conteudo" rows="6"></textarea></div>
+    </div>
+    <div id="modulo-conteudo-file" style="display:none;">
+      <div class="fg"><label>URL do Ficheiro *</label><input type="text" id="modulo-file-url" placeholder="https://drive.google.com/file/d/.../view"></div>
+    </div>
+    <button class="btn" id="btn-salvar-modulo">Salvar</button>
+  </div>
+</div>
+
+<div id="modal-pergunta" class="modal">
+  <div class="modal-content">
+    <div class="modal-header"><h3>Adicionar Pergunta</h3><span class="modal-close" onclick="fecharModal('modal-pergunta')">&times;</span></div>
+    <div class="fg"><label>Texto *</label><input type="text" id="pergunta-texto"></div>
+    <div class="fg"><label>Opção A *</label><input type="text" id="pergunta-opcao-a"></div>
+    <div class="fg"><label>Opção B *</label><input type="text" id="pergunta-opcao-b"></div>
+    <div class="fg"><label>Opção C *</label><input type="text" id="pergunta-opcao-c"></div>
+    <div class="fg"><label>Opção D *</label><input type="text" id="pergunta-opcao-d"></div>
+    <div class="fg"><label>Correta *</label><select id="pergunta-correta"><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+    <button class="btn" id="btn-salvar-pergunta">Salvar</button>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAwywvboQgWqkrZlbwrUPdaUq-gLnWM64E",
+    authDomain: "plataforma-ssa-3130e.firebaseapp.com",
+    projectId: "plataforma-ssa-3130e",
+    storageBucket: "plataforma-ssa-3130e.firebasestorage.app",
+    messagingSenderId: "850671249674",
+    appId: "1:850671249674:web:53a115408f8006745c32f3"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  window.db = db;
+  window.storage = storage;
+  window.collection = collection;
+  window.addDoc = addDoc;
+  window.getDocs = getDocs;
+  window.doc = doc;
+  window.updateDoc = updateDoc;
+  window.deleteDoc = deleteDoc;
+  window.query = query;
+  window.orderBy = orderBy;
+  window.getDoc = getDoc;
+  window.onSnapshot = onSnapshot;
+  window.ref = ref;
+  window.uploadBytes = uploadBytes;
+  window.getDownloadURL = getDownloadURL;
+</script>
+
+<script>
+  let adminConfig = JSON.parse(localStorage.getItem('admin_config') || '{"adminPassword":"SSA2024admin"}');
+  let modulos = [];
+  let perguntas = [];
+  let editandoModuloId = null;
+  let editandoPerguntaId = null;
+  let moduloTipoAtual = 'video';
+  let editandoFormacaoId = null;
+  let linksGerados = [];
+
+  const defaultCert = { fundoImagem: "imagens/fundo_certificado.png", titulo: "Certificado de Formação", texto: "Certifica-se que {{nome}} concluiu {{formacao}} com {{nota}}.\nEmitido em {{data}}.", rodape: "Direção de Formação" };
+  let certTemplate = JSON.parse(localStorage.getItem('cert_template') || JSON.stringify(defaultCert));
+
+  // ==================== FUNÇÃO ESCAPE HTML ====================
+  function escapeHtml(text) {
+    if (!text) return '';
+    return text.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  // ==================== FUNÇÃO CONVERTER LINK GOOGLE DRIVE ====================
+  function converterLinkGoogleDrive(url) {
+    if (!url) return url;
+    if (!url.includes('drive.google.com')) return url;
+    
+    let fileId = null;
+    let match = url.match(/\/file\/d\/([^\/]+)/);
+    if (match) fileId = match[1];
+    if (!fileId) {
+        match = url.match(/[?&]id=([^&]+)/);
+        if (match) fileId = match[1];
+    }
+    if (!fileId) {
+        match = url.match(/\/d\/([^\/]+)/);
+        if (match) fileId = match[1];
+    }
+    
+    if (fileId) {
+        return `https://drive.google.com/file/d/${fileId}/preview`;
+    }
+    return url.replace('/view', '/preview').replace('?usp=sharing', '');
+  }
+
+  // ==================== FUNÇÕES PRINCIPAIS ====================
+  
+  let cachedFormacoes = [];
+  let formacoesDados = {};
+  let unsubscribeFormacoes = null;
+  
+  async function carregarFormacoes() {
+    try {
+      // Se já temos listeners ativos, retorna cached
+      if (unsubscribeFormacoes) {
+        return cachedFormacoes;
+      }
+      
+      // Configurar listener real-time
+      unsubscribeFormacoes = window.onSnapshot(
+        window.query(window.collection(window.db, 'formacoes'), window.orderBy('dataTimestamp', 'desc')),
+        (querySnapshot) => {
+          cachedFormacoes = [];
+          querySnapshot.forEach((doc) => { 
+            const data = { id: doc.id, ...doc.data() };
+            cachedFormacoes.push(data);
+            formacoesDados[doc.id] = data;
+          });
+          // Auto-refresh dos painéis ativos
+          if (document.getElementById('sec-lista-formacoes').classList.contains('active')) {
+            renderFormacoesLista();
+          }
+          if (document.getElementById('sec-dashboard').classList.contains('active')) {
+            atualizarDashboard();
+          }
+        },
+        (error) => {
+          console.error("Erro carregar formações:", error);
+        }
+      );
+      
+      return cachedFormacoes;
+    } catch(e) { 
+      console.error("Erro carregar formações:", e); 
+      return cachedFormacoes || [];
+    }
+  }
+
+  let cachedColaboradores = [];
+  let colaboradoresDados = {};
+  let unsubscribeColaboradores = null;
+  
+  async function carregarColaboradores() {
+    try {
+      if (unsubscribeColaboradores) {
+        return cachedColaboradores;
+      }
+      
+      // Configurar listener real-time
+      unsubscribeColaboradores = window.onSnapshot(
+        window.collection(window.db, 'colaboradores'),
+        (querySnapshot) => {
+          cachedColaboradores = [];
+          querySnapshot.forEach((doc) => { 
+            const data = { id: doc.id, ...doc.data() };
+            cachedColaboradores.push(data);
+            colaboradoresDados[doc.id] = data;
+          });
+          // Auto-refresh do painel de colaboradores
+          if (document.getElementById('sec-colaboradores').classList.contains('active')) {
+            renderColabs();
+          }
+        },
+        (error) => {
+          console.error("Erro carregar colaboradores:", error);
+        }
+      );
+      
+      return cachedColaboradores;
+    } catch(e) { 
+      console.error("Erro carregar colaboradores:", e); 
+      return cachedColaboradores || [];
+    }
+  }
+
+  let cachedHistorico = [];
+  let unsubscribeHistorico = null;
+  
+  async function carregarHistorico() {
+    try {
+      if (unsubscribeHistorico) {
+        return cachedHistorico;
+      }
+      
+      // Configurar listener real-time
+      unsubscribeHistorico = window.onSnapshot(
+        window.query(window.collection(window.db, 'historico'), window.orderBy('dataTimestamp', 'desc')),
+        (querySnapshot) => {
+          cachedHistorico = [];
+          querySnapshot.forEach((doc) => { 
+            cachedHistorico.push({ id: doc.id, ...doc.data() });
+          });
+          // Auto-refresh do painel de histórico
+          if (document.getElementById('sec-historico').classList.contains('active')) {
+            renderHistorico();
+          }
+          if (document.getElementById('sec-dashboard').classList.contains('active')) {
+            atualizarDashboard();
+          }
+        },
+        (error) => {
+          console.error("Erro carregar histórico:", error);
+        }
+      );
+      
+      return cachedHistorico;
+    } catch(e) { 
+      console.error("Erro carregar histórico:", e); 
+      return cachedHistorico || [];
+    }
+  }
+
+  async function atualizarDashboard() {
+    const cursos = await carregarFormacoes();
+    const colaboradores = await carregarColaboradores();
+    const historico = await carregarHistorico();
+    document.getElementById('dashboard-grid').innerHTML = `
+      <div class="dash-card"><div class="dash-icon" style="background:var(--info-bg)">👥</div><div class="dash-info"><h3>${colaboradores.length}</h3><p>Colaboradores</p></div></div>
+      <div class="dash-card"><div class="dash-icon" style="background:var(--success-bg)">📚</div><div class="dash-info"><h3>${cursos.length}</h3><p>Formações</p></div></div>
+      <div class="dash-card"><div class="dash-icon" style="background:var(--purple-bg)">🏅</div><div class="dash-info"><h3>${historico.length}</h3><p>Certificados</p></div></div>`;
+    const recentes = historico.slice(0,5);
+    document.getElementById('recent-activities').innerHTML = recentes.length ? recentes.map(h => `<div class="item-card"><div class="item-card-info"><strong>${escapeHtml(h.nome)}</strong> concluiu "${escapeHtml(h.curso)}" com ${escapeHtml(h.nota)}</div><div class="item-card-meta">${escapeHtml(h.data)}</div></div>`).join('') : '<div class="empty">Sem atividades recentes.</div>';
+  }
+
+  async function renderFormacoesLista() {
+    const cursos = await carregarFormacoes();
+    const container = document.getElementById('formacoes-list');
+    if(!cursos.length) { container.innerHTML = '<div class="empty">Nenhuma formação criada.</div>'; return; }
+    container.innerHTML = cursos.map(curso => `
+      <div class="item-card">
+        <div class="item-card-info">
+          <div class="item-card-title">📘 ${escapeHtml(curso.nome)}</div>
+          <div class="item-card-meta">${curso.modulos?.length || 0} módulos · ${curso.perguntas?.length || 0} perguntas</div>
+        </div>
+        <div class="item-card-actions">
+          <button onclick="editarFormacao('${curso.id}')" style="color:var(--info)">✏️ Editar</button>
+          <button onclick="apagarFormacao('${curso.id}')" style="color:var(--danger)">🗑️ Apagar</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function apagarFormacao(id) {
+    if(!confirm('Apagar esta formação permanentemente?')) return;
+    try {
+      await window.deleteDoc(window.doc(window.db, 'formacoes', id));
+      alert('✅ Formação apagada!');
+      renderFormacoesLista();
+      atualizarDashboard();
+      atualizarSelectores();
+    } catch(error) { console.error('Erro:', error); alert('Erro ao apagar formação.'); }
+  }
+
+  function inserirPlaceholder(ph) { document.getElementById('cert-texto').value += ph; }
+  
+  function previewCertificado() {
+    const preview = document.getElementById('cert-preview');
+    const content = document.getElementById('cert-preview-content');
+    const fundoImagem = document.getElementById('cert-fundo-imagem').value || '';
+    let texto = document.getElementById('cert-texto').value;
+    const titulo = document.getElementById('cert-titulo').value;
+    const rodape = document.getElementById('cert-rodape').value;
+    
+    const dadosExemplo = { nome: "João Silva", formacao: "Formação Teste", data: new Date().toLocaleDateString('pt-PT'), nota: "85%", validade: "2027", certificado_id: "CERT-001" };
+    Object.entries(dadosExemplo).forEach(([k,v]) => { texto = texto.replace(new RegExp(`{{${k}}}`, 'g'), v); });
+    
+    const fundoStyle = fundoImagem ? `background-image: url('${fundoImagem}'); background-size: cover; background-position: center;` : '';
+    
+    content.innerHTML = `
+      <div style="text-align:center;padding:20px;border:2px solid var(--birkenstock-gold);border-radius:16px;${fundoStyle} min-height:300px;">
+        <h2 style="color:var(--birkenstock-blue);">${escapeHtml(titulo)}</h2>
+        <div style="margin:20px 0;">${texto.replace(/\n/g,'<br>')}</div>
+        <div style="margin-top:20px; font-size:12px;">${escapeHtml(rodape)}</div>
+      </div>
+    `;
+    preview.style.display = 'block';
+  }
+  
+  function salvarTemplateCertificado() {
+    certTemplate = { 
+      fundoImagem: document.getElementById('cert-fundo-imagem').value,
+      titulo: document.getElementById('cert-titulo').value, 
+      texto: document.getElementById('cert-texto').value, 
+      rodape: document.getElementById('cert-rodape').value 
+    };
+    localStorage.setItem('cert_template', JSON.stringify(certTemplate));
+    alert('✅ Template salvo!');
+  }
+  
+  function resetTemplateCertificado() {
+    certTemplate = JSON.parse(JSON.stringify(defaultCert));
+    document.getElementById('cert-fundo-imagem').value = certTemplate.fundoImagem;
+    document.getElementById('cert-titulo').value = certTemplate.titulo;
+    document.getElementById('cert-texto').value = certTemplate.texto;
+    document.getElementById('cert-rodape').value = certTemplate.rodape;
+    alert('✅ Template restaurado!');
+  }
+  
+  function carregarTemplateCertificado() {
+    const saved = localStorage.getItem('cert_template');
+    if (saved) {
+      const template = JSON.parse(saved);
+      document.getElementById('cert-fundo-imagem').value = template.fundoImagem || '';
+      document.getElementById('cert-titulo').value = template.titulo || '';
+      document.getElementById('cert-texto').value = template.texto || '';
+      document.getElementById('cert-rodape').value = template.rodape || '';
+    }
+  }
+
+  // ==================== MÓDULOS ====================
+  function abrirModalModulo(tipo) {
+    moduloTipoAtual = tipo;
+    editandoModuloId = null;
+    
+    document.getElementById('modulo-titulo').value = '';
+    document.getElementById('modulo-duracao').value = '';
+    document.getElementById('modulo-video-url').value = '';
+    document.getElementById('modulo-texto-conteudo').value = '';
+    document.getElementById('modulo-file-url').value = '';
+    
+    document.getElementById('modulo-conteudo-video').style.display = tipo === 'video' ? 'block' : 'none';
+    document.getElementById('modulo-conteudo-texto').style.display = tipo === 'text' ? 'block' : 'none';
+    document.getElementById('modulo-conteudo-file').style.display = tipo === 'file' ? 'block' : 'none';
+    
+    const titulos = { video: '🎬 Adicionar Vídeo', text: '📄 Adicionar Texto', file: '📁 Adicionar Ficheiro/URL' };
+    document.getElementById('modal-modulo-titulo').textContent = titulos[tipo];
+    
+    document.getElementById('modal-modulo').style.display = 'flex';
+  }
+  
+  function editarModulo(id) {
+    const m = modulos.find(m => m.id === id);
+    if (!m) return;
+    
+    editandoModuloId = id;
+    moduloTipoAtual = m.tipo;
+    
+    document.getElementById('modulo-titulo').value = m.titulo;
+    document.getElementById('modulo-duracao').value = m.duracao;
+    
+    document.getElementById('modulo-conteudo-video').style.display = m.tipo === 'video' ? 'block' : 'none';
+    document.getElementById('modulo-conteudo-texto').style.display = m.tipo === 'text' ? 'block' : 'none';
+    document.getElementById('modulo-conteudo-file').style.display = m.tipo === 'file' ? 'block' : 'none';
+    
+    if (m.tipo === 'video') document.getElementById('modulo-video-url').value = m.conteudo.url || '';
+    if (m.tipo === 'text') document.getElementById('modulo-texto-conteudo').value = m.conteudo.texto || '';
+    if (m.tipo === 'file') document.getElementById('modulo-file-url').value = m.conteudo.url || '';
+    
+    document.getElementById('modal-modulo').style.display = 'flex';
+  }
+  
+  function salvarModulo() {
+    const titulo = document.getElementById('modulo-titulo').value.trim();
+    if (!titulo) { alert('❌ Título obrigatório'); return; }
+    
+    let conteudo = {};
+    
+    if (moduloTipoAtual === 'video') {
+      const url = document.getElementById('modulo-video-url').value.trim();
+      if (!url) { alert('❌ URL do vídeo obrigatória'); return; }
+      conteudo = { url };
+    }
+    else if (moduloTipoAtual === 'text') {
+      const texto = document.getElementById('modulo-texto-conteudo').value.trim();
+      if (!texto) { alert('❌ Conteúdo obrigatório'); return; }
+      conteudo = { texto };
+    }
+    else if (moduloTipoAtual === 'file') {
+      let url = document.getElementById('modulo-file-url').value.trim();
+      if (!url) { alert('❌ URL do ficheiro obrigatória'); return; }
+      url = converterLinkGoogleDrive(url);
+      conteudo = { url };
+    }
+    
+    const duracao = document.getElementById('modulo-duracao').value.trim() || '15 min';
+    
+    const novoModulo = {
+      id: editandoModuloId || Date.now(),
+      titulo: titulo,
+      tipo: moduloTipoAtual,
+      conteudo: conteudo,
+      duracao: duracao
+    };
+    
+    if (editandoModuloId) {
+      const index = modulos.findIndex(m => m.id === editandoModuloId);
+      if (index !== -1) modulos[index] = novoModulo;
+      editandoModuloId = null;
+    } else {
+      modulos.push(novoModulo);
+    }
+    
+    renderModulos();
+    fecharModal('modal-modulo');
+    alert(`✅ Módulo "${titulo}" adicionado!`);
+  }
+  
+  function removerModulo(id) {
+    if (confirm('Remover este módulo?')) {
+      modulos = modulos.filter(m => m.id !== id);
+      renderModulos();
+    }
+  }
+  
+  function renderModulos() {
+    const container = document.getElementById('modulos-container');
+    
+    if (!modulos.length) {
+      container.innerHTML = '<div class="alert alert-info">Nenhum módulo adicionado. Clique nos botões acima para adicionar.</div>';
+      return;
+    }
+    
+    container.innerHTML = modulos.map((m, idx) => `
+      <div style="background: var(--bg); border-radius: 8px; margin-bottom: 12px; padding: 12px; border: 1px solid var(--border);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="background: var(--birkenstock-blue); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">${idx + 1}</span>
+            <div>
+              <div style="font-weight: 700;">${escapeHtml(m.titulo)}</div>
+              <div style="font-size: 11px; color: var(--birkenstock-gray);">${m.tipo === 'video' ? '🎬 Vídeo' : m.tipo === 'text' ? '📄 Texto' : '📁 Ficheiro'} · ${m.duracao}</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button onclick="editarModulo(${m.id})" style="background: var(--info); color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer;">✏️</button>
+            <button onclick="removerModulo(${m.id})" style="background: var(--danger); color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer;">🗑️</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ==================== PERGUNTAS ====================
+  function abrirModalPergunta() {
+    editandoPerguntaId = null;
+    document.getElementById('pergunta-texto').value = '';
+    document.getElementById('pergunta-opcao-a').value = '';
+    document.getElementById('pergunta-opcao-b').value = '';
+    document.getElementById('pergunta-opcao-c').value = '';
+    document.getElementById('pergunta-opcao-d').value = '';
+    document.getElementById('pergunta-correta').value = 'A';
+    document.getElementById('modal-pergunta').style.display = 'flex';
+  }
+  
+  function editarPergunta(id) {
+    const p = perguntas.find(p => p.id === id);
+    if (!p) return;
+    editandoPerguntaId = id;
+    document.getElementById('pergunta-texto').value = p.texto;
+    document.getElementById('pergunta-opcao-a').value = p.opcoes[0];
+    document.getElementById('pergunta-opcao-b').value = p.opcoes[1];
+    document.getElementById('pergunta-opcao-c').value = p.opcoes[2];
+    document.getElementById('pergunta-opcao-d').value = p.opcoes[3];
+    document.getElementById('pergunta-correta').value = p.correta;
+    document.getElementById('modal-pergunta').style.display = 'flex';
+  }
+  
+  function salvarPergunta() {
+    const texto = document.getElementById('pergunta-texto').value.trim();
+    if (!texto) { alert('Texto da pergunta obrigatório'); return; }
+    const opcoes = [
+      document.getElementById('pergunta-opcao-a').value.trim(),
+      document.getElementById('pergunta-opcao-b').value.trim(),
+      document.getElementById('pergunta-opcao-c').value.trim(),
+      document.getElementById('pergunta-opcao-d').value.trim()
+    ];
+    if (opcoes.some(o => !o)) { alert('Todas as opções são obrigatórias'); return; }
+    const correta = document.getElementById('pergunta-correta').value;
+    
+    if (editandoPerguntaId) {
+      const idx = perguntas.findIndex(p => p.id === editandoPerguntaId);
+      if (idx !== -1) perguntas[idx] = { ...perguntas[idx], texto, opcoes, correta };
+    } else {
+      perguntas.push({ id: Date.now(), texto, opcoes, correta });
+    }
+    renderPerguntas();
+    fecharModal('modal-pergunta');
+    alert('✅ Pergunta adicionada!');
+  }
+  
+  function removerPergunta(id) {
+    if (confirm('Remover pergunta?')) {
+      perguntas = perguntas.filter(p => p.id !== id);
+      renderPerguntas();
+    }
+  }
+  
+  function renderPerguntas() {
+    const container = document.getElementById('perguntas-container');
+    if (!perguntas.length) {
+      container.innerHTML = '<div class="alert alert-info">Nenhuma pergunta adicionada. Clique em "Adicionar Pergunta".</div>';
+      return;
+    }
+    container.innerHTML = perguntas.map((p, idx) => `
+      <div style="background: var(--bg); border-radius: 8px; margin-bottom: 12px; padding: 12px; border: 1px solid var(--border);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
+          <div style="flex: 1;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <span style="background: var(--warning); color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">${idx + 1}</span>
+              <strong>${escapeHtml(p.texto)}</strong>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; font-size: 12px;">
+              <div>A) ${escapeHtml(p.opcoes[0])}</div>
+              <div>B) ${escapeHtml(p.opcoes[1])}</div>
+              <div>C) ${escapeHtml(p.opcoes[2])}</div>
+              <div>D) ${escapeHtml(p.opcoes[3])}</div>
+            </div>
+            <div style="margin-top: 8px; font-size: 11px; color: var(--success);"><i class="fas fa-check-circle"></i> Correta: ${p.correta}</div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button onclick="editarPergunta(${p.id})" style="background: var(--info); color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer;">✏️</button>
+            <button onclick="removerPergunta(${p.id})" style="background: var(--danger); color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer;">🗑️</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ==================== COLABORADORES ====================
+  async function renderColabs() {
+    const colaboradores = await carregarColaboradores();
+    const container = document.getElementById('colab-list');
+    if(!colaboradores.length) { container.innerHTML = '<div class="empty">Nenhum colaborador cadastrado.</div>'; return; }
+    container.innerHTML = colaboradores.map((c) => `
+      <div class="item-card">
+        <div class="item-card-info">
+          <strong>${escapeHtml(c.user)}</strong>
+          <div class="item-card-meta">${escapeHtml(c.email || 'sem email')}</div>
+        </div>
+        <div class="item-card-actions">
+          <button onclick="removerColab('${c.id}')" style="color:var(--danger)">🗑️ Remover</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  
+  async function removerColab(id) { 
+    if(confirm('Remover colaborador?')) { 
+      await window.deleteDoc(window.doc(window.db, 'colaboradores', id)); 
+      renderColabs(); 
+      atualizarSelectores(); 
+      atualizarDashboard(); 
+    } 
+  }
+  
+  async function saveUser() {
+    const user = document.getElementById('u-nome').value.trim().toLowerCase();
+    const email = document.getElementById('u-email').value.trim();
+    const pass = document.getElementById('u-pass').value;
+    if(!user || !pass) { alert('Preencha utilizador e password.'); return; }
+    await window.addDoc(window.collection(window.db, 'colaboradores'), { user, email, pass, dataCriacao: new Date().toISOString() });
+    alert('✅ Colaborador criado!');
+    document.getElementById('u-nome').value = ''; 
+    document.getElementById('u-email').value = ''; 
+    document.getElementById('u-pass').value = '';
+    renderColabs(); 
+    atualizarSelectores(); 
+    atualizarDashboard();
+  }
+  
+  function importColaboradores(files) { 
+    if(!files || !files[0]) return; 
+    const reader = new FileReader(); 
+    reader.onload = async function(e) { 
+      const lines = e.target.result.split('\n'); 
+      let imported = 0; 
+      for(let i = 1; i < lines.length; i++){ 
+        const parts = lines[i].split(','); 
+        if(parts.length >= 3){ 
+          const user = parts[0].trim().toLowerCase(); 
+          const pass = parts[1].trim(); 
+          const email = parts[2].trim(); 
+          if(user && pass){ 
+            await window.addDoc(window.collection(window.db, 'colaboradores'), { user, email, pass, dataCriacao: new Date().toISOString() }); 
+            imported++; 
+          } 
+        } 
+      } 
+      alert(`✅ Importados ${imported} colaboradores!`); 
+      renderColabs(); 
+      atualizarSelectores(); 
+      atualizarDashboard(); 
+    }; 
+    reader.readAsText(files[0], 'UTF-8'); 
+  }
+  
+  function downloadModeloCSV(){ 
+    const csv = "utilizador,password,email\njoao.silva,pass123,joao@empresa.pt\nmaria.santos,ssa456,maria@empresa.pt"; 
+    const blob = new Blob([csv], {type:'text/csv'}); 
+    const link = document.createElement('a'); 
+    link.href = URL.createObjectURL(blob); 
+    link.download = 'modelo_colaboradores.csv'; 
+    link.click(); 
+  }
+
+  // ==================== ATRIBUIÇÃO EM MASSA ====================
+  async function atualizarSelectores() {
+    const cursos = await carregarFormacoes();
+    const colaboradores = await carregarColaboradores();
+    document.getElementById('atribuir-curso').innerHTML = '<option value="">Selecione uma formação</option>' + cursos.map(c => `<option value="${c.id}">${escapeHtml(c.nome)}</option>`).join('');
+    document.getElementById('colab-selector-grid').innerHTML = colaboradores.map(c => `<label class="colab-check"><input type="checkbox" value="${c.user}" data-email="${c.email || ''}" data-nome="${c.user}"> ${escapeHtml(c.user)} ${c.email ? '(' + escapeHtml(c.email) + ')' : ''}</label>`).join('');
+  }
+  
+  function selecionarTodos(){ 
+    document.querySelectorAll('#colab-selector-grid input').forEach(cb => cb.checked = true); 
+  }
+  
+  function deselecionarTodos(){ 
+    document.querySelectorAll('#colab-selector-grid input').forEach(cb => cb.checked = false); 
+  }
+  
+  function gerarLinksMassa() {
+    const cursoId = document.getElementById('atribuir-curso').value; 
+    if(!cursoId){ alert('Selecione uma formação'); return; }
+    
+    const selected = Array.from(document.querySelectorAll('#colab-selector-grid input:checked')).map(cb => { 
+      return { user: cb.value, email: cb.dataset.email, nome: cb.dataset.nome || cb.value }; 
+    });
+    
+    if(!selected.length){ alert('Selecione colaboradores'); return; }
+    
+    const prazo = document.getElementById('atribuir-prazo').value || '31/12/2026';
+    const baseUrl = window.location.origin + window.location.pathname.replace('admin.html', '') + 'formacao_colaborador.html';
+    const cursoNome = document.getElementById('atribuir-curso').selectedOptions[0]?.text || 'Formação';
+    
+    linksGerados = selected.map(c => {
+      const tokenData = { user: c.user, nome: c.nome, cursoId: cursoId, cursoNome: cursoNome, prazo: prazo, timestamp: Date.now() }; 
+      const token = btoa(JSON.stringify(tokenData)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+      const link = `${baseUrl}?token=${token}`;
+      localStorage.setItem(`token_${token}`, JSON.stringify(tokenData));
+      return { ...c, link, prazo, cursoNome }; 
+    });
+    
+    document.getElementById('links-list').innerHTML = linksGerados.map(l => `
+      <div class="item-card" style="flex-direction: column; align-items: stretch;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+          <div><strong>${escapeHtml(l.nome || l.user)}</strong> ${l.email ? `<span style="font-size:11px;">(${escapeHtml(l.email)})</span>` : ''}</div>
+          <div><button class="btn-sm" onclick="copiarLinkIndividual('${l.link}')">📋 Copiar</button></div>
+        </div>
+        <div style="margin-top: 8px; padding: 8px; background: var(--bg); border-radius: 6px; font-size: 11px; word-break: break-all;">${l.link}</div>
+      </div>
+    `).join('');
+    document.getElementById('links-gerados').style.display = 'block';
+    alert(`✅ ${linksGerados.length} link(s) gerados!`);
+  }
+  
+  function copiarLinkIndividual(link){ 
+    navigator.clipboard.writeText(link); 
+    alert('🔗 Link copiado!'); 
+  }
+  
+  function copiarTodosLinks() {
+    if (!linksGerados.length) { alert('Gere links primeiro'); return; }
+    let texto = "LINKS DE ACESSO ÀS FORMAÇÕES\n\n";
+    linksGerados.forEach(l => { texto += `${l.nome || l.user}: ${l.link}\n`; });
+    navigator.clipboard.writeText(texto);
+    alert(`✅ ${linksGerados.length} links copiados!`);
+  }
+  
+  function enviarEmailsMassa() {
+    if (!linksGerados.length) { alert('Gere links primeiro'); return; }
+    let abertos = 0;
+    linksGerados.forEach(l => {
+      if (l.email) {
+        const assunto = encodeURIComponent(`[Birkenstock] Nova formação: ${l.cursoNome}`);
+        const corpo = encodeURIComponent(`Olá ${l.nome || l.user},\n\nFoi-lhe atribuída a formação "${l.cursoNome}".\n\nPrazo: ${l.prazo}\n\nAceda através do link:\n${l.link}\n\nAtenciosamente,\nEquipa de Formação`);
+        window.open(`mailto:${l.email}?subject=${assunto}&body=${corpo}`);
+        abertos++;
+      }
+    });
+    alert(`📧 Foram abertas ${abertos} janelas de email.\nPara cada uma, clique em "Enviar".`);
+  }
+
+  // ==================== PUBLICAÇÃO ====================
+  async function publicarFormacao(){
+    const titulo = document.getElementById('f-titulo').value.trim();
+    if(!titulo){ alert('Título obrigatório'); return; }
+    if(!modulos.length){ alert('Adicione pelo menos um módulo'); return; }
+    if(!perguntas.length){ alert('Adicione pelo menos uma pergunta'); return; }
+    
+    const novaFormacao = { 
+      nome: titulo, 
+      duracao: document.getElementById('f-duracao').value || '30 min', 
+      descricao: document.getElementById('f-descricao').value, 
+      modulos: [...modulos], 
+      perguntas: perguntas.map(p => ({texto: p.texto, opcoes: p.opcoes, correta: p.correta})), 
+      data: new Date().toLocaleDateString('pt-PT'), 
+      dataTimestamp: Date.now() 
+    };
+    
+    try {
+      if (editandoFormacaoId) {
+        await window.updateDoc(window.doc(window.db, 'formacoes', editandoFormacaoId), novaFormacao);
+        alert(`✅ Formação "${titulo}" atualizada!`);
+        editandoFormacaoId = null;
+        document.getElementById('editando-id').innerHTML = '';
+        document.getElementById('btn-cancelar-edicao').style.display = 'none';
+      } else {
+        await window.addDoc(window.collection(window.db, 'formacoes'), novaFormacao);
+        alert(`✅ Formação "${titulo}" publicada!`);
+      }
+      
+      document.getElementById('f-titulo').value = ''; 
+      document.getElementById('f-duracao').value = ''; 
+      document.getElementById('f-descricao').value = '';
+      modulos = []; 
+      perguntas = [];
+      renderModulos(); 
+      renderPerguntas(); 
+      renderFormacoesLista(); 
+      atualizarSelectores(); 
+      atualizarDashboard();
+    } catch(error) { 
+      console.error('Erro:', error); 
+      alert('❌ Erro ao publicar formação.'); 
+    }
+  }
+
+  // ==================== HISTÓRICO ====================
+  async function renderHistorico() {
+    const historico = await carregarHistorico();
+    const tbody = document.getElementById('lista-notas');
+    if(!historico.length){ 
+      tbody.innerHTML = '}<td colspan="6" class="empty">Nenhum resultado registado</td> </tr>'; 
+      return; 
+    }
+    tbody.innerHTML = historico.map(h => `
+        <tr>
+          <td><strong>${escapeHtml(h.nome)}</strong></td>
+          <td>${escapeHtml(h.email || '-')}</td>
+          <td>${escapeHtml(h.curso)}</td>
+          <td>${escapeHtml(h.data)}</td>
+          <td><span class="badge badge-success">${escapeHtml(h.nota)}</span></td>
+          <td><button class="btn-sm" onclick="alert('Certificado de ${escapeHtml(h.nome)}')">📄 Ver</button></td>
+        </tr>
+    `).join('');
+  }
+  
+  function exportarHistoricoCSV(){ alert('📥 Exportação CSV em breve'); }
+  function exportarHistoricoExcel(){ alert('📊 Exportação Excel em breve'); }
+  
+  async function limparHistorico(){ 
+    if(confirm('Apagar todo o histórico de formações?')){ 
+      const historico = await carregarHistorico();
+      for(const item of historico) {
+        await window.deleteDoc(window.doc(window.db, 'historico', item.id));
+      }
+      renderHistorico(); 
+      atualizarDashboard();
+      alert('✅ Histórico limpo!');
+    } 
+  }
+
+  // ==================== SEGURANÇA ====================
+  function checkPasswordStrength(pass){ 
+    let s = 0; 
+    if(pass.length >= 8) s++; 
+    if(/[A-Z]/.test(pass)) s++; 
+    if(/[0-9]/.test(pass)) s++; 
+    if(/[^a-zA-Z0-9]/.test(pass)) s++; 
+    const d = document.getElementById('password-strength'); 
+    d.className = 'password-strength'; 
+    if(s <= 1) d.classList.add('strength-weak'); 
+    else if(s <= 2) d.classList.add('strength-medium'); 
+    else d.classList.add('strength-strong'); 
+  }
+  
+  function alterarPasswordAdmin(){ 
+    const atual = document.getElementById('admin-pass-atual').value; 
+    const nova = document.getElementById('admin-pass-nova').value; 
+    const conf = document.getElementById('admin-pass-confirm').value; 
+    if(atual !== adminConfig.adminPassword){ alert('❌ Password atual incorreta'); return; } 
+    if(nova !== conf){ alert('❌ Passwords não coincidem'); return; } 
+    if(nova.length < 6){ alert('❌ Mínimo 6 caracteres'); return; } 
+    adminConfig.adminPassword = nova; 
+    localStorage.setItem('admin_config', JSON.stringify(adminConfig)); 
+    alert('✅ Password alterada!'); 
+    document.getElementById('admin-pass-atual').value = ''; 
+    document.getElementById('admin-pass-nova').value = ''; 
+    document.getElementById('admin-pass-confirm').value = ''; 
+  }
+
+  // ==================== UTILITÁRIOS ====================
+  function fecharModal(id){ 
+    document.getElementById(id).style.display = 'none'; 
+  }
+  
+  function switchTab(tabId){
+    document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
+    document.getElementById(`sec-${tabId}`).classList.add('active');
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+    if(tabId === 'colaboradores') renderColabs();
+    if(tabId === 'historico') renderHistorico();
+    if(tabId === 'atribuir') atualizarSelectores();
+    if(tabId === 'dashboard') atualizarDashboard();
+    if(tabId === 'lista-formacoes') renderFormacoesLista();
+    if(tabId === 'certificado') carregarTemplateCertificado();
+  }
+
+  // ==================== EDIÇÃO DE FORMAÇÃO ====================
+  window.editarFormacao = async (id) => {
+    const docRef = window.doc(window.db, 'formacoes', id);
+    const docSnap = await window.getDoc(docRef);
+    if(docSnap.exists()) {
+      const data = docSnap.data();
+      document.getElementById('f-titulo').value = data.nome;
+      document.getElementById('f-duracao').value = data.duracao;
+      document.getElementById('f-descricao').value = data.descricao;
+      modulos = data.modulos || [];
+      perguntas = data.perguntas || [];
+      editandoFormacaoId = id;
+      renderModulos();
+      renderPerguntas();
+      document.getElementById('editando-id').innerHTML = `✏️ Editando: ${escapeHtml(data.nome)}`;
+      document.getElementById('btn-cancelar-edicao').style.display = 'inline-block';
+      switchTab('formacao');
+    }
+  };
+  
+  window.cancelarEdicao = () => {
+    editandoFormacaoId = null;
+    document.getElementById('f-titulo').value = '';
+    document.getElementById('f-duracao').value = '';
+    document.getElementById('f-descricao').value = '';
+    modulos = [];
+    perguntas = [];
+    renderModulos();
+    renderPerguntas();
+    document.getElementById('editando-id').innerHTML = '';
+    document.getElementById('btn-cancelar-edicao').style.display = 'none';
+  };
+
+  // ==================== EVENT LISTENERS ====================
+  document.getElementById('btn-save-user').addEventListener('click', saveUser);
+  document.getElementById('btn-publicar').addEventListener('click', publicarFormacao);
+  document.getElementById('btn-limpar').addEventListener('click', limparHistorico);
+  document.getElementById('btn-gerar-links').addEventListener('click', gerarLinksMassa);
+  document.getElementById('btn-salvar-modulo').addEventListener('click', salvarModulo);
+  document.getElementById('btn-salvar-pergunta').addEventListener('click', salvarPergunta);
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
+  document.getElementById('btn-cancelar-edicao').addEventListener('click', () => window.cancelarEdicao());
+
+  // ==================== INICIALIZAÇÃO ====================
+  renderModulos(); 
+  renderPerguntas(); 
+  renderColabs(); 
+  renderHistorico(); 
+  atualizarSelectores(); 
+  atualizarDashboard(); 
+  renderFormacoesLista();
+  carregarTemplateCertificado();
+
+  // ==================== EXPOR FUNÇÕES GLOBAIS ====================
+  window.abrirModalModulo = abrirModalModulo;
+  window.editarModulo = editarModulo;
+  window.removerModulo = removerModulo;
+  window.abrirModalPergunta = abrirModalPergunta;
+  window.editarPergunta = editarPergunta;
+  window.removerPergunta = removerPergunta;
+  window.removerColab = removerColab;
+  window.copiarLinkIndividual = copiarLinkIndividual;
+  window.copiarTodosLinks = copiarTodosLinks;
+  window.enviarEmailsMassa = enviarEmailsMassa;
+  window.gerarLinksMassa = gerarLinksMassa;
+  window.selecionarTodos = selecionarTodos;
+  window.deselecionarTodos = deselecionarTodos;
+  window.inserirPlaceholder = inserirPlaceholder;
+  window.previewCertificado = previewCertificado;
+  window.salvarTemplateCertificado = salvarTemplateCertificado;
+  window.resetTemplateCertificado = resetTemplateCertificado;
+  window.alterarPasswordAdmin = alterarPasswordAdmin;
+  window.checkPasswordStrength = checkPasswordStrength;
+  window.exportarHistoricoCSV = exportarHistoricoCSV;
+  window.exportarHistoricoExcel = exportarHistoricoExcel;
+  window.converterLinkGoogleDrive = converterLinkGoogleDrive;
+</script>
+</body>
+</html>
