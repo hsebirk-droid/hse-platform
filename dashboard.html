@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birkenstock S&CC — Minhas Formações</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    BIRKENSTOCK
+    <span>S&CC Portugal · Formação</span>
+  </div>
+  <div class="header-actions">
+    <button class="notification-btn" id="notificationBtn">
+      <i class="fas fa-bell"></i>
+      <span class="notification-badge" id="notificationBadge">0</span>
+    </button>
+    <div class="user-menu" id="userMenuBtn">
+      <div class="user-avatar" id="userAvatar">👤</div>
+      <span class="user-name" id="userNameDisplay">Carregando...</span>
+      <i class="fas fa-chevron-down" style="color: white; font-size: 12px;"></i>
+    </div>
+    <button class="logout-btn">Sair</button>
+  </div>
+</header>
+
+<div class="user-dropdown" id="userDropdown">
+  <div class="dropdown-item" onclick="openProfileModal()">
+    <i class="fas fa-user"></i>
+    <span>Meu Perfil</span>
+  </div>
+  <div class="dropdown-item" onclick="openCompletedModal()">
+    <i class="fas fa-check-circle"></i>
+    <span>Formações Concluídas</span>
+  </div>
+  <div class="dropdown-divider"></div>
+  <div class="dropdown-item" onclick="fazerLogout()">
+    <i class="fas fa-sign-out-alt"></i>
+    <span>Sair</span>
+  </div>
+</div>
+
+<div class="notifications-panel" id="notificationsPanel">
+  <div class="notifications-header">
+    <i class="fas fa-bell"></i> Notificações
+  </div>
+  <div id="notificationsList"></div>
+</div>
+
+<main class="main-container">
+  <div class="welcome-section">
+    <h2 id="welcomeMessage">Bem-vindo de volta! 👋</h2>
+    <p>Continue a sua jornada de aprendizagem e desenvolva novas competências.</p>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="coursesCompleted">0</div>
+        <div class="stat-label">Formações concluídas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="coursesInProgress">0</div>
+        <div class="stat-label">Em progresso</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="certificatesCount">0</div>
+        <div class="stat-label">Certificados</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="search-section">
+    <div class="search-bar">
+      <input type="text" class="search-input" id="searchInput" placeholder="Pesquisar formações...">
+    </div>
+    <div class="filter-buttons" id="filterButtons">
+      <button class="filter-btn active" data-filter="all">Todas</button>
+      <button class="filter-btn" data-filter="em_andamento">Em andamento</button>
+      <button class="filter-btn" data-filter="concluidas">Concluídas</button>
+    </div>
+  </div>
+
+  <div class="section-title">
+    <h3><i class="fas fa-graduation-cap"></i> As Minhas Formações</h3>
+  </div>
+
+  <div id="loading" style="text-align: center; padding: 60px;">
+    <i class="fas fa-spinner fa-spin" style="font-size: 32px; color: var(--birkenstock-blue);"></i>
+    <p>A carregar formações...</p>
+  </div>
+  <div class="courses-grid" id="coursesGrid" style="display: none;"></div>
+</main>
+
+<div class="modal" id="profileModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Meu Perfil</h3>
+      <span class="modal-close" onclick="closeProfileModal()">&times;</span>
+    </div>
+    <div class="profile-avatar" id="profileAvatar">👤</div>
+    <div class="profile-field">
+      <label>Nome</label>
+      <p id="profileName">-</p>
+    </div>
+    <div class="profile-field">
+      <label>Email</label>
+      <p id="profileEmail">-</p>
+    </div>
+    <div class="profile-field">
+      <label>Membro desde</label>
+      <p id="profileSince">-</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="completedModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3><i class="fas fa-check-circle"></i> Formações Concluídas</h3>
+      <span class="modal-close" onclick="closeCompletedModal()">&times;</span>
+    </div>
+    <div id="completedList" style="max-height: 400px; overflow-y: auto;"></div>
+  </div>
+</div>
+
+<script type="module" src="js/dashboard.js"></script>
+<script>
+  function fazerLogout() {
+    if(confirm('Deseja sair da plataforma?')) {
+      localStorage.removeItem('usuarioAtivo');
+      localStorage.removeItem('usuarioAdmin');
+      localStorage.removeItem('cursoAtualId');
+      window.location.href = 'login.html';
+    }
+  }
+  
+  function openProfileModal() {
+    const modal = document.getElementById('profileModal');
+    if (modal) modal.classList.add('show');
+  }
+  
+  function closeProfileModal() {
+    const modal = document.getElementById('profileModal');
+    if (modal) modal.classList.remove('show');
+  }
+  
+  function openCompletedModal() {
+    const modal = document.getElementById('completedModal');
+    if (modal) modal.classList.add('show');
+  }
+  
+  function closeCompletedModal() {
+    const modal = document.getElementById('completedModal');
+    if (modal) modal.classList.remove('show');
+  }
+  
+  window.fazerLogout = fazerLogout;
+  window.openProfileModal = openProfileModal;
+  window.closeProfileModal = closeProfileModal;
+  window.openCompletedModal = openCompletedModal;
+  window.closeCompletedModal = closeCompletedModal;
+</script>
+</body>
+</html>

@@ -1,0 +1,506 @@
+/* ============================================
+   FORMAÇÃO - ESTILOS ESPECÍFICOS
+   ============================================ */
+
+/* Hero Section */
+.hero {
+  background: linear-gradient(135deg, var(--birkenstock-blue), var(--birkenstock-blue-dark));
+  padding: 48px 32px;
+  color: white;
+}
+
+.hero-inner {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero h1 {
+  font-family: var(--font-head);
+  font-size: 2rem;
+  margin-bottom: 16px;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 24px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.hero-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  background: rgba(255,255,255,0.1);
+  padding: 6px 16px;
+  border-radius: 30px;
+}
+
+/* Progress Strip */
+.progress-strip {
+  background: white;
+  padding: 16px 32px;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.progress-strip-inner {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.8rem;
+}
+
+.prog-track {
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--birkenstock-blue), var(--birkenstock-gold));
+  width: 0%;
+  transition: width 0.3s;
+}
+
+/* Main Content */
+.main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+/* Section Blocks */
+.section-block {
+  background: white;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
+}
+
+.section-block.locked {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.section-header {
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  background: #fafafa;
+}
+
+.section-header:hover {
+  background: #f5f5f5;
+}
+
+.s-num {
+  width: 40px;
+  height: 40px;
+  background: #e0e0e0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.section-block.completed .s-num {
+  background: var(--birkenstock-blue);
+  color: white;
+}
+
+.s-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--birkenstock-blue);
+}
+
+.s-meta {
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 4px;
+}
+
+.section-body {
+  padding: 24px;
+  border-top: 1px solid #e0e0e0;
+  display: none;
+}
+
+.section-body.open {
+  display: block;
+}
+
+/* Content Types */
+.text-content {
+  line-height: 1.6;
+  color: #555;
+  margin: 16px 0;
+}
+
+.video-wrap {
+  margin: 16px 0;
+}
+
+.video-wrap iframe {
+  width: 100%;
+  height: 400px;
+  border: none;
+  border-radius: 12px;
+}
+
+.doc-viewer {
+  margin: 16px 0;
+}
+
+.doc-iframe {
+  width: 100%;
+  height: 500px;
+  border: none;
+  border-radius: 12px;
+}
+
+/* Confirm View */
+.confirm-viewed {
+  background: #f5f5f5;
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.btn-confirm {
+  background: var(--birkenstock-blue);
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-confirm:hover {
+  background: var(--birkenstock-blue-dark);
+}
+
+.confirmed-label {
+  color: var(--success);
+  background: var(--success-bg);
+  padding: 8px 16px;
+  border-radius: 30px;
+  display: inline-block;
+}
+
+/* Quiz */
+.quiz-intro {
+  background: var(--warning-bg);
+  padding: 20px;
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+.question {
+  margin-bottom: 24px;
+}
+
+.question-text {
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--birkenstock-blue);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option-item {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.option-item:hover {
+  background: #f5f5f5;
+}
+
+.option-item.selected {
+  border-color: var(--birkenstock-blue);
+  background: #eef2ff;
+}
+
+.option-letter {
+  width: 28px;
+  height: 28px;
+  background: #e0e0e0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.quiz-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.btn-submit {
+  background: var(--birkenstock-blue);
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-submit:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Result Screen */
+.result-screen {
+  text-align: center;
+  padding: 40px;
+  display: none;
+}
+
+.result-score-ring {
+  width: 140px;
+  height: 140px;
+  border: 8px solid var(--birkenstock-blue);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  background: rgba(0,51,141,0.05);
+}
+
+.result-score-ring.fail {
+  border-color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.score-num {
+  font-family: var(--font-head);
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--birkenstock-blue);
+}
+
+.result-actions {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.result-btn {
+  background: var(--birkenstock-blue);
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 40px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s;
+}
+
+.result-btn:hover {
+  background: var(--birkenstock-blue-dark);
+  transform: translateY(-2px);
+}
+
+.result-btn-retry {
+  background: var(--warning);
+}
+
+.result-btn-retry:hover {
+  background: #d97706;
+}
+
+.result-btn-cert {
+  background: var(--success);
+}
+
+.result-btn-cert:hover {
+  background: #059669;
+}
+
+/* Certificate */
+.cert-screen {
+  margin-top: 30px;
+}
+
+#certificado-para-pdf {
+  width: 100%;
+  max-width: 210mm;
+  margin: 0 auto;
+  position: relative;
+  border: none;
+  border-radius: 0;
+  aspect-ratio: 210 / 297;
+}
+
+.cert-actions {
+  text-align: center;
+  margin-top: 30px;
+  padding: 20px;
+}
+
+.action-btn {
+  background: var(--birkenstock-blue);
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 40px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 10px;
+  min-width: 200px;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  background: var(--birkenstock-blue-dark);
+  transform: translateY(-2px);
+}
+
+.action-btn-secondary {
+  background: white;
+  color: var(--birkenstock-blue);
+  border: 2px solid var(--birkenstock-blue);
+}
+
+.action-btn-secondary:hover {
+  background: var(--birkenstock-blue);
+  color: white;
+}
+
+.action-btn-download {
+  background: var(--success);
+}
+
+.action-btn-download:hover {
+  background: #059669;
+}
+
+/* Top Bar for Formacao */
+.top-bar {
+  background: var(--birkenstock-blue);
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  border-bottom: 2px solid var(--birkenstock-gold);
+}
+
+.top-bar .logo {
+  font-family: var(--font-head);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  line-height: 1.2;
+}
+
+.top-bar .logo span {
+  font-size: 0.7rem;
+  font-weight: 400;
+  display: block;
+  color: rgba(255,255,255,0.8);
+}
+
+.deadline-badge {
+  background: rgba(255,255,255,0.15);
+  border-radius: 30px;
+  padding: 6px 16px;
+  font-size: 0.8rem;
+  color: white;
+}
+
+.btn-exit {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero {
+    padding: 32px 20px;
+  }
+  
+  .hero h1 {
+    font-size: 1.5rem;
+  }
+  
+  .main {
+    padding: 20px;
+  }
+  
+  .section-header {
+    padding: 16px;
+  }
+  
+  .section-body {
+    padding: 16px;
+  }
+  
+  .action-btn {
+    padding: 10px 20px;
+    min-width: 160px;
+    font-size: 0.9rem;
+    margin: 5px;
+  }
+  
+  .result-btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+  
+  .video-wrap iframe {
+    height: 250px;
+  }
+}
