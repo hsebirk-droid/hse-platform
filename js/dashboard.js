@@ -1,4 +1,4 @@
-import { db, collection, query, orderBy, onSnapshot } from './firebase-config.js';
+import { db, collection, query, orderBy, onSnapshot, getDoc, doc } from './firebase-config.js';
 import { escapeHtml, formatDate, showToast, checkAuth } from './utils.js';
 import { getCurrentUser, logout } from './auth.js';
 
@@ -12,6 +12,7 @@ let currentFilter = 'all';
 let searchTerm = '';
 let notifications = [];
 let unsubscribeCourses = null;
+let currentUser = null;
 
 // ============================================
 // INICIALIZAÇÃO
@@ -20,180 +21,133 @@ let unsubscribeCourses = null;
 export async function initDashboard() {
   console.log("🚀 Iniciando dashboard...");
   
-  // Verificar autenticação
   if (!checkAuth()) return;
   
-  const user = getCurrentUser();
-  console.log("👤 Utilizador:", user);
+  currentUser = getCurrentUser();
   
-  if (!user || user.type !== 'colaborador') {
-    console.log("❌ Não é colaborador, redirecionando...");
+  if (!currentUser || currentUser.type !== 'colaborador') {
     window.location.href = 'login.html';
     return;
   }
   
-  // Configurar UI com nome do utilizador
-  const userNameDisplay = document.getElementById('userNameDisplay');
-  const userAvatar = document.getElementById('userAvatar');
-  const welcomeMessage = document.getElementById('welcomeMessage');
+  // Configurar UI
+  setupUI();
   
-  if (userNameDisplay) userNameDisplay.textContent = user.name;
-  if (userAvatar) userAvatar.textContent = user.name.charAt(0).toUpperCase();
-  if (welcomeMessage) welcomeMessage.innerHTML = `Bem-vindo de volta, ${user.name}! 👋`;
-  
-  // Configurar event listeners
-  setupEventListeners();
-  
-  // Carregar progresso
+  // Carregar progresso e notificações
   loadUserProgress();
+  loadNotifications();
   
   // Carregar formações
   await loadCourses();
   
-  // Verificar se há curso concluído para marcar
+  // Configurar eventos
+  setupEventListeners();
+  
+  // Verificar curso concluído
   verificarCursoConcluido();
 }
 
+function setupUI() {
+  const userNameDisplay = document.getElementById('userNameDisplay');
+  const userAvatar = document.getElementById('userAvatar');
+  const welcomeMessage = document.getElementById('welcomeMessage');
+  const profileAvatar = document.getElementById('profileAvatar');
+  
+  if (userNameDisplay) userNameDisplay.textContent = currentUser.name;
+  if (userAvatar) userAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
+  if (profileAvatar) profileAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
+  if (welcomeMessage) welcomeMessage.innerHTML = `Bem-vindo de volta, ${currentUser.name}! 👋`;
+}
+
 // ============================================
-// CARREGAR FORMAÇÕES EM TEMPO REAL
+// CARREGAR FORMAÇÕES
 // ============================================
 
 async function loadCourses() {
   const loadingDiv = document.getElementById('loading');
   const coursesGrid = document.getElementById('coursesGrid');
   
-  if (!loadingDiv || !coursesGrid) {
-    console.error("❌ Elementos do DOM não encontrados");
-    return;
-  }
+  if (!loadingDiv || !coursesGrid) return;
   
   loadingDiv.style.display = 'block';
   coursesGrid.style.display = 'none';
   
   try {
-    console.log("📡 A conectar ao Firebase...");
-    
-    // Usar onSnapshot para atualizações em tempo real
     unsubscribeCourses = onSnapshot(
       query(collection(db, 'formacoes'), orderBy('dataTimestamp', 'desc')),
       (querySnapshot) => {
-        console.log("✅ Formações recebidas:", querySnapshot.size);
-        
         allCourses = [];
         querySnapshot.forEach((doc) => {
           allCourses.push({ id: doc.id, ...doc.data() });
         });
         
-        console.log("📚 Total de formações carregadas:", allCourses.length);
-        
-        // Atualizar estatísticas e renderizar
+        console.log("✅ Formações carregadas:", allCourses.length);
         updateUserStats();
         renderCourses();
         
-        // Esconder loading e mostrar grid
         loadingDiv.style.display = 'none';
         coursesGrid.style.display = 'grid';
-        
-        // Notificação de boas-vindas (apenas uma vez)
-        const user = getCurrentUser();
-        if (user && !localStorage.getItem(`welcome_${user.name}`)) {
-          addNotification(`Bem-vindo à plataforma de formação! Explore os cursos disponíveis.`);
-          localStorage.setItem(`welcome_${user.name}`, 'true');
-        }
       },
       (error) => {
-        console.error('❌ Erro ao carregar formações:', error);
+        console.error('❌ Erro:', error);
         loadingDiv.innerHTML = '❌ Erro ao carregar formações. <button onclick="location.reload()">Tentar novamente</button>';
       }
     );
-    
   } catch (error) {
     console.error('❌ Erro:', error);
-    loadingDiv.innerHTML = '❌ Erro ao carregar formações. <button onclick="location.reload()">Tentar novamente</button>';
+    loadingDiv.innerHTML = '❌ Erro ao carregar formações.';
   }
 }
 
 // ============================================
-// PROGRESSO DO UTILIZADOR
+// PROGRESSO
 // ============================================
 
 function loadUserProgress() {
-  const user = getCurrentUser();
-  if (!user) return;
-  
-  const saved = localStorage.getItem(`progress_${user.name}`);
+  const saved = localStorage.getItem(`progress_${currentUser.name}`);
   if (saved) {
     try {
       userProgress = JSON.parse(saved);
-      console.log("📊 Progresso carregado:", userProgress);
     } catch(e) {
-      console.error("Erro ao carregar progresso:", e);
       userProgress = {};
     }
-  } else {
-    userProgress = {};
-    console.log("📊 Sem progresso salvo");
   }
 }
 
 function saveUserProgress() {
-  const user = getCurrentUser();
-  if (!user) return;
-  
-  localStorage.setItem(`progress_${user.name}`, JSON.stringify(userProgress));
-  console.log("💾 Progresso salvo");
+  localStorage.setItem(`progress_${currentUser.name}`, JSON.stringify(userProgress));
 }
-
-// ============================================
-// ESTATÍSTICAS
-// ============================================
-
-function updateUserStats() {
-  let completed = 0;
-  let inProgress = 0;
-  
-  allCourses.forEach(curso => {
-    const progress = userProgress[curso.id];
-    if (progress && progress.completed === true) {
-      completed++;
-    } else if (progress && progress.modulesCompleted > 0) {
-      inProgress++;
-    }
-  });
-  
-  const coursesCompletedEl = document.getElementById('coursesCompleted');
-  const coursesInProgressEl = document.getElementById('coursesInProgress');
-  const certificatesCountEl = document.getElementById('certificatesCount');
-  
-  if (coursesCompletedEl) coursesCompletedEl.textContent = completed;
-  if (coursesInProgressEl) coursesInProgressEl.textContent = inProgress;
-  if (certificatesCountEl) certificatesCountEl.textContent = completed;
-  
-  console.log(`📊 Estatísticas: ${completed} concluídas, ${inProgress} em andamento`);
-}
-
-// ============================================
-// CÁLCULO DE PROGRESSO
-// ============================================
 
 function calculateCourseProgress(curso) {
   const progress = userProgress[curso.id];
-  if (progress && progress.completed) return 100;
-  if (progress && progress.modulesCompleted) {
+  if (progress?.completed) return 100;
+  if (progress?.modulesCompleted) {
     const totalModules = curso.modulos?.length || 1;
     return Math.round((progress.modulesCompleted / totalModules) * 100);
   }
   return 0;
 }
 
-function isCourseCompleted(cursoId) {
-  const progress = userProgress[cursoId];
-  return progress && progress.completed === true;
+function updateUserStats() {
+  let completed = 0;
+  let inProgress = 0;
+  
+  allCourses.forEach(curso => {
+    const progress = calculateCourseProgress(curso);
+    if (progress === 100) completed++;
+    else if (progress > 0) inProgress++;
+  });
+  
+  const completedEl = document.getElementById('coursesCompleted');
+  const inProgressEl = document.getElementById('coursesInProgress');
+  const certificatesEl = document.getElementById('certificatesCount');
+  
+  if (completedEl) completedEl.textContent = completed;
+  if (inProgressEl) inProgressEl.textContent = inProgress;
+  if (certificatesEl) certificatesEl.textContent = completed;
 }
 
 export function markCourseCompleted(cursoId, cursoNome) {
-  console.log("🏆 Marcando curso como concluído:", cursoId, cursoNome);
-  
   if (!userProgress[cursoId]) {
     userProgress[cursoId] = { modulesCompleted: 0, completed: false };
   }
@@ -201,14 +155,29 @@ export function markCourseCompleted(cursoId, cursoNome) {
   userProgress[cursoId].completedAt = new Date().toISOString();
   
   saveUserProgress();
-  renderCourses();
   updateUserStats();
+  renderCourses();
   addNotification(`🎉 Parabéns! Concluiu a formação "${cursoNome}"!`);
 }
 
 // ============================================
 // NOTIFICAÇÕES
 // ============================================
+
+function loadNotifications() {
+  const saved = localStorage.getItem(`notifications_${currentUser.name}`);
+  if (saved) {
+    try {
+      notifications = JSON.parse(saved);
+      updateNotificationBadge();
+      renderNotifications();
+    } catch(e) {}
+  }
+}
+
+function saveNotifications() {
+  localStorage.setItem(`notifications_${currentUser.name}`, JSON.stringify(notifications.slice(0, 50)));
+}
 
 function addNotification(message) {
   notifications.unshift({
@@ -218,17 +187,9 @@ function addNotification(message) {
     read: false
   });
   
-  // Manter apenas últimas 50 notificações
-  if (notifications.length > 50) notifications.pop();
-  
+  saveNotifications();
   updateNotificationBadge();
   renderNotifications();
-  
-  // Guardar notificações
-  const user = getCurrentUser();
-  if (user) {
-    localStorage.setItem(`notifications_${user.name}`, JSON.stringify(notifications));
-  }
 }
 
 function updateNotificationBadge() {
@@ -260,34 +221,18 @@ function renderNotifications() {
 window.markNotificationRead = (id) => {
   const notification = notifications.find(n => n.id === id);
   if (notification) notification.read = true;
+  saveNotifications();
   updateNotificationBadge();
   renderNotifications();
 };
 
-function loadNotifications() {
-  const user = getCurrentUser();
-  if (!user) return;
-  
-  const saved = localStorage.getItem(`notifications_${user.name}`);
-  if (saved) {
-    try {
-      notifications = JSON.parse(saved);
-      updateNotificationBadge();
-      renderNotifications();
-    } catch(e) {
-      console.error("Erro ao carregar notificações:", e);
-    }
-  }
-}
-
 // ============================================
-// FILTROS E PESQUISA
+// RENDERIZAR CURSOS
 // ============================================
 
 function filterCourses() {
   let filtered = [...allCourses];
   
-  // Aplicar filtro por status
   filtered = filtered.filter(curso => {
     const progress = calculateCourseProgress(curso);
     const completed = progress === 100;
@@ -298,7 +243,6 @@ function filterCourses() {
     }
   });
   
-  // Aplicar pesquisa
   if (searchTerm) {
     const term = searchTerm.toLowerCase();
     filtered = filtered.filter(curso => 
@@ -310,16 +254,11 @@ function filterCourses() {
   return filtered;
 }
 
-// ============================================
-// RENDERIZAR CURSOS
-// ============================================
-
 function renderCourses() {
   const grid = document.getElementById('coursesGrid');
   if (!grid) return;
   
   const filtered = filterCourses();
-  console.log(`🎨 Renderizando ${filtered.length} cursos (total: ${allCourses.length})`);
   
   if (filtered.length === 0) {
     grid.innerHTML = `
@@ -348,19 +287,13 @@ function renderCourses() {
       btnClass = 'btn-continue';
     }
     
-    // Determinar ícone da capa
-    let iconClass = 'book-open';
-    if (curso.categoria === 'video') iconClass = 'video';
-    if (curso.categoria === 'documento') iconClass = 'file-alt';
-    
     return `
       <div class="course-card" onclick="window.entrarFormacao('${curso.id}')">
         <div class="course-cover">
-          <i class="fas fa-${iconClass}"></i>
+          <i class="fas fa-book-open"></i>
           <span class="course-badge">${escapeHtml(curso.duracao || '30 min')}</span>
         </div>
         <div class="course-body">
-          <div class="course-category">${escapeHtml(curso.categoria || 'Formação')}</div>
           <div class="course-title">${escapeHtml(curso.nome || 'Formação')}</div>
           <div class="course-desc">${escapeHtml((curso.descricao || 'Curso de formação profissional.').substring(0, 100))}${curso.descricao?.length > 100 ? '...' : ''}</div>
           <div class="course-meta">
@@ -376,12 +309,10 @@ function renderCourses() {
             </div>
           ` : `
             <div style="margin-top: 12px; color: var(--success); font-size: 12px;">
-              <i class="fas fa-check-circle"></i> Concluído em ${userProgress[curso.id]?.completedAt ? formatDate(userProgress[curso.id].completedAt) : ''}
+              <i class="fas fa-check-circle"></i> Concluído
             </div>
           `}
-          <div class="btn-start ${btnClass}">
-            ${btnText}
-          </div>
+          <div class="btn-start ${btnClass}">${btnText}</div>
         </div>
       </div>
     `;
@@ -393,7 +324,6 @@ function renderCourses() {
 // ============================================
 
 window.entrarFormacao = (cursoId) => {
-  console.log("🎓 Entrando na formação:", cursoId);
   localStorage.setItem('cursoAtualId', cursoId);
   window.location.href = 'formacao_colaborador.html';
 };
@@ -401,12 +331,9 @@ window.entrarFormacao = (cursoId) => {
 function verificarCursoConcluido() {
   const cursoConcluido = localStorage.getItem('cursoConcluido');
   if (cursoConcluido) {
-    console.log("🎓 Curso concluído detectado:", cursoConcluido);
     const curso = allCourses.find(c => c.id === cursoConcluido);
     if (curso) {
       markCourseCompleted(cursoConcluido, curso.nome);
-    } else {
-      markCourseCompleted(cursoConcluido, 'Formação');
     }
     localStorage.removeItem('cursoConcluido');
   }
@@ -417,18 +344,15 @@ function verificarCursoConcluido() {
 // ============================================
 
 window.openProfileModal = () => {
-  const user = getCurrentUser();
-  if (!user) return;
-  
   const profileName = document.getElementById('profileName');
   const profileEmail = document.getElementById('profileEmail');
   const profileSince = document.getElementById('profileSince');
-  const profileModal = document.getElementById('profileModal');
+  const modal = document.getElementById('profileModal');
   
-  if (profileName) profileName.textContent = user.name;
-  if (profileEmail) profileEmail.textContent = `${user.name}@birkenstock.pt`;
+  if (profileName) profileName.textContent = currentUser.name;
+  if (profileEmail) profileEmail.textContent = `${currentUser.name}@birkenstock.pt`;
   if (profileSince) profileSince.textContent = '2024';
-  if (profileModal) profileModal.classList.add('show');
+  if (modal) modal.classList.add('show');
 };
 
 window.closeProfileModal = () => {
@@ -442,21 +366,19 @@ window.openCompletedModal = () => {
   
   if (!modal || !completedList) return;
   
-  const completedCourses = allCourses.filter(curso => isCourseCompleted(curso.id));
+  const completedCourses = allCourses.filter(curso => calculateCourseProgress(curso) === 100);
   
   if (completedCourses.length === 0) {
-    completedList.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--birkenstock-gray);">Nenhuma formação concluída ainda.</div>';
+    completedList.innerHTML = '<div style="text-align: center; padding: 40px;">Nenhuma formação concluída ainda.</div>';
   } else {
     completedList.innerHTML = completedCourses.map(curso => `
-      <div style="display: flex; align-items: center; gap: 16px; padding: 12px; border-bottom: 1px solid var(--border);">
-        <div style="width: 40px; height: 40px; background: var(--success-bg); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-          <i class="fas fa-check-circle" style="color: var(--success); font-size: 20px;"></i>
+      <div class="completed-item">
+        <div class="completed-icon"><i class="fas fa-check-circle"></i></div>
+        <div class="completed-info">
+          <div class="completed-title">${escapeHtml(curso.nome)}</div>
+          <div class="completed-date">Concluído em ${userProgress[curso.id]?.completedAt ? formatDate(userProgress[curso.id].completedAt) : ''}</div>
         </div>
-        <div style="flex: 1;">
-          <div style="font-weight: 600;">${escapeHtml(curso.nome)}</div>
-          <div style="font-size: 12px; color: var(--birkenstock-gray);">Concluído em ${userProgress[curso.id]?.completedAt ? formatDate(userProgress[curso.id].completedAt) : ''}</div>
-        </div>
-        <button onclick="window.entrarFormacao('${curso.id}')" style="background: var(--birkenstock-blue); color: white; border: none; padding: 6px 16px; border-radius: 20px; cursor: pointer;">Ver</button>
+        <button class="completed-btn" onclick="window.entrarFormacao('${curso.id}')">Ver</button>
       </div>
     `).join('');
   }
@@ -469,11 +391,11 @@ window.closeCompletedModal = () => {
 };
 
 // ============================================
-// EVENT LISTENERS
+// EVENTOS
 // ============================================
 
 function setupEventListeners() {
-  // Search input
+  // Search
   const searchInput = document.getElementById('searchInput');
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
@@ -482,18 +404,17 @@ function setupEventListeners() {
     });
   }
   
-  // Filter buttons
-  const filterButtons = document.querySelectorAll('.filter-btn');
-  filterButtons.forEach(btn => {
+  // Filters
+  document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      filterButtons.forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentFilter = btn.dataset.filter;
       renderCourses();
     });
   });
   
-  // User dropdown
+  // User menu
   const userMenuBtn = document.getElementById('userMenuBtn');
   const userDropdown = document.getElementById('userDropdown');
   const notificationBtn = document.getElementById('notificationBtn');
@@ -502,27 +423,21 @@ function setupEventListeners() {
   if (userMenuBtn) {
     userMenuBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      if (userDropdown) userDropdown.classList.toggle('show');
-      if (notificationsPanel) notificationsPanel.classList.remove('show');
+      userDropdown.classList.toggle('show');
+      notificationsPanel.classList.remove('show');
     });
   }
   
   if (notificationBtn) {
     notificationBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      if (notificationsPanel) notificationsPanel.classList.toggle('show');
-      if (userDropdown) userDropdown.classList.remove('show');
+      notificationsPanel.classList.toggle('show');
+      userDropdown.classList.remove('show');
     });
   }
   
-  // Fechar dropdowns ao clicar fora
-  document.addEventListener('click', () => {
-    if (userDropdown) userDropdown.classList.remove('show');
-    if (notificationsPanel) notificationsPanel.classList.remove('show');
-  });
-  
-  // Logout button
-  const logoutBtn = document.querySelector('.logout-btn');
+  // Logout
+  const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
       if (confirm('Deseja sair da plataforma?')) {
@@ -530,6 +445,12 @@ function setupEventListeners() {
       }
     });
   }
+  
+  // Close dropdowns on outside click
+  document.addEventListener('click', () => {
+    if (userDropdown) userDropdown.classList.remove('show');
+    if (notificationsPanel) notificationsPanel.classList.remove('show');
+  });
 }
 
 // ============================================
@@ -537,10 +458,5 @@ function setupEventListeners() {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log("📄 Dashboard carregado");
   initDashboard();
 });
-
-// Exportar funções globais
-window.entrarFormacao = entrarFormacao;
-window.markNotificationRead = markNotificationRead;
