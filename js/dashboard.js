@@ -220,6 +220,58 @@ function renderCourses() {
   console.log("✅ Cursos renderizados com sucesso");
 }
 
+function renderCoursesFiltered(filtered) {
+  const grid = document.getElementById('coursesGrid');
+  if (!grid) return;
+  
+  grid.innerHTML = filtered.map(curso => {
+    const progress = calculateCourseProgress(curso);
+    const completed = progress === 100;
+    const modulesCount = curso.modulos?.length || 0;
+    const isStarted = progress > 0 && !completed;
+    
+    let btnText = '📖 Iniciar';
+    let btnClass = '';
+    if (completed) {
+      btnText = '🎓 Ver Certificado';
+      btnClass = 'btn-completed';
+    } else if (isStarted) {
+      btnText = '▶ Continuar';
+      btnClass = 'btn-continue';
+    }
+    
+    return `
+      <div class="course-card" onclick="window.entrarFormacao('${curso.id}')">
+        <div class="course-cover">
+          <i class="fas fa-book-open"></i>
+          <span class="course-badge">${escapeHtml(curso.duracao || '30 min')}</span>
+        </div>
+        <div class="course-body">
+          <div class="course-title">${escapeHtml(curso.nome || 'Formação')}</div>
+          <div class="course-desc">${escapeHtml((curso.descricao || 'Curso de formação profissional.').substring(0, 100))}</div>
+          <div class="course-meta">
+            <span><i class="fas fa-layer-group"></i> ${modulesCount} módulos</span>
+            <span><i class="fas fa-question-circle"></i> ${curso.perguntas?.length || 0} questões</span>
+          </div>
+          ${!completed ? `
+            <div class="course-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${progress}%"></div>
+              </div>
+              <div class="progress-text">${progress}% concluído</div>
+            </div>
+          ` : `
+            <div style="margin-top: 12px; color: var(--success); font-size: 12px;">
+              <i class="fas fa-check-circle"></i> Concluído
+            </div>
+          `}
+          <div class="btn-start ${btnClass}">${btnText}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
 window.entrarFormacao = (cursoId) => {
   console.log("🎓 Entrando na formação:", cursoId);
   localStorage.setItem('cursoAtualId', cursoId);
@@ -274,6 +326,8 @@ window.closeCompletedModal = () => {
 };
 
 function setupEventListeners() {
+  console.log("🔧 Configurando event listeners...");
+  
   const searchInput = document.getElementById('searchInput');
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
@@ -284,7 +338,6 @@ function setupEventListeners() {
       );
       const grid = document.getElementById('coursesGrid');
       if (grid && filtered.length !== allCourses.length) {
-        // Renderizar filtrados
         if (filtered.length === 0) {
           grid.innerHTML = `
             <div class="empty-state">
@@ -312,7 +365,6 @@ function setupEventListeners() {
       if (filter === 'concluidas') {
         filtered = filtered.filter(curso => calculateCourseProgress(curso) === 100);
       } else if (filter === 'em_andamento') {
-        const progress = filtered.map(c => calculateCourseProgress(c));
         filtered = filtered.filter(curso => {
           const p = calculateCourseProgress(curso);
           return p > 0 && p < 100;
@@ -367,61 +419,11 @@ function setupEventListeners() {
   }
   
   document.addEventListener('click', () => {
-    if (userDropdown) userDropdown.classList.remove('show');
+    if (userDropdown) userDropdown?.classList.remove('show');
     if (notificationsPanel) notificationsPanel?.classList.remove('show');
   });
-}
-
-function renderCoursesFiltered(filtered) {
-  const grid = document.getElementById('coursesGrid');
-  if (!grid) return;
   
-  grid.innerHTML = filtered.map(curso => {
-    const progress = calculateCourseProgress(curso);
-    const completed = progress === 100;
-    const modulesCount = curso.modulos?.length || 0;
-    const isStarted = progress > 0 && !completed;
-    
-    let btnText = '📖 Iniciar';
-    let btnClass = '';
-    if (completed) {
-      btnText = '🎓 Ver Certificado';
-      btnClass = 'btn-completed';
-    } else if (isStarted) {
-      btnText = '▶ Continuar';
-      btnClass = 'btn-continue';
-    }
-    
-    return `
-      <div class="course-card" onclick="window.entrarFormacao('${curso.id}')">
-        <div class="course-cover">
-          <i class="fas fa-book-open"></i>
-          <span class="course-badge">${escapeHtml(curso.duracao || '30 min')}</span>
-        </div>
-        <div class="course-body">
-          <div class="course-title">${escapeHtml(curso.nome || 'Formação')}</div>
-          <div class="course-desc">${escapeHtml((curso.descricao || 'Curso de formação profissional.').substring(0, 100))}</div>
-          <div class="course-meta">
-            <span><i class="fas fa-layer-group"></i> ${modulesCount} módulos</span>
-            <span><i class="fas fa-question-circle"></i> ${curso.perguntas?.length || 0} questões</span>
-          </div>
-          ${!completed ? `
-            <div class="course-progress">
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: ${progress}%"></div>
-              </div>
-              <div class="progress-text">${progress}% concluído</div>
-            </div>
-          ` : `
-            <div style="margin-top: 12px; color: var(--success); font-size: 12px;">
-              <i class="fas fa-check-circle"></i> Concluído
-            </div>
-          `}
-          <div class="btn-start ${btnClass}">${btnText}</div>
-        </div>
-      </div>
-    `;
-  }).join('');
+  console.log("✅ Event listeners configurados");
 }
 
 // Inicializar
