@@ -40,38 +40,30 @@ export function showToast(message, duration = 3000) {
 export function checkAuth() {
   const usuario = localStorage.getItem('usuarioAtivo');
   const admin = localStorage.getItem('usuarioAdmin');
-  // Apenas retorna se está autenticado, NÃO redireciona automaticamente
   return !!(usuario || admin);
 }
 
 export function converterLinkGoogleDrive(url) {
   if (!url) return url;
   
-  // Se já for um link de embed, retornar
   if (url.includes('/preview') || url.includes('youtube.com/embed')) {
     return url;
   }
   
-  // Extrair ID do Google Drive
   let fileId = null;
-  
-  // Formato: /file/d/ID/view
   let match = url.match(/\/file\/d\/([^\/]+)/);
   if (match) fileId = match[1];
   
-  // Formato: /d/ID
   if (!fileId) {
     match = url.match(/\/d\/([^\/]+)/);
     if (match) fileId = match[1];
   }
   
-  // Formato: ?id=ID
   if (!fileId) {
     match = url.match(/[?&]id=([^&]+)/);
     if (match) fileId = match[1];
   }
   
-  // Formato: /open?id=ID
   if (!fileId) {
     match = url.match(/open\?id=([^&]+)/);
     if (match) fileId = match[1];
@@ -81,7 +73,6 @@ export function converterLinkGoogleDrive(url) {
     return `https://drive.google.com/file/d/${fileId}/preview`;
   }
   
-  // Converter YouTube para embed
   if (url.includes('youtube.com/watch')) {
     let videoId = url.split('v=')[1]?.split('&')[0];
     if (videoId) {
@@ -105,7 +96,6 @@ export function downloadExcel(data, filename, sheetName = 'Dados') {
     return;
   }
   
-  // Verificar se XLSX está disponível
   if (typeof XLSX === 'undefined') {
     showToast('❌ Erro: Biblioteca Excel não carregada');
     return;
