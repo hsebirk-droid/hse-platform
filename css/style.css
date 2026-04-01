@@ -159,6 +159,10 @@ body {
   opacity: 0;
   transition: opacity 0.3s;
   z-index: 1000;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  pointer-events: none;
 }
 
 .toast.show {
@@ -208,6 +212,11 @@ body {
   cursor: pointer;
   font-size: 24px;
   color: var(--birkenstock-gray);
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: var(--danger);
 }
 
 /* ============================================
@@ -235,6 +244,18 @@ body {
   color: #666;
 }
 
+.loading::before {
+  content: "🔄";
+  display: inline-block;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 /* ============================================
    ALERTS
    ============================================ */
@@ -256,17 +277,8 @@ body {
 }
 
 /* ============================================
-   RESPONSIVIDADE COMUM
+   IFRAMES E CONTEÚDO EMBUTIDO
    ============================================ */
-@media (max-width: 768px) {
-  .topbar, header, .dashboard-header, .login-header {
-    padding: 12px 20px;
-  }
-   /* ============================================
-   ESTILOS ADICIONAIS PARA CORREÇÕES
-   ============================================ */
-
-/* Garantir que os iframes são responsivos */
 .video-wrap iframe,
 .doc-viewer iframe {
   width: 100%;
@@ -275,100 +287,25 @@ body {
   border-radius: 12px;
 }
 
+/* ============================================
+   RESPONSIVIDADE COMUM
+   ============================================ */
 @media (max-width: 768px) {
+  .topbar, header, .dashboard-header, .login-header {
+    padding: 12px 20px;
+  }
+  
   .video-wrap iframe,
   .doc-viewer iframe {
     height: 250px;
   }
-}
-
-/* Melhorar visibilidade do toast */
-.toast {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #333;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 30px;
-  opacity: 0;
-  transition: opacity 0.3s;
-  z-index: 1000;
-  font-size: 14px;
-  font-weight: 500;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  pointer-events: none;
-}
-
-.toast.show {
-  opacity: 1;
-}
-
-/* Estilo para modais */
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
-  z-index: 2000;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal.show {
-  display: flex;
-}
-
-.modal-content {
-  background: var(--white);
-  border-radius: 24px;
-  max-width: 700px;
-  width: 90%;
-  max-height: 80vh;
-  overflow-y: auto;
-  padding: 32px;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-}
-
-.modal-close {
-  cursor: pointer;
-  font-size: 24px;
-  color: var(--birkenstock-gray);
-  transition: color 0.2s;
-}
-
-.modal-close:hover {
-  color: var(--danger);
-}
-
-/* Loading spinner */
-.loading {
-  text-align: center;
-  padding: 60px;
-  color: #666;
-}
-
-.loading::before {
-  content: "🔄";
-  display: inline-block;
-  animation: spin 1s linear infinite;
-  margin-right: 8px;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
+  
+  .modal-content {
+    padding: 20px;
+  }
+  
+  .btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
 }
