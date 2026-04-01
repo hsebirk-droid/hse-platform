@@ -1,5 +1,5 @@
 import { db, collection, query, orderBy, onSnapshot } from './firebase-config.js';
-import { escapeHtml, formatDate, showToast, checkAuth } from './utils.js';
+import { escapeHtml, formatDate, showToast } from './utils.js';
 import { getCurrentUser, logout } from './auth.js';
 
 let allCourses = [];
@@ -13,7 +13,33 @@ let currentUser = null;
 export async function initDashboard() {
   console.log("🚀 Iniciando dashboard...");
   
-  if (!checkAuth()) return;
+  // Verificar autenticação de forma segura
+  const usuarioAtivo = localStorage.getItem('usuarioAtivo');
+  const usuarioAdmin = localStorage.getItem('usuarioAdmin');
+  
+  console.log("👤 usuarioAtivo:", usuarioAtivo);
+  console.log("👑 usuarioAdmin:", usuarioAdmin);
+  
+  // Se não há nenhum utilizador logado, redirecionar
+  if (!usuarioAtivo && !usuarioAdmin) {
+    console.log("❌ Nenhum utilizador logado, redirecionando para login");
+    window.location.href = 'login.html';
+    return;
+  }
+  
+  // Se é admin, redirecionar para admin.html
+  if (usuarioAdmin) {
+    console.log("👑 É administrador, redirecionando para admin.html");
+    window.location.href = 'admin.html';
+    return;
+  }
+  
+  // Se é colaborador, prosseguir
+  if (!usuarioAtivo) {
+    console.log("❌ Utilizador não encontrado, redirecionando");
+    window.location.href = 'login.html';
+    return;
+  }
   
   currentUser = getCurrentUser();
   console.log("👤 Utilizador atual:", currentUser);
@@ -70,7 +96,7 @@ async function loadCourses() {
         coursesGrid.style.display = 'grid';
       },
       (error) => {
-        console.error('❌ Erro:', error);
+        console.error('❌ Erro ao carregar formações:', error);
         loadingDiv.innerHTML = '❌ Erro ao carregar formações. <button onclick="location.reload()">Tentar novamente</button>';
       }
     );
@@ -88,6 +114,8 @@ function loadUserProgress() {
     } catch(e) {
       userProgress = {};
     }
+  } else {
+    userProgress = {};
   }
 }
 
@@ -144,7 +172,11 @@ function loadNotifications() {
       notifications = JSON.parse(saved);
       updateNotificationBadge();
       renderNotifications();
-    } catch(e) {}
+    } catch(e) {
+      notifications = [];
+    }
+  } else {
+    notifications = [];
   }
 }
 
@@ -378,15 +410,15 @@ function setupEventListeners() {
     userMenuBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       userDropdown.classList.toggle('show');
-      notificationsPanel.classList.remove('show');
+      if (notificationsPanel) notificationsPanel.classList.remove('show');
     });
   }
   
   if (notificationBtn) {
     notificationBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      notificationsPanel.classList.toggle('show');
-      userDropdown.classList.remove('show');
+      if (notificationsPanel) notificationsPanel.classList.toggle('show');
+      if (userDropdown) userDropdown.classList.remove('show');
     });
   }
   
@@ -399,12 +431,18 @@ function setupEventListeners() {
     });
   }
   
-  document.addEventListener('click', () => {
-    if (userDropdown) userDropdown.classList.remove('show');
-    if (notificationsPanel) notificationsPanel.classList.remove('show');
+  // Fechar dropdowns ao clicar fora
+  document.addEventListener('click', (e) => {
+    if (userDropdown && !userMenuBtn?.contains(e.target)) {
+      userDropdown.classList.remove('show');
+    }
+    if (notificationsPanel && !notificationBtn?.contains(e.target)) {
+      notificationsPanel.classList.remove('show');
+    }
   });
 }
 
+// Inicializar quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', () => {
   initDashboard();
 });
