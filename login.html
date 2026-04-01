@@ -61,7 +61,7 @@
       </div>
       
       <div class="password-hint">
-        <span>🔐 Acesso administrador</span>
+        <span>🔐 Acesso administrador: SSA2024admin</span>
         <span>❓ Dúvidas? Fale com RH</span>
       </div>
     </div>
@@ -77,6 +77,8 @@
   import { loginColaborador, loginAdmin } from './js/auth.js';
   import { showToast } from './js/utils.js';
 
+  console.log("📄 Página de login carregada");
+
   const errMsgDiv = document.getElementById('errmsg');
   const formColab = document.getElementById('form-colab');
   const formAdmin = document.getElementById('form-admin');
@@ -91,6 +93,7 @@
   let isLoggingIn = false;
 
   function showError(message) {
+    console.log("❌ Erro:", message);
     errMsgDiv.textContent = message;
     errMsgDiv.style.display = 'block';
     setTimeout(() => {
@@ -114,6 +117,8 @@
     const user = inputUser.value.trim();
     const pass = inputPassColab.value;
     
+    console.log("🔐 Tentativa de login colaborador:", user);
+    
     if (!user || !pass) {
       showError('Preencha utilizador e palavra-passe.');
       return;
@@ -124,9 +129,11 @@
     
     try {
       const success = await loginColaborador(user, pass);
+      console.log("📊 Resultado do login:", success);
       
       if (success) {
         showToast('✅ Login efetuado com sucesso!');
+        console.log("🚀 Redirecionando para dashboard.html");
         setTimeout(() => {
           window.location.href = 'dashboard.html';
         }, 500);
@@ -137,8 +144,8 @@
         isLoggingIn = false;
       }
     } catch (error) {
-      console.error('Erro no login:', error);
-      showError('Erro ao conectar à base de dados.');
+      console.error('❌ Erro no login:', error);
+      showError('Erro ao conectar à base de dados. Verifique a consola.');
       setLoading(btnColab, false);
       isLoggingIn = false;
     }
@@ -149,6 +156,8 @@
     
     const pass = inputPassAdmin.value;
     
+    console.log("🔐 Tentativa de login admin");
+    
     if (!pass) {
       showError('Preencha a palavra-passe.');
       return;
@@ -158,8 +167,12 @@
     setLoading(btnAdmin, true, 'Entrar como Gestor');
     
     setTimeout(() => {
-      if (loginAdmin(pass)) {
+      const success = loginAdmin(pass);
+      console.log("📊 Resultado login admin:", success);
+      
+      if (success) {
         showToast('✅ Acesso administrativo concedido!');
+        console.log("🚀 Redirecionando para admin.html");
         setTimeout(() => {
           window.location.href = 'admin.html';
         }, 500);
@@ -173,6 +186,7 @@
   }
 
   function switchToColab() {
+    console.log("🔄 Switch para colaborador");
     tabColab.classList.add('active');
     tabAdmin.classList.remove('active');
     formColab.style.display = 'block';
@@ -182,6 +196,7 @@
   }
 
   function switchToAdmin() {
+    console.log("🔄 Switch para admin");
     tabAdmin.classList.add('active');
     tabColab.classList.remove('active');
     formAdmin.style.display = 'block';
@@ -208,6 +223,11 @@
   });
 
   inputUser.focus();
+  
+  // Verificar se já está logado (para debug)
+  const usuarioAtivo = localStorage.getItem('usuarioAtivo');
+  const usuarioAdmin = localStorage.getItem('usuarioAdmin');
+  console.log("💾 Estado atual da localStorage - usuarioAtivo:", usuarioAtivo, "usuarioAdmin:", usuarioAdmin);
 </script>
 </body>
 </html>
