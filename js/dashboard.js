@@ -2,10 +2,6 @@ import { db, collection, query, orderBy, onSnapshot } from './firebase-config.js
 import { escapeHtml, formatDate, showToast, checkAuth } from './utils.js';
 import { getCurrentUser, logout } from './auth.js';
 
-// ============================================
-// VARIÁVEIS GLOBAIS
-// ============================================
-
 let allCourses = [];
 let userProgress = {};
 let currentFilter = 'all';
@@ -14,18 +10,16 @@ let notifications = [];
 let unsubscribeCourses = null;
 let currentUser = null;
 
-// ============================================
-// INICIALIZAÇÃO
-// ============================================
-
 export async function initDashboard() {
   console.log("🚀 Iniciando dashboard...");
   
   if (!checkAuth()) return;
   
   currentUser = getCurrentUser();
+  console.log("👤 Utilizador atual:", currentUser);
   
   if (!currentUser || currentUser.type !== 'colaborador') {
+    console.log("❌ Não é colaborador, redirecionando...");
     window.location.href = 'login.html';
     return;
   }
@@ -50,10 +44,6 @@ function setupUI() {
   if (welcomeMessage) welcomeMessage.innerHTML = `Bem-vindo de volta, ${currentUser.name}! 👋`;
 }
 
-// ============================================
-// CARREGAR FORMAÇÕES
-// ============================================
-
 async function loadCourses() {
   const loadingDiv = document.getElementById('loading');
   const coursesGrid = document.getElementById('coursesGrid');
@@ -72,6 +62,7 @@ async function loadCourses() {
           allCourses.push({ id: doc.id, ...doc.data() });
         });
         
+        console.log("✅ Formações carregadas:", allCourses.length);
         updateUserStats();
         renderCourses();
         
@@ -88,10 +79,6 @@ async function loadCourses() {
     loadingDiv.innerHTML = '❌ Erro ao carregar formações.';
   }
 }
-
-// ============================================
-// PROGRESSO
-// ============================================
 
 function loadUserProgress() {
   const saved = localStorage.getItem(`progress_${currentUser.name}`);
@@ -149,10 +136,6 @@ export function markCourseCompleted(cursoId, cursoNome) {
   renderCourses();
   addNotification(`🎉 Parabéns! Concluiu a formação "${cursoNome}"!`);
 }
-
-// ============================================
-// NOTIFICAÇÕES
-// ============================================
 
 function loadNotifications() {
   const saved = localStorage.getItem(`notifications_${currentUser.name}`);
@@ -215,10 +198,6 @@ window.markNotificationRead = (id) => {
   updateNotificationBadge();
   renderNotifications();
 };
-
-// ============================================
-// RENDERIZAR CURSOS
-// ============================================
 
 function filterCourses() {
   let filtered = [...allCourses];
@@ -309,10 +288,6 @@ function renderCourses() {
   }).join('');
 }
 
-// ============================================
-// NAVEGAÇÃO
-// ============================================
-
 window.entrarFormacao = (cursoId) => {
   localStorage.setItem('cursoAtualId', cursoId);
   window.location.href = 'formacao_colaborador.html';
@@ -328,10 +303,6 @@ function verificarCursoConcluido() {
     localStorage.removeItem('cursoConcluido');
   }
 }
-
-// ============================================
-// MODAIS
-// ============================================
 
 window.openProfileModal = () => {
   const profileName = document.getElementById('profileName');
@@ -379,10 +350,6 @@ window.closeCompletedModal = () => {
   const modal = document.getElementById('completedModal');
   if (modal) modal.classList.remove('show');
 };
-
-// ============================================
-// EVENTOS
-// ============================================
 
 function setupEventListeners() {
   const searchInput = document.getElementById('searchInput');
@@ -437,10 +404,6 @@ function setupEventListeners() {
     if (notificationsPanel) notificationsPanel.classList.remove('show');
   });
 }
-
-// ============================================
-// INICIAR
-// ============================================
 
 document.addEventListener('DOMContentLoaded', () => {
   initDashboard();
