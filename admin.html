@@ -7,6 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/admin.css">
 </head>
@@ -35,19 +37,16 @@
     <button class="tab" data-tab="historico">📊 Histórico</button>
   </div>
 
-  <!-- Dashboard -->
   <div class="sec active" id="sec-dashboard">
     <div class="sec-head"><h2>📈 Visão Geral</h2></div>
     <div class="sec-body"><div id="recent-activities" class="item-list"></div></div>
   </div>
 
-  <!-- Lista de Formações -->
   <div class="sec" id="sec-lista-formacoes">
     <div class="sec-head"><h2>📚 Gestão de Formações</h2></div>
     <div class="sec-body"><div id="formacoes-list" class="item-list"></div></div>
   </div>
 
-  <!-- Criar/Editar Formação -->
   <div class="sec" id="sec-formacao">
     <div class="sec-head"><h2>🎓 Criar Nova Formação</h2><div id="editando-id" style="color:white;font-size:12px;"></div></div>
     <div class="sec-body">
@@ -84,7 +83,6 @@
     </div>
   </div>
 
-  <!-- Atribuir Formações -->
   <div class="sec" id="sec-atribuir">
     <div class="sec-head">
       <h2>📨 Atribuir Formações</h2>
@@ -113,7 +111,6 @@
     </div>
   </div>
 
-  <!-- Acompanhar (NOVA) -->
   <div class="sec" id="sec-acompanhar">
     <div class="sec-head">
       <h2>📋 Acompanhamento de Formações</h2>
@@ -130,7 +127,6 @@
     </div>
   </div>
 
-  <!-- Certificado -->
   <div class="sec" id="sec-certificado">
     <div class="sec-head"><h2>🏅 Editor de Certificado</h2></div>
     <div class="sec-body">
@@ -161,7 +157,6 @@
     </div>
   </div>
 
-  <!-- Colaboradores (melhorado com tabela e matrícula) -->
   <div class="sec" id="sec-colaboradores">
     <div class="sec-head">
       <h2>👥 Colaboradores</h2>
@@ -182,16 +177,10 @@
       </div>
       <button class="btn" id="btn-save-user">Criar Colaborador</button>
       
-      <!-- Lista de colaboradores em tabela com colunas separadas -->
       <div style="margin-top: 24px; overflow-x: auto;">
         <table style="width:100%; border-collapse: collapse;" id="tabela-colaboradores">
           <thead>
-            <tr>
-              <th>Matrícula</th>
-              <th>Nome</th>
-              <th>Email</th>
-              <th>Ações</th>
-            </tr>
+            <tr><th>Matrícula</th><th>Nome</th><th>Email</th><th>Ações</th</tr>
           </thead>
           <tbody id="colab-list-table"></tbody>
         </table>
@@ -199,7 +188,6 @@
     </div>
   </div>
 
-  <!-- Segurança -->
   <div class="sec" id="sec-seguranca">
     <div class="sec-head"><h2>🔐 Segurança</h2></div>
     <div class="sec-body">
@@ -213,7 +201,6 @@
     </div>
   </div>
 
-  <!-- Histórico (melhorado com filtro e visualização de certificados) -->
   <div class="sec" id="sec-historico">
     <div class="sec-head">
       <h2>📊 Histórico</h2>
@@ -229,7 +216,7 @@
       <div style="overflow-x:auto;">
         <table id="tabela-historico">
           <thead>
-            <tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th></tr>
+            <tr><th>Colaborador</th><th>Email</th><th>Formação</th><th>Data</th><th>Nota</th><th>Certificado</th</tr>
           </thead>
           <tbody id="lista-notas"></tbody>
         </table>
@@ -239,7 +226,6 @@
   </div>
 </div>
 
-<!-- Modal para Módulo -->
 <div id="modal-modulo" class="modal">
   <div class="modal-content">
     <div class="modal-header">
@@ -261,7 +247,6 @@
   </div>
 </div>
 
-<!-- Modal para Pergunta -->
 <div id="modal-pergunta" class="modal">
   <div class="modal-content">
     <div class="modal-header"><h3>Adicionar Pergunta</h3><span class="modal-close" onclick="document.getElementById('modal-pergunta').style.display='none'">&times;</span></div>
@@ -275,7 +260,6 @@
   </div>
 </div>
 
-<!-- Modal para visualizar certificado -->
 <div id="modal-certificado" class="modal">
   <div class="modal-content" style="max-width: 800px;">
     <div class="modal-header">
