@@ -3,6 +3,11 @@ import { db, collection, getDocs, query, where } from './firebase-config.js';
 export async function loginColaborador(user, pass) {
   console.log("🔐 Login colaborador:", user);
   
+  if (!user || !pass) {
+    console.log("❌ Utilizador ou password vazios");
+    return false;
+  }
+  
   try {
     const q = query(collection(db, 'colaboradores'), where('user', '==', user.toLowerCase().trim()));
     const querySnapshot = await getDocs(q);
@@ -13,16 +18,26 @@ export async function loginColaborador(user, pass) {
     }
     
     let found = false;
+    let userData = null;
+    
     querySnapshot.forEach((doc) => {
       const data = doc.data();
       if (data.pass === pass) {
         found = true;
-        localStorage.setItem('usuarioAtivo', user.toLowerCase().trim());
-        localStorage.setItem('usuarioNome', data.user);
+        userData = data;
       }
     });
     
-    return found;
+    if (found && userData) {
+      localStorage.setItem('usuarioAtivo', user.toLowerCase().trim());
+      localStorage.setItem('usuarioNome', userData.user);
+      localStorage.setItem('usuarioEmail', userData.email || '');
+      localStorage.setItem('usuarioMatricula', userData.matricula || '');
+      return true;
+    }
+    
+    console.log("❌ Password incorreta");
+    return false;
   } catch (error) {
     console.error('Erro no login:', error);
     return false;
@@ -41,13 +56,21 @@ export function loginAdmin(password) {
 export function getCurrentUser() {
   const colaborador = localStorage.getItem('usuarioAtivo');
   const admin = localStorage.getItem('usuarioAdmin');
-  if (admin) return { type: 'admin', name: 'Administrador' };
-  if (colaborador) return { type: 'colaborador', name: colaborador };
+  const nome = localStorage.getItem('usuarioNome') || colaborador;
+  const email = localStorage.getItem('usuarioEmail') || '';
+  const matricula = localStorage.getItem('usuarioMatricula') || '';
+  
+  if (admin) return { type: 'admin', name: 'Administrador', email: '', matricula: '' };
+  if (colaborador) return { type: 'colaborador', name: nome, email: email, matricula: matricula };
   return null;
 }
 
 export function isAdmin() {
   return localStorage.getItem('usuarioAdmin') !== null;
+}
+
+export function isAuthenticated() {
+  return localStorage.getItem('usuarioAtivo') !== null || localStorage.getItem('usuarioAdmin') !== null;
 }
 
 export function logout() {
