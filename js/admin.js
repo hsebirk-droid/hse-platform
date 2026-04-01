@@ -6,7 +6,7 @@ import {
 import { escapeHtml, formatDate, showToast, converterLinkGoogleDrive, downloadExcel } from './utils.js';
 
 // ============================================
-// ADMIN - LÓGICA PRINCIPAL (VERSÃO COMPLETA)
+// ADMIN - LÓGICA PRINCIPAL (VERSÃO CORRIGIDA)
 // ============================================
 
 let adminConfig = JSON.parse(localStorage.getItem('admin_config') || '{"adminPassword":"SSA2024admin"}');
@@ -41,13 +41,13 @@ async function carregarFormacoes() {
       querySnapshot.forEach((doc) => { 
         cachedFormacoes.push({ id: doc.id, ...doc.data() });
       });
-      if (document.getElementById('sec-lista-formacoes').classList.contains('active')) {
+      if (document.getElementById('sec-lista-formacoes')?.classList.contains('active')) {
         renderFormacoesLista();
       }
-      if (document.getElementById('sec-dashboard').classList.contains('active')) {
+      if (document.getElementById('sec-dashboard')?.classList.contains('active')) {
         atualizarDashboard();
       }
-      if (document.getElementById('sec-acompanhar').classList.contains('active')) {
+      if (document.getElementById('sec-acompanhar')?.classList.contains('active')) {
         renderAcompanhamento();
       }
     }
@@ -68,13 +68,13 @@ async function carregarColaboradores() {
       querySnapshot.forEach((doc) => { 
         cachedColaboradores.push({ id: doc.id, ...doc.data() });
       });
-      if (document.getElementById('sec-colaboradores').classList.contains('active')) {
+      if (document.getElementById('sec-colaboradores')?.classList.contains('active')) {
         renderColabs();
       }
-      if (document.getElementById('sec-atribuir').classList.contains('active')) {
+      if (document.getElementById('sec-atribuir')?.classList.contains('active')) {
         atualizarSelectores();
       }
-      if (document.getElementById('sec-acompanhar').classList.contains('active')) {
+      if (document.getElementById('sec-acompanhar')?.classList.contains('active')) {
         renderAcompanhamento();
       }
     }
@@ -95,13 +95,13 @@ async function carregarHistorico() {
       querySnapshot.forEach((doc) => { 
         cachedHistorico.push({ id: doc.id, ...doc.data() });
       });
-      if (document.getElementById('sec-historico').classList.contains('active')) {
+      if (document.getElementById('sec-historico')?.classList.contains('active')) {
         renderHistorico();
       }
-      if (document.getElementById('sec-dashboard').classList.contains('active')) {
+      if (document.getElementById('sec-dashboard')?.classList.contains('active')) {
         atualizarDashboard();
       }
-      if (document.getElementById('sec-acompanhar').classList.contains('active')) {
+      if (document.getElementById('sec-acompanhar')?.classList.contains('active')) {
         renderAcompanhamento();
       }
     }
@@ -122,7 +122,7 @@ async function carregarAtribuicoes() {
       querySnapshot.forEach((doc) => { 
         cachedAtribuicoes.push({ id: doc.id, ...doc.data() });
       });
-      if (document.getElementById('sec-acompanhar').classList.contains('active')) {
+      if (document.getElementById('sec-acompanhar')?.classList.contains('active')) {
         renderAcompanhamento();
       }
     }
@@ -141,48 +141,54 @@ async function atualizarDashboard() {
   const concluidas = atribuicoes.filter(a => a.status === 'concluido').length;
   const pendentes = atribuicoes.filter(a => a.status !== 'concluido').length;
   
-  document.getElementById('dashboard-grid').innerHTML = `
-    <div class="dash-card">
-      <div class="dash-icon" style="background:var(--info-bg)">👥</div>
-      <div class="dash-info">
-        <h3>${colaboradores.length}</h3>
-        <p>Colaboradores</p>
+  const dashboardGrid = document.getElementById('dashboard-grid');
+  if (dashboardGrid) {
+    dashboardGrid.innerHTML = `
+      <div class="dash-card">
+        <div class="dash-icon" style="background:var(--info-bg)">👥</div>
+        <div class="dash-info">
+          <h3>${colaboradores.length}</h3>
+          <p>Colaboradores</p>
+        </div>
       </div>
-    </div>
-    <div class="dash-card">
-      <div class="dash-icon" style="background:var(--success-bg)">📚</div>
-      <div class="dash-info">
-        <h3>${cursos.length}</h3>
-        <p>Formações</p>
+      <div class="dash-card">
+        <div class="dash-icon" style="background:var(--success-bg)">📚</div>
+        <div class="dash-info">
+          <h3>${cursos.length}</h3>
+          <p>Formações</p>
+        </div>
       </div>
-    </div>
-    <div class="dash-card">
-      <div class="dash-icon" style="background:var(--purple-bg)">🏅</div>
-      <div class="dash-info">
-        <h3>${concluidas}</h3>
-        <p>Atribuições concluídas</p>
+      <div class="dash-card">
+        <div class="dash-icon" style="background:var(--purple-bg)">🏅</div>
+        <div class="dash-info">
+          <h3>${concluidas}</h3>
+          <p>Atribuições concluídas</p>
+        </div>
       </div>
-    </div>
-    <div class="dash-card">
-      <div class="dash-icon" style="background:var(--warning-bg)">⏳</div>
-      <div class="dash-info">
-        <h3>${pendentes}</h3>
-        <p>Pendentes</p>
+      <div class="dash-card">
+        <div class="dash-icon" style="background:var(--warning-bg)">⏳</div>
+        <div class="dash-info">
+          <h3>${pendentes}</h3>
+          <p>Pendentes</p>
+        </div>
       </div>
-    </div>
-  `;
+    `;
+  }
   
   const recentes = historico.slice(0, 5);
-  document.getElementById('recent-activities').innerHTML = recentes.length ? 
-    recentes.map(h => `
-      <div class="item-card">
-        <div class="item-card-info">
-          <strong>${escapeHtml(h.nome)}</strong> concluiu "${escapeHtml(h.curso)}" com ${escapeHtml(h.nota)}
+  const recentActivities = document.getElementById('recent-activities');
+  if (recentActivities) {
+    recentActivities.innerHTML = recentes.length ? 
+      recentes.map(h => `
+        <div class="item-card">
+          <div class="item-card-info">
+            <strong>${escapeHtml(h.nome)}</strong> concluiu "${escapeHtml(h.curso)}" com ${escapeHtml(h.nota)}
+          </div>
+          <div class="item-card-meta">${escapeHtml(h.data)}</div>
         </div>
-        <div class="item-card-meta">${escapeHtml(h.data)}</div>
-      </div>
-    `).join('') : 
-    '<div class="empty">Sem atividades recentes.</div>';
+      `).join('') : 
+      '<div class="empty">Sem atividades recentes.</div>';
+  }
 }
 
 // ==================== GESTÃO DE FORMAÇÕES ====================
@@ -190,6 +196,8 @@ async function atualizarDashboard() {
 async function renderFormacoesLista() {
   const cursos = await carregarFormacoes();
   const container = document.getElementById('formacoes-list');
+  
+  if (!container) return;
   
   if (!cursos.length) { 
     container.innerHTML = '<div class="empty">Nenhuma formação criada.</div>'; 
@@ -323,6 +331,7 @@ window.removerModulo = (id) => {
 
 function renderModulos() {
   const container = document.getElementById('modulos-container');
+  if (!container) return;
   
   if (!modulos.length) {
     container.innerHTML = '<div class="alert alert-info">Nenhum módulo adicionado. Clique nos botões acima para adicionar.</div>';
@@ -406,6 +415,8 @@ window.removerPergunta = (id) => {
 
 function renderPerguntas() {
   const container = document.getElementById('perguntas-container');
+  if (!container) return;
+  
   if (!perguntas.length) {
     container.innerHTML = '<div class="alert alert-info">Nenhuma pergunta adicionada. Clique em "Adicionar Pergunta".</div>';
     return;
@@ -441,8 +452,10 @@ async function renderColabs() {
   const colaboradores = await carregarColaboradores();
   const tbody = document.getElementById('colab-list-table');
   
+  if (!tbody) return;
+  
   if (!colaboradores.length) { 
-    tbody.innerHTML = '发展<td colspan="4" class="empty">Nenhum colaborador cadastrado.</td>发展'; 
+    tbody.innerHTML = '<tr><td colspan="4" class="empty">Nenhum colaborador cadastrado.</td></tr>'; 
     return; 
   }
   
@@ -452,7 +465,7 @@ async function renderColabs() {
       <td data-label="Nome">${escapeHtml(c.user)}</td>
       <td data-label="Email">${escapeHtml(c.email || '-')}</td>
       <td data-label="Ações">
-        <button class="btn-sm btn-danger" onclick="window.removerColab('${c.id}')">🗑️</button>
+        <button class="btn-sm btn-danger" onclick="window.removerColab('${c.id}')">🗑️ Remover</button>
       </td>
     </tr>
   `).join('');
@@ -474,7 +487,7 @@ async function saveUser() {
   const email = document.getElementById('u-email').value.trim();
   const pass = document.getElementById('u-pass').value;
   
-  if (!user || !pass) { showToast('Preencha nome e password.'); return; }
+  if (!user || !pass) { showToast('❌ Preencha nome e password.'); return; }
   
   await addDoc(collection(db, 'colaboradores'), { 
     matricula,
@@ -552,15 +565,22 @@ async function atualizarSelectores() {
   const cursos = await carregarFormacoes();
   const colaboradores = await carregarColaboradores();
   
-  document.getElementById('atribuir-curso').innerHTML = '<option value="">Selecione uma formação</option>' + 
-    cursos.map(c => `<option value="${c.id}">${escapeHtml(c.nome)}</option>`).join('');
+  const atribuirCurso = document.getElementById('atribuir-curso');
+  const colabGrid = document.getElementById('colab-selector-grid');
   
-  document.getElementById('colab-selector-grid').innerHTML = colaboradores.map(c => `
-    <label class="colab-check">
-      <input type="checkbox" value="${c.user}" data-email="${c.email || ''}" data-nome="${c.user}" data-matricula="${c.matricula || ''}"> 
-      ${escapeHtml(c.user)} ${c.matricula ? `(${c.matricula})` : ''} ${c.email ? '-' + escapeHtml(c.email) : ''}
-    </label>
-  `).join('');
+  if (atribuirCurso) {
+    atribuirCurso.innerHTML = '<option value="">Selecione uma formação</option>' + 
+      cursos.map(c => `<option value="${c.id}">${escapeHtml(c.nome)}</option>`).join('');
+  }
+  
+  if (colabGrid) {
+    colabGrid.innerHTML = colaboradores.map(c => `
+      <label class="colab-check">
+        <input type="checkbox" value="${c.user}" data-email="${c.email || ''}" data-nome="${c.user}" data-matricula="${c.matricula || ''}"> 
+        ${escapeHtml(c.user)} ${c.matricula ? `(${c.matricula})` : ''} ${c.email ? '-' + escapeHtml(c.email) : ''}
+      </label>
+    `).join('');
+  }
 }
 
 window.selecionarTodos = () => { 
@@ -573,22 +593,67 @@ window.deselecionarTodos = () => {
 
 window.gerarLinksMassa = async () => {
   const cursoId = document.getElementById('atribuir-curso').value; 
-  if (!cursoId) { showToast('Selecione uma formação'); return; }
+  if (!cursoId) { 
+    showToast('❌ Selecione uma formação'); 
+    return; 
+  }
   
   const selected = Array.from(document.querySelectorAll('#colab-selector-grid input:checked')).map(cb => { 
-    return { user: cb.value, email: cb.dataset.email, nome: cb.dataset.nome || cb.value, matricula: cb.dataset.matricula }; 
+    return { 
+      user: cb.value, 
+      email: cb.dataset.email, 
+      nome: cb.dataset.nome || cb.value, 
+      matricula: cb.dataset.matricula 
+    }; 
   });
   
-  if (!selected.length) { showToast('Selecione colaboradores'); return; }
+  if (!selected.length) { 
+    showToast('❌ Selecione pelo menos um colaborador'); 
+    return; 
+  }
   
   const prazo = document.getElementById('atribuir-prazo').value || '31/12/2026';
   const baseUrl = window.location.origin + window.location.pathname.replace('admin.html', '') + 'formacao_colaborador.html';
   const cursoNome = document.getElementById('atribuir-curso').selectedOptions[0]?.text || 'Formação';
   
   linksGerados = [];
+  let contadorSucesso = 0;
+  
   for (const c of selected) {
-    const tokenData = { user: c.user, nome: c.nome, cursoId: cursoId, cursoNome: cursoNome, prazo: prazo, timestamp: Date.now() }; 
-    const token = btoa(JSON.stringify(tokenData)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+    // Verificar se já existe atribuição ativa para este colaborador e curso
+    const atribuicaoExistente = cachedAtribuicoes.find(a => 
+      a.colaboradorUser === c.user && 
+      a.cursoId === cursoId && 
+      a.status !== 'concluido'
+    );
+    
+    if (atribuicaoExistente) {
+      // Se já existe, reutilizar o link existente
+      const link = atribuicaoExistente.link || `${baseUrl}?token=${atribuicaoExistente.token}`;
+      linksGerados.push({ ...c, link, prazo, cursoNome, status: 'reutilizado' });
+      contadorSucesso++;
+      continue;
+    }
+    
+    // Criar novo token
+    const tokenData = { 
+      user: c.user, 
+      nome: c.nome, 
+      cursoId: cursoId, 
+      cursoNome: cursoNome, 
+      prazo: prazo, 
+      timestamp: Date.now() 
+    };
+    
+    // Gerar token base64
+    let token;
+    try {
+      token = btoa(JSON.stringify(tokenData)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+    } catch(e) {
+      console.error('Erro ao gerar token:', e);
+      token = Date.now() + '_' + c.user;
+    }
+    
     const link = `${baseUrl}?token=${token}`;
     localStorage.setItem(`token_${token}`, JSON.stringify(tokenData));
     
@@ -604,52 +669,185 @@ window.gerarLinksMassa = async () => {
         prazo: prazo,
         status: 'pendente',
         dataCriacao: new Date().toISOString(),
-        token: token
+        token: token,
+        link: link
       });
-    } catch(e) { console.error(e); }
-    
-    linksGerados.push({ ...c, link, prazo, cursoNome });
+      linksGerados.push({ ...c, link, prazo, cursoNome, status: 'novo' });
+      contadorSucesso++;
+    } catch(e) { 
+      console.error('Erro ao salvar atribuição:', e); 
+      showToast(`❌ Erro ao atribuir para ${c.nome}`);
+    }
   }
   
-  document.getElementById('links-list').innerHTML = linksGerados.map(l => `
-    <div class="item-card" style="flex-direction: column; align-items: stretch;">
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-        <div><strong>${escapeHtml(l.nome || l.user)}</strong> ${l.email ? `<span style="font-size:11px;">(${escapeHtml(l.email)})</span>` : ''}</div>
-        <div><button class="btn-sm" onclick="window.copiarLinkIndividual('${l.link}')">📋 Copiar</button></div>
+  // Mostrar os links gerados (apenas visualização - NÃO ABRE JANELAS)
+  const linksList = document.getElementById('links-list');
+  const linksGeradosDiv = document.getElementById('links-gerados');
+  
+  if (linksList && linksGerados.length > 0) {
+    linksList.innerHTML = linksGerados.map(l => `
+      <div class="item-card" style="flex-direction: column; align-items: stretch; margin-bottom: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <strong>${escapeHtml(l.nome || l.user)}</strong>
+            ${l.email ? `<span style="font-size:11px; color:var(--birkenstock-gray);">(${escapeHtml(l.email)})</span>` : ''}
+            ${l.status === 'reutilizado' ? '<span style="background:var(--info-bg); color:var(--info); padding:2px 6px; border-radius:12px; font-size:10px; margin-left:8px;">Já atribuído</span>' : ''}
+          </div>
+          <div>
+            <button class="btn-sm" onclick="window.copiarLinkIndividual('${l.link}')" style="background:var(--info); color:white; border:none; padding:4px 12px; border-radius:4px; cursor:pointer;">
+              📋 Copiar Link
+            </button>
+          </div>
+        </div>
+        <div style="margin-top: 8px; padding: 8px; background: var(--bg); border-radius: 6px; font-size: 11px; word-break: break-all; font-family: monospace;">
+          ${l.link}
+        </div>
+        <div style="margin-top: 6px; font-size: 10px; color: var(--birkenstock-gray);">
+          📅 Prazo: ${l.prazo}
+        </div>
       </div>
-      <div style="margin-top: 8px; padding: 8px; background: var(--bg); border-radius: 6px; font-size: 11px; word-break: break-all;">${l.link}</div>
-    </div>
-  `).join('');
-  document.getElementById('links-gerados').style.display = 'block';
-  showToast(`✅ ${linksGerados.length} link(s) gerados e atribuições registadas!`);
-  renderAcompanhamento();
+    `).join('');
+    
+    if (linksGeradosDiv) linksGeradosDiv.style.display = 'block';
+    showToast(`✅ ${contadorSucesso} link(s) gerado(s) com sucesso!`);
+    
+    // Atualizar a lista de acompanhamento
+    renderAcompanhamento();
+  } else if (linksGeradosDiv) {
+    showToast('❌ Nenhum link foi gerado');
+  }
 };
 
 window.copiarLinkIndividual = (link) => { 
-  navigator.clipboard.writeText(link); 
-  showToast('🔗 Link copiado!'); 
+  navigator.clipboard.writeText(link).then(() => {
+    showToast('🔗 Link copiado para a área de transferência!');
+  }).catch(() => {
+    // Fallback para browsers mais antigos
+    const textarea = document.createElement('textarea');
+    textarea.value = link;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    showToast('🔗 Link copiado!');
+  });
 };
 
 window.copiarTodosLinks = () => {
-  if (!linksGerados.length) { showToast('Gere links primeiro'); return; }
+  if (!linksGerados.length) { 
+    showToast('❌ Gere links primeiro'); 
+    return; 
+  }
   let texto = "LINKS DE ACESSO ÀS FORMAÇÕES\n\n";
-  linksGerados.forEach(l => { texto += `${l.nome || l.user}: ${l.link}\n`; });
+  texto += "═══════════════════════════════════════\n\n";
+  linksGerados.forEach(l => { 
+    texto += `👤 ${l.nome || l.user}\n`;
+    texto += `📧 ${l.email || 'sem email'}\n`;
+    texto += `📅 Prazo: ${l.prazo}\n`;
+    texto += `🔗 ${l.link}\n`;
+    texto += `───────────────────────────────────────\n\n`;
+  });
   navigator.clipboard.writeText(texto);
   showToast(`✅ ${linksGerados.length} links copiados!`);
 };
 
 window.enviarEmailsMassa = () => {
-  if (!linksGerados.length) { showToast('Gere links primeiro'); return; }
-  let abertos = 0;
-  linksGerados.forEach(l => {
-    if (l.email) {
-      const assunto = encodeURIComponent(`[Birkenstock] Nova formação: ${l.cursoNome}`);
-      const corpo = encodeURIComponent(`Olá ${l.nome || l.user},\n\nFoi-lhe atribuída a formação "${l.cursoNome}".\n\nPrazo: ${l.prazo}\n\nAceda através do link:\n${l.link}\n\nAtenciosamente,\nEquipa de Formação`);
-      window.open(`mailto:${l.email}?subject=${assunto}&body=${corpo}`);
-      abertos++;
-    }
+  if (!linksGerados.length) { 
+    showToast('❌ Gere links primeiro'); 
+    return; 
+  }
+  
+  const emailsList = linksGerados.filter(l => l.email).map(l => ({
+    nome: l.nome || l.user,
+    email: l.email,
+    link: l.link,
+    prazo: l.prazo,
+    curso: l.cursoNome
+  }));
+  
+  if (emailsList.length === 0) {
+    showToast('❌ Nenhum colaborador selecionado tem email');
+    return;
+  }
+  
+  // Criar modal para envio de emails
+  const modalHtml = `
+    <div id="modal-emails" class="modal" style="display:flex;">
+      <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+          <h3>📧 Enviar Emails</h3>
+          <span class="modal-close" onclick="document.getElementById('modal-emails').remove()">&times;</span>
+        </div>
+        <div style="max-height: 400px; overflow-y: auto;">
+          ${emailsList.map(e => `
+            <div style="padding: 12px; border-bottom: 1px solid var(--border);">
+              <div><strong>${escapeHtml(e.nome)}</strong> (${escapeHtml(e.email)})</div>
+              <div style="font-size: 11px; color: var(--birkenstock-gray);">Formação: ${escapeHtml(e.curso)} | Prazo: ${e.prazo}</div>
+              <button class="btn-sm btn-info" onclick="window.abrirEmailIndividual('${e.email}', '${e.nome}', '${e.curso}', '${e.prazo}', '${e.link}')" style="margin-top: 8px; background:var(--info); color:white; border:none; padding:4px 12px; border-radius:4px; cursor:pointer;">
+                📧 Enviar Email
+              </button>
+            </div>
+          `).join('')}
+        </div>
+        <div style="margin-top: 16px; text-align: center;">
+          <button class="btn-sm btn-success" onclick="window.enviarTodosEmails()">📧 Enviar Todos</button>
+          <button class="btn-sm btn" onclick="document.getElementById('modal-emails').remove()">Fechar</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Remover modal existente se houver
+  const existingModal = document.getElementById('modal-emails');
+  if (existingModal) existingModal.remove();
+  
+  // Adicionar modal ao body
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+  
+  // Guardar lista de emails para envio em massa
+  window.emailsPendentes = emailsList;
+};
+
+window.abrirEmailIndividual = (email, nome, curso, prazo, link) => {
+  const assunto = encodeURIComponent(`[Birkenstock] Formação: ${curso}`);
+  const corpo = encodeURIComponent(
+    `Olá ${nome},\n\n` +
+    `Foi-lhe atribuída a formação "${curso}".\n\n` +
+    `Prazo: ${prazo}\n\n` +
+    `Aceda através do link:\n${link}\n\n` +
+    `Atenciosamente,\nEquipa de Formação Birkenstock`
+  );
+  window.open(`mailto:${email}?subject=${assunto}&body=${corpo}`);
+  showToast(`📧 A abrir email para ${nome}`);
+};
+
+window.enviarTodosEmails = () => {
+  if (!window.emailsPendentes || window.emailsPendentes.length === 0) {
+    showToast('❌ Nenhum email pendente');
+    return;
+  }
+  
+  let count = 0;
+  window.emailsPendentes.forEach((e, index) => {
+    setTimeout(() => {
+      const assunto = encodeURIComponent(`[Birkenstock] Formação: ${e.curso}`);
+      const corpo = encodeURIComponent(
+        `Olá ${e.nome},\n\n` +
+        `Foi-lhe atribuída a formação "${e.curso}".\n\n` +
+        `Prazo: ${e.prazo}\n\n` +
+        `Aceda através do link:\n${e.link}\n\n` +
+        `Atenciosamente,\nEquipa de Formação Birkenstock`
+      );
+      window.open(`mailto:${e.email}?subject=${assunto}&body=${corpo}`);
+      count++;
+    }, index * 500);
   });
-  showToast(`📧 Foram abertas ${abertos} janelas de email.\nPara cada uma, clique em "Enviar".`);
+  
+  showToast(`📧 A abrir ${window.emailsPendentes.length} janelas de email...`);
+  setTimeout(() => {
+    const modal = document.getElementById('modal-emails');
+    if (modal) modal.remove();
+  }, window.emailsPendentes.length * 500 + 1000);
 };
 
 // ==================== ACOMPANHAMENTO ====================
@@ -657,7 +855,6 @@ window.enviarEmailsMassa = () => {
 async function renderAcompanhamento() {
   const atribuicoes = await carregarAtribuicoes();
   const formacoes = await carregarFormacoes();
-  const colaboradores = await carregarColaboradores();
   
   const filtroFormacao = document.getElementById('filtro-formacao-acompanhar')?.value || '';
   const filtroStatus = document.getElementById('filtro-status-acompanhar')?.value || '';
@@ -690,7 +887,7 @@ async function renderAcompanhamento() {
           ${g.atribuicoes.filter(a => a.status === 'concluido').map(a => `
             <div class="acompanhar-item concluido">
               <span>${escapeHtml(a.colaboradorNome || a.colaboradorUser)}</span>
-              <button onclick="window.visualizarCertificadoAtribuicao('${a.id}')" title="Ver certificado">🎓</button>
+              <button onclick="window.visualizarCertificadoAtribuicao('${a.id}')" title="Ver certificado" style="background:none; border:none; cursor:pointer;">🎓</button>
             </div>
           `).join('') || '<span style="color:gray;">Nenhum</span>'}
         </div>
@@ -702,7 +899,7 @@ async function renderAcompanhamento() {
             <div class="acompanhar-item pendente">
               <span>${escapeHtml(a.colaboradorNome || a.colaboradorUser)}</span>
               <span style="font-size:10px;">Prazo: ${a.prazo || '---'}</span>
-              <button onclick="window.relembrarColaborador('${a.id}')" title="Enviar lembrete">📧</button>
+              <button onclick="window.relembrarColaborador('${a.id}')" title="Enviar lembrete" style="background:none; border:none; cursor:pointer;">📧</button>
             </div>
           `).join('') || '<span style="color:gray;">Nenhum</span>'}
         </div>
@@ -715,9 +912,15 @@ window.relembrarColaborador = async (atribuicaoId) => {
   const atribuicao = cachedAtribuicoes.find(a => a.id === atribuicaoId);
   if (!atribuicao) return;
   
-  const link = window.location.origin + window.location.pathname.replace('admin.html', '') + 'formacao_colaborador.html?token=' + atribuicao.token;
+  const link = atribuicao.link || (window.location.origin + window.location.pathname.replace('admin.html', '') + 'formacao_colaborador.html?token=' + atribuicao.token);
   const assunto = encodeURIComponent(`[Birkenstock] Lembrete: ${atribuicao.cursoNome}`);
-  const corpo = encodeURIComponent(`Olá ${atribuicao.colaboradorNome || atribuicao.colaboradorUser},\n\nRecordamos que ainda tem pendente a formação "${atribuicao.cursoNome}".\n\nPrazo: ${atribuicao.prazo}\n\nAceda através do link:\n${link}\n\nAtenciosamente,\nEquipa de Formação`);
+  const corpo = encodeURIComponent(
+    `Olá ${atribuicao.colaboradorNome || atribuicao.colaboradorUser},\n\n` +
+    `Recordamos que ainda tem pendente a formação "${atribuicao.cursoNome}".\n\n` +
+    `Prazo: ${atribuicao.prazo}\n\n` +
+    `Aceda através do link:\n${link}\n\n` +
+    `Atenciosamente,\nEquipa de Formação Birkenstock`
+  );
   window.open(`mailto:${atribuicao.colaboradorEmail}?subject=${assunto}&body=${corpo}`);
   showToast(`📧 Email de lembrete aberto para ${atribuicao.colaboradorNome}`);
 };
@@ -809,9 +1012,9 @@ window.exportarAcompanhamentoExcel = async () => {
 
 async function publicarFormacao() {
   const titulo = document.getElementById('f-titulo').value.trim();
-  if (!titulo) { showToast('Título obrigatório'); return; }
-  if (!modulos.length) { showToast('Adicione pelo menos um módulo'); return; }
-  if (!perguntas.length) { showToast('Adicione pelo menos uma pergunta'); return; }
+  if (!titulo) { showToast('❌ Título obrigatório'); return; }
+  if (!modulos.length) { showToast('❌ Adicione pelo menos um módulo'); return; }
+  if (!perguntas.length) { showToast('❌ Adicione pelo menos uma pergunta'); return; }
   
   const novaFormacao = { 
     nome: titulo, 
@@ -869,8 +1072,10 @@ async function renderHistorico() {
     filtroSelect.innerHTML = '<option value="">Todos</option>' + nomes.map(n => `<option value="${n}">${escapeHtml(n)}</option>`).join('');
   }
   
+  if (!tbody) return;
+  
   if (!filtered.length) { 
-    tbody.innerHTML = '发展<td colspan="6" class="empty">Nenhum resultado registado</td>发展'; 
+    tbody.innerHTML = '发展<td colspan="6" class="empty">Nenhum resultado registado</td></tr>'; 
     return; 
   }
   
@@ -953,16 +1158,17 @@ window.limparHistorico = async () => {
 // ==================== CERTIFICADO ====================
 
 window.inserirPlaceholder = (ph) => { 
-  document.getElementById('cert-texto').value += ph; 
+  const textarea = document.getElementById('cert-texto');
+  if (textarea) textarea.value += ph; 
 };
 
 window.previewCertificado = () => {
   const preview = document.getElementById('cert-preview');
   const content = document.getElementById('cert-preview-content');
-  const fundoImagem = document.getElementById('cert-fundo-imagem').value || '';
-  let texto = document.getElementById('cert-texto').value;
-  const titulo = document.getElementById('cert-titulo').value;
-  const rodape = document.getElementById('cert-rodape').value;
+  const fundoImagem = document.getElementById('cert-fundo-imagem')?.value || '';
+  let texto = document.getElementById('cert-texto')?.value || '';
+  const titulo = document.getElementById('cert-titulo')?.value || '';
+  const rodape = document.getElementById('cert-rodape')?.value || '';
   
   const dadosExemplo = { 
     nome: "João Silva", 
@@ -979,22 +1185,24 @@ window.previewCertificado = () => {
   
   const fundoStyle = fundoImagem ? `background-image: url('${fundoImagem}'); background-size: cover; background-position: center;` : '';
   
-  content.innerHTML = `
-    <div style="text-align:center;padding:20px;border:2px solid var(--birkenstock-gold);border-radius:16px;${fundoStyle} min-height:300px;">
-      <h2 style="color:var(--birkenstock-blue);">${escapeHtml(titulo)}</h2>
-      <div style="margin:20px 0;">${texto.replace(/\n/g,'<br>')}</div>
-      <div style="margin-top:20px; font-size:12px;">${escapeHtml(rodape)}</div>
-    </div>
-  `;
-  preview.style.display = 'block';
+  if (content) {
+    content.innerHTML = `
+      <div style="text-align:center;padding:20px;border:2px solid var(--birkenstock-gold);border-radius:16px;${fundoStyle} min-height:300px;">
+        <h2 style="color:var(--birkenstock-blue);">${escapeHtml(titulo)}</h2>
+        <div style="margin:20px 0;">${texto.replace(/\n/g,'<br>')}</div>
+        <div style="margin-top:20px; font-size:12px;">${escapeHtml(rodape)}</div>
+      </div>
+    `;
+  }
+  if (preview) preview.style.display = 'block';
 };
 
 window.salvarTemplateCertificado = () => {
   certTemplate = { 
-    fundoImagem: document.getElementById('cert-fundo-imagem').value,
-    titulo: document.getElementById('cert-titulo').value, 
-    texto: document.getElementById('cert-texto').value, 
-    rodape: document.getElementById('cert-rodape').value 
+    fundoImagem: document.getElementById('cert-fundo-imagem')?.value || '',
+    titulo: document.getElementById('cert-titulo')?.value || '', 
+    texto: document.getElementById('cert-texto')?.value || '', 
+    rodape: document.getElementById('cert-rodape')?.value || '' 
   };
   localStorage.setItem('cert_template', JSON.stringify(certTemplate));
   showToast('✅ Template salvo!');
@@ -1002,10 +1210,14 @@ window.salvarTemplateCertificado = () => {
 
 window.resetTemplateCertificado = () => {
   certTemplate = JSON.parse(JSON.stringify(defaultCert));
-  document.getElementById('cert-fundo-imagem').value = certTemplate.fundoImagem;
-  document.getElementById('cert-titulo').value = certTemplate.titulo;
-  document.getElementById('cert-texto').value = certTemplate.texto;
-  document.getElementById('cert-rodape').value = certTemplate.rodape;
+  const fundoInput = document.getElementById('cert-fundo-imagem');
+  const tituloInput = document.getElementById('cert-titulo');
+  const textoInput = document.getElementById('cert-texto');
+  const rodapeInput = document.getElementById('cert-rodape');
+  if (fundoInput) fundoInput.value = certTemplate.fundoImagem;
+  if (tituloInput) tituloInput.value = certTemplate.titulo;
+  if (textoInput) textoInput.value = certTemplate.texto;
+  if (rodapeInput) rodapeInput.value = certTemplate.rodape;
   showToast('✅ Template restaurado!');
 };
 
@@ -1013,10 +1225,14 @@ function carregarTemplateCertificado() {
   const saved = localStorage.getItem('cert_template');
   if (saved) {
     const template = JSON.parse(saved);
-    document.getElementById('cert-fundo-imagem').value = template.fundoImagem || '';
-    document.getElementById('cert-titulo').value = template.titulo || '';
-    document.getElementById('cert-texto').value = template.texto || '';
-    document.getElementById('cert-rodape').value = template.rodape || '';
+    const fundoInput = document.getElementById('cert-fundo-imagem');
+    const tituloInput = document.getElementById('cert-titulo');
+    const textoInput = document.getElementById('cert-texto');
+    const rodapeInput = document.getElementById('cert-rodape');
+    if (fundoInput) fundoInput.value = template.fundoImagem || '';
+    if (tituloInput) tituloInput.value = template.titulo || '';
+    if (textoInput) textoInput.value = template.texto || '';
+    if (rodapeInput) rodapeInput.value = template.rodape || '';
   }
 }
 
@@ -1029,16 +1245,18 @@ window.checkPasswordStrength = (pass) => {
   if (/[0-9]/.test(pass)) s++; 
   if (/[^a-zA-Z0-9]/.test(pass)) s++; 
   const d = document.getElementById('password-strength'); 
-  d.className = 'password-strength'; 
-  if (s <= 1) d.classList.add('strength-weak'); 
-  else if (s <= 2) d.classList.add('strength-medium'); 
-  else d.classList.add('strength-strong'); 
+  if (d) {
+    d.className = 'password-strength'; 
+    if (s <= 1) d.classList.add('strength-weak'); 
+    else if (s <= 2) d.classList.add('strength-medium'); 
+    else d.classList.add('strength-strong'); 
+  }
 };
 
 window.alterarPasswordAdmin = () => { 
-  const atual = document.getElementById('admin-pass-atual').value; 
-  const nova = document.getElementById('admin-pass-nova').value; 
-  const conf = document.getElementById('admin-pass-confirm').value; 
+  const atual = document.getElementById('admin-pass-atual')?.value; 
+  const nova = document.getElementById('admin-pass-nova')?.value; 
+  const conf = document.getElementById('admin-pass-confirm')?.value; 
   
   if (atual !== adminConfig.adminPassword) { showToast('❌ Password atual incorreta'); return; } 
   if (nova !== conf) { showToast('❌ Passwords não coincidem'); return; } 
@@ -1048,9 +1266,12 @@ window.alterarPasswordAdmin = () => {
   localStorage.setItem('admin_config', JSON.stringify(adminConfig)); 
   showToast('✅ Password alterada!'); 
   
-  document.getElementById('admin-pass-atual').value = ''; 
-  document.getElementById('admin-pass-nova').value = ''; 
-  document.getElementById('admin-pass-confirm').value = ''; 
+  const atualInput = document.getElementById('admin-pass-atual');
+  const novaInput = document.getElementById('admin-pass-nova');
+  const confInput = document.getElementById('admin-pass-confirm');
+  if (atualInput) atualInput.value = ''; 
+  if (novaInput) novaInput.value = ''; 
+  if (confInput) confInput.value = ''; 
 };
 
 // ==================== EDIÇÃO DE FORMAÇÃO ====================
@@ -1061,44 +1282,58 @@ window.editarFormacao = async (id) => {
   
   if (docSnap.exists()) {
     const data = docSnap.data();
-    document.getElementById('f-titulo').value = data.nome;
-    document.getElementById('f-duracao').value = data.duracao;
-    document.getElementById('f-descricao').value = data.descricao;
+    const tituloInput = document.getElementById('f-titulo');
+    const duracaoInput = document.getElementById('f-duracao');
+    const descricaoInput = document.getElementById('f-descricao');
+    if (tituloInput) tituloInput.value = data.nome;
+    if (duracaoInput) duracaoInput.value = data.duracao;
+    if (descricaoInput) descricaoInput.value = data.descricao;
     modulos = data.modulos || [];
     perguntas = data.perguntas || [];
     editandoFormacaoId = id;
     renderModulos();
     renderPerguntas();
-    document.getElementById('editando-id').innerHTML = `✏️ Editando: ${escapeHtml(data.nome)}`;
-    document.getElementById('btn-cancelar-edicao').style.display = 'inline-block';
+    const editandoDiv = document.getElementById('editando-id');
+    const cancelarBtn = document.getElementById('btn-cancelar-edicao');
+    if (editandoDiv) editandoDiv.innerHTML = `✏️ Editando: ${escapeHtml(data.nome)}`;
+    if (cancelarBtn) cancelarBtn.style.display = 'inline-block';
     switchTab('formacao');
   }
 };
 
 window.cancelarEdicao = () => {
   editandoFormacaoId = null;
-  document.getElementById('f-titulo').value = '';
-  document.getElementById('f-duracao').value = '';
-  document.getElementById('f-descricao').value = '';
+  const tituloInput = document.getElementById('f-titulo');
+  const duracaoInput = document.getElementById('f-duracao');
+  const descricaoInput = document.getElementById('f-descricao');
+  if (tituloInput) tituloInput.value = '';
+  if (duracaoInput) duracaoInput.value = '';
+  if (descricaoInput) descricaoInput.value = '';
   modulos = [];
   perguntas = [];
   renderModulos();
   renderPerguntas();
-  document.getElementById('editando-id').innerHTML = '';
-  document.getElementById('btn-cancelar-edicao').style.display = 'none';
+  const editandoDiv = document.getElementById('editando-id');
+  const cancelarBtn = document.getElementById('btn-cancelar-edicao');
+  if (editandoDiv) editandoDiv.innerHTML = '';
+  if (cancelarBtn) cancelarBtn.style.display = 'none';
 };
 
 // ==================== UTILITÁRIOS ====================
 
 function fecharModal(id) { 
-  document.getElementById(id).style.display = 'none'; 
+  const modal = document.getElementById(id);
+  if (modal) modal.style.display = 'none'; 
 }
 
 function switchTab(tabId) {
   document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
-  document.getElementById(`sec-${tabId}`).classList.add('active');
+  const secAtiva = document.getElementById(`sec-${tabId}`);
+  if (secAtiva) secAtiva.classList.add('active');
+  
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+  const tabAtiva = document.querySelector(`.tab[data-tab="${tabId}"]`);
+  if (tabAtiva) tabAtiva.classList.add('active');
   
   if (tabId === 'colaboradores') renderColabs();
   if (tabId === 'historico') renderHistorico();
@@ -1112,21 +1347,31 @@ function switchTab(tabId) {
 // ==================== INICIALIZAÇÃO ====================
 
 function setupEventListeners() {
-  document.getElementById('btn-save-user').addEventListener('click', saveUser);
-  document.getElementById('btn-publicar').addEventListener('click', publicarFormacao);
-  document.getElementById('btn-limpar').addEventListener('click', window.limparHistorico);
-  document.getElementById('btn-gerar-links').addEventListener('click', window.gerarLinksMassa);
-  document.getElementById('btn-salvar-modulo').addEventListener('click', salvarModulo);
-  document.getElementById('btn-salvar-pergunta').addEventListener('click', salvarPergunta);
-  document.getElementById('btn-cancelar-edicao').addEventListener('click', () => window.cancelarEdicao());
+  const btnSaveUser = document.getElementById('btn-save-user');
+  const btnPublicar = document.getElementById('btn-publicar');
+  const btnLimpar = document.getElementById('btn-limpar');
+  const btnGerarLinks = document.getElementById('btn-gerar-links');
+  const btnSalvarModulo = document.getElementById('btn-salvar-modulo');
+  const btnSalvarPergunta = document.getElementById('btn-salvar-pergunta');
+  const btnCancelarEdicao = document.getElementById('btn-cancelar-edicao');
+  const importCsv = document.getElementById('import-csv');
+  const btnDownloadModelo = document.getElementById('btn-download-modelo');
+  
+  if (btnSaveUser) btnSaveUser.addEventListener('click', saveUser);
+  if (btnPublicar) btnPublicar.addEventListener('click', publicarFormacao);
+  if (btnLimpar) btnLimpar.addEventListener('click', window.limparHistorico);
+  if (btnGerarLinks) btnGerarLinks.addEventListener('click', window.gerarLinksMassa);
+  if (btnSalvarModulo) btnSalvarModulo.addEventListener('click', salvarModulo);
+  if (btnSalvarPergunta) btnSalvarPergunta.addEventListener('click', salvarPergunta);
+  if (btnCancelarEdicao) btnCancelarEdicao.addEventListener('click', () => window.cancelarEdicao());
   
   document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
   
-  document.getElementById('import-csv').addEventListener('change', (e) => {
+  if (importCsv) importCsv.addEventListener('change', (e) => {
     importColaboradores(e.target.files);
   });
   
-  document.getElementById('btn-download-modelo').addEventListener('click', downloadModeloCSV);
+  if (btnDownloadModelo) btnDownloadModelo.addEventListener('click', downloadModeloCSV);
   
   // Filtros da aba acompanhar
   const filtroFormacao = document.getElementById('filtro-formacao-acompanhar');
@@ -1199,5 +1444,7 @@ window.visualizarCertificadoAtribuicao = visualizarCertificadoAtribuicao;
 window.visualizarCertificadoHistorico = visualizarCertificadoHistorico;
 window.imprimirCertificadoModal = imprimirCertificadoModal;
 window.baixarPDFCertificadoModal = baixarPDFCertificadoModal;
+window.abrirEmailIndividual = abrirEmailIndividual;
+window.enviarTodosEmails = enviarTodosEmails;
 
 document.addEventListener('DOMContentLoaded', initAdmin);
