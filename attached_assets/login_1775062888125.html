@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | Birkenstock S&CC Portugal</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+
+<header class="login-header">
+  <div class="logo-text">
+    BIRKENSTOCK
+    <small>S&CC Portugal · Formação</small>
+  </div>
+  <span>Portal de Acesso</span>
+</header>
+
+<div class="wrap">
+  <div class="card">
+    <div class="card-top">
+      <div class="logo-large">
+        BIRKENSTOCK
+        <small>S&CC Portugal</small>
+      </div>
+    </div>
+    <div class="card-body">
+      <h2>Plataforma de Formação</h2>
+      
+      <div class="tabs">
+        <button class="tab active" id="tab-colab">👥 Colaborador</button>
+        <button class="tab" id="tab-admin">👑 Administrador</button>
+      </div>
+      
+      <div id="errmsg" class="errmsg"></div>
+      
+      <div id="form-colab">
+        <div class="fg">
+          <label>Utilizador</label>
+          <input type="text" id="c-user" placeholder="nome.apelido" autocomplete="username">
+        </div>
+        <div class="fg">
+          <label>Palavra-passe</label>
+          <input type="password" id="c-pass" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="btnlogin" id="btn-colab">Entrar</button>
+      </div>
+      
+      <div id="form-admin" style="display:none">
+        <div class="fg">
+          <label>Utilizador</label>
+          <input type="text" id="a-user" placeholder="admin" value="admin" readonly style="background:#f5f5f5">
+        </div>
+        <div class="fg">
+          <label>Palavra-passe</label>
+          <input type="password" id="a-pass" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="btnlogin" id="btn-admin">Entrar como Gestor</button>
+      </div>
+      
+      <div class="password-hint">
+        <span>❓ Dúvidas? Fale com RH</span>
+      </div>
+    </div>
+    <div class="footer">
+      &copy; 2026 Birkenstock S&CC Portugal · Plataforma de Formação
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script type="module">
+  import { db, collection, getDocs, query, where } from './js/firebase-config.js';
+  import { showToast } from './js/utils.js';
+
+  console.log("🚀 Login carregado - Versão Simplificada");
+
+  const errMsgDiv = document.getElementById('errmsg');
+  const formColab = document.getElementById('form-colab');
+  const formAdmin = document.getElementById('form-admin');
+  const tabColab = document.getElementById('tab-colab');
+  const tabAdmin = document.getElementById('tab-admin');
+  const btnColab = document.getElementById('btn-colab');
+  const btnAdmin = document.getElementById('btn-admin');
+  const inputUser = document.getElementById('c-user');
+  const inputPassColab = document.getElementById('c-pass');
+  const inputPassAdmin = document.getElementById('a-pass');
+
+  let isLoggingIn = false;
+
+  function showError(message) {
+    errMsgDiv.textContent = message;
+    errMsgDiv.style.display = 'block';
+    setTimeout(() => {
+      errMsgDiv.style.display = 'none';
+    }, 4000);
+  }
+
+  function setLoading(button, isLoading, originalText = 'Entrar') {
+    if (isLoading) {
+      button.disabled = true;
+      button.textContent = 'A validar...';
+    } else {
+      button.disabled = false;
+      button.textContent = originalText;
+    }
+  }
+
+  async function handleLoginColaborador() {
+    if (isLoggingIn) return;
+    
+    const user = inputUser.value.trim();
+    const pass = inputPassColab.value;
+    
+    if (!user || !pass) {
+      showError('Preencha utilizador e palavra-passe.');
+      return;
+    }
+    
+    isLoggingIn = true;
+    setLoading(btnColab, true);
+    
+    try {
+      console.log("🔍 Procurando colaborador:", user);
+      
+      const q = query(collection(db, 'colaboradores'), where('user', '==', user.toLowerCase()));
+      const querySnapshot = await getDocs(q);
+      
+      console.log("📋 Encontrados:", querySnapshot.size);
+      
+      if (querySnapshot.empty) {
+        showError('Utilizador não encontrado.');
+        setLoading(btnColab, false);
+        isLoggingIn = false;
+        return;
+      }
+      
+      let loginSuccess = false;
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        console.log("👤 Comparando:", data.user, "| Pass:", data.pass);
+        
+        if (data.pass === pass) {
+          loginSuccess = true;
+          localStorage.setItem('usuarioAtivo', user.toLowerCase());
+          localStorage.setItem('usuarioNome', data.user);
+        }
+      });
+      
+      if (loginSuccess) {
+        showToast('✅ Login efetuado!');
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 500);
+      } else {
+        showError('Palavra-passe incorreta.');
+        inputPassColab.value = '';
+        setLoading(btnColab, false);
+        isLoggingIn = false;
+      }
+      
+    } catch (error) {
+      console.error('❌ Erro:', error);
+      showError('Erro: ' + error.message);
+      setLoading(btnColab, false);
+      isLoggingIn = false;
+    }
+  }
+
+  function handleLoginAdmin() {
+    if (isLoggingIn) return;
+    
+    const pass = inputPassAdmin.value;
+    
+    if (!pass) {
+      showError('Preencha a palavra-passe.');
+      return;
+    }
+    
+    isLoggingIn = true;
+    setLoading(btnAdmin, true, 'Entrar como Gestor');
+    
+    setTimeout(() => {
+      const ADMIN_PASS = 'SSA2024admin';
+      
+      if (pass === ADMIN_PASS) {
+        localStorage.setItem('usuarioAdmin', 'admin');
+        showToast('✅ Acesso concedido!');
+        setTimeout(() => {
+          window.location.href = 'admin.html';
+        }, 500);
+      } else {
+        showError('Palavra-passe incorreta.');
+        inputPassAdmin.value = '';
+        setLoading(btnAdmin, false, 'Entrar como Gestor');
+        isLoggingIn = false;
+      }
+    }, 300);
+  }
+
+  function switchToColab() {
+    tabColab.classList.add('active');
+    tabAdmin.classList.remove('active');
+    formColab.style.display = 'block';
+    formAdmin.style.display = 'none';
+    errMsgDiv.style.display = 'none';
+    inputUser.focus();
+  }
+
+  function switchToAdmin() {
+    tabAdmin.classList.add('active');
+    tabColab.classList.remove('active');
+    formAdmin.style.display = 'block';
+    formColab.style.display = 'none';
+    errMsgDiv.style.display = 'none';
+    inputPassAdmin.focus();
+  }
+
+  btnColab.addEventListener('click', handleLoginColaborador);
+  btnAdmin.addEventListener('click', handleLoginAdmin);
+  tabColab.addEventListener('click', switchToColab);
+  tabAdmin.addEventListener('click', switchToAdmin);
+  
+  inputPassColab.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleLoginColaborador();
+  });
+  
+  inputPassAdmin.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleLoginAdmin();
+  });
+  
+  inputUser.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') inputPassColab.focus();
+  });
+
+  inputUser.focus();
+  
+  // Teste inicial para ver se o Firebase está acessível
+  async function testarFirebase() {
+    try {
+      const testQuery = await getDocs(collection(db, 'colaboradores'));
+      console.log("✅ Firebase OK! Colaboradores encontrados:", testQuery.size);
+    } catch(e) {
+      console.error("❌ Firebase ERROR:", e);
+      showError('Erro de conexão com o servidor. Verifique a consola.');
+    }
+  }
+  testarFirebase();
+</script>
+</body>
+</html>
