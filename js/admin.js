@@ -613,7 +613,7 @@ window.gerarLinksMassa = async () => {
   }
   
   const prazo = document.getElementById('atribuir-prazo').value || '31/12/2026';
-  let baseUrl = window.location.origin + window.location.pathname.replace('admin.html', '');
+let baseUrl = window.location.origin + window.location.pathname.replace('admin.html', '');
 if (!baseUrl.endsWith('/')) baseUrl += '/';
 baseUrl += 'formacao_colaborador.html';
   const cursoNome = document.getElementById('atribuir-curso').selectedOptions[0]?.text || 'Formação';
