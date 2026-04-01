@@ -5,10 +5,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Formação | Birkenstock S&CC Portugal</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/formacao.css">
+<style>
+  /* Garantir que o botão de confirmação funcione corretamente */
+  .btn-confirm {
+    background: var(--birkenstock-blue);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .btn-confirm:hover {
+    background: var(--birkenstock-blue-dark);
+    transform: translateY(-1px);
+  }
+  .btn-confirm:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+  }
+</style>
 </head>
 <body>
 
@@ -19,7 +42,7 @@
   </div>
   <div class="user-name" id="user-name-display">Carregando...</div>
   <div class="deadline-badge">Prazo: <strong id="prazo-data">---</strong></div>
-  <button class="btn-sair" onclick="window.sair()">Sair</button>
+  <button class="btn-sair" id="btn-sair">Sair</button>
 </div>
 
 <div class="hero">
@@ -47,6 +70,21 @@
   <div id="modules-container" style="display:none;"></div>
 </div>
 
+<div id="toast" class="toast"></div>
+
 <script type="module" src="js/formacao.js"></script>
+<script type="text/javascript">
+  // Fallback para o botão de sair caso o módulo não carregue
+  document.addEventListener('DOMContentLoaded', function() {
+    const btnSair = document.getElementById('btn-sair');
+    if (btnSair) {
+      btnSair.addEventListener('click', function() {
+        if (confirm('Tem a certeza que deseja sair? O seu progresso será guardado automaticamente.')) {
+          window.location.href = 'dashboard.html';
+        }
+      });
+    }
+  });
+</script>
 </body>
 </html>
