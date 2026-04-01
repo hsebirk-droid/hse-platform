@@ -26,6 +26,15 @@ export async function initFormacao() {
   if (tokenData && tokenData.user && tokenData.cursoId) {
     console.log("🔑 Token válido encontrado para:", tokenData.user);
     
+    // Verificar se o token não expirou
+    if (tokenData.prazo && !validarPrazo(tokenData.prazo)) {
+      showToast('❌ Este link expirou. Contacte o RH.');
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 2000);
+      return;
+    }
+    
     localStorage.setItem('usuarioAtivo', tokenData.user);
     nomeUser = tokenData.user;
     
@@ -60,7 +69,7 @@ export async function initFormacao() {
     await carregarFormacao(cursoIdStorage);
   } else {
     const loadingDiv = document.getElementById('loading');
-    if (loadingDiv) loadingDiv.innerHTML = '❌ Nenhuma formação. <a href="dashboard.html">Voltar</a>';
+    if (loadingDiv) loadingDiv.innerHTML = '❌ Nenhuma formação selecionada. <a href="dashboard.html">Voltar</a>';
   }
 }
 
@@ -81,6 +90,25 @@ function lerTokenUrl() {
   } catch(e) {
     console.error('❌ Erro ao decodificar token:', e);
     return null;
+  }
+}
+
+function validarPrazo(prazoStr) {
+  if (!prazoStr) return true;
+  
+  try {
+    // Suporta formato DD/MM/YYYY
+    const partes = prazoStr.split('/');
+    if (partes.length === 3) {
+      const prazoDate = new Date(partes[2], partes[1] - 1, partes[0]);
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+      return prazoDate >= hoje;
+    }
+    return true;
+  } catch(e) {
+    console.error('Erro ao validar prazo:', e);
+    return true;
   }
 }
 
@@ -105,9 +133,18 @@ async function carregarFormacao(id) {
   cursoId = id;
   console.log("📚 Carregando formação ID:", id);
   
+  // Timeout para evitar loading infinito
+  const timeoutId = setTimeout(() => {
+    if (loadingDiv.style.display !== 'none') {
+      loadingDiv.innerHTML = '❌ A formação demorou muito a carregar. <a href="dashboard.html">Voltar</a>';
+    }
+  }, 15000);
+  
   try {
     const docRef = doc(db, 'formacoes', id);
     const docSnap = await getDoc(docRef);
+    
+    clearTimeout(timeoutId);
     
     if (docSnap.exists()) {
       const data = docSnap.data();
@@ -139,11 +176,12 @@ async function carregarFormacao(id) {
       renderModules();
       updateProgress();
     } else {
-      loadingDiv.innerHTML = '❌ Formação não encontrada.';
+      loadingDiv.innerHTML = '❌ Formação não encontrada. <a href="dashboard.html">Voltar</a>';
     }
   } catch(error) {
+    clearTimeout(timeoutId);
     console.error('❌ Erro ao carregar formação:', error);
-    loadingDiv.innerHTML = '❌ Erro: ' + error.message;
+    loadingDiv.innerHTML = '❌ Erro: ' + error.message + ' <a href="dashboard.html">Voltar</a>';
   }
 }
 
@@ -155,9 +193,15 @@ function carregarProgresso() {
   const storageKey = `progresso_${cursoId}_${nomeUser}`;
   const saved = localStorage.getItem(storageKey);
   if (saved) {
-    const progress = JSON.parse(saved);
-    completedModules = progress.completedModules || {};
-    quizPassed = progress.quizPassed || false;
+    try {
+      const progress = JSON.parse(saved);
+      completedModules = progress.completedModules || {};
+      quizPassed = progress.quizPassed || false;
+    } catch(e) {
+      console.error('Erro ao carregar progresso:', e);
+      completedModules = {};
+      quizPassed = false;
+    }
   }
 }
 
@@ -210,7 +254,7 @@ function renderModules() {
         <div class="s-num">${idx + 1}</div>
         <div class="s-info">
           <div class="s-title">${escapeHtml(module.titulo || 'Módulo ' + (idx + 1))}</div>
-          <div class="s-meta">${module.tipo === 'video' ? '🎬 Vídeo' : module.tipo === 'text' ? '📄 Texto' : '📁 Conteúdo'}</div>
+          <div class="s-meta">${module.tipo === 'video' ? '🎬 Vídeo' : module.tipo === 'text' ? '📄 Texto' : '📁 Conteúdo'} · ${module.duracao || '15 min'}</div>
         </div>
         <div>${isCompleted ? '✅' : (isLocked ? '🔒' : '▶')}</div>
       </div>
@@ -218,37 +262,52 @@ function renderModules() {
         <div id="content-${moduleIdStr}" style="min-height: 200px;">Carregando conteúdo...</div>
         <div class="confirm-viewed">
           <span>✅ Após visualizar o conteúdo, clique para confirmar</span>
-          <button class="btn-confirm" id="btn-confirm-${moduleIdStr}" onclick="window.confirmModule('${moduleIdStr}')">✓ Confirmar conclusão</button>
+          <button class="btn-confirm" id="btn-confirm-${moduleIdStr}">✓ Confirmar conclusão</button>
         </div>
         <div id="confirmed-${moduleIdStr}" style="display:none; margin-top:10px;" class="confirmed-label">✅ Módulo concluído</div>
       </div>
     `;
     container.appendChild(block);
     
+    // Carregar conteúdo do módulo
     setTimeout(() => {
-      const url = module.conteudo?.url || '';
-      const contentDiv = document.getElementById(`content-${moduleIdStr}`);
-      
-      if (module.tipo === 'text' && module.conteudo?.texto) {
-        contentDiv.innerHTML = `<div class="text-content">${module.conteudo.texto}</div>`;
-      }
-      else if (url) {
-        const embedUrl = converterLinkGoogleDrive(url);
-        
-        if (embedUrl.includes('youtube.com') || embedUrl.includes('youtu.be')) {
-          let videoId = embedUrl.split('v=')[1]?.split('&')[0] || embedUrl.split('/').pop();
-          contentDiv.innerHTML = `<div class="video-wrap"><iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe></div>`;
-        } else {
-          contentDiv.innerHTML = `<div class="doc-viewer"><iframe src="${embedUrl}" class="doc-iframe" allow="autoplay"></iframe></div>`;
-        }
-      }
-      else {
-        contentDiv.innerHTML = '<div class="text-content">Conteúdo não disponível.</div>';
-      }
+      carregarConteudoModulo(module, moduleIdStr);
     }, 100);
   });
   
   renderQuiz();
+}
+
+function carregarConteudoModulo(module, moduleIdStr) {
+  const url = module.conteudo?.url || '';
+  const contentDiv = document.getElementById(`content-${moduleIdStr}`);
+  
+  if (!contentDiv) return;
+  
+  if (module.tipo === 'text' && module.conteudo?.texto) {
+    contentDiv.innerHTML = `<div class="text-content">${module.conteudo.texto.replace(/\n/g, '<br>')}</div>`;
+  }
+  else if (url) {
+    const embedUrl = converterLinkGoogleDrive(url);
+    
+    if (embedUrl.includes('youtube.com') || embedUrl.includes('youtu.be')) {
+      let videoId = embedUrl.split('v=')[1]?.split('&')[0] || embedUrl.split('/').pop();
+      contentDiv.innerHTML = `<div class="video-wrap"><iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe></div>`;
+    } else if (embedUrl.includes('drive.google.com')) {
+      contentDiv.innerHTML = `<div class="doc-viewer"><iframe src="${embedUrl}" class="doc-iframe" allow="autoplay"></iframe></div>`;
+    } else {
+      contentDiv.innerHTML = `<div class="doc-viewer"><iframe src="${embedUrl}" class="doc-iframe" allow="autoplay"></iframe></div>`;
+    }
+  }
+  else {
+    contentDiv.innerHTML = '<div class="text-content">Conteúdo não disponível.</div>';
+  }
+  
+  // Adicionar evento ao botão de confirmação
+  const confirmBtn = document.getElementById(`btn-confirm-${moduleIdStr}`);
+  if (confirmBtn) {
+    confirmBtn.onclick = () => window.confirmModule(moduleIdStr);
+  }
 }
 
 // ============================================
@@ -275,7 +334,7 @@ function renderQuiz() {
       <div id="quiz-questions"></div>
       <div class="quiz-footer">
         <span id="quiz-answered">0 respondidas</span>
-        <button class="btn-submit" id="btn-submit" disabled onclick="window.submitQuiz()">Submeter avaliação</button>
+        <button class="btn-submit" id="btn-submit" disabled>Submeter avaliação</button>
       </div>
       <div class="result-screen" id="result-screen">
         <div class="result-score-ring" id="result-ring">
@@ -298,14 +357,15 @@ function renderQuiz() {
     const resultScreen = document.getElementById('result-screen');
     if (resultScreen) {
       resultScreen.style.display = 'block';
-      document.getElementById('quiz-questions').style.display = 'none';
+      const quizQuestions = document.getElementById('quiz-questions');
       const quizFooter = document.querySelector('.quiz-footer');
+      if (quizQuestions) quizQuestions.style.display = 'none';
       if (quizFooter) quizFooter.style.display = 'none';
     }
     return;
   }
   
-  if (!perguntas.length) {
+  if (!perguntas || !perguntas.length) {
     perguntas = [
       { texto: "Qual é a melhor forma de aprender?", opcoes: ["Praticar", "Só ler", "Decorar", "Ignorar"], correta: "A" }
     ];
@@ -315,11 +375,11 @@ function renderQuiz() {
   if (!questionsDiv) return;
   
   questionsDiv.innerHTML = perguntas.map((q, idx) => `
-    <div class="question">
+    <div class="question" data-qidx="${idx}">
       <div class="question-text">${escapeHtml(q.texto)}</div>
       <div class="options" id="opts-${idx}">
         ${q.opcoes.map((opt, i) => `
-          <div class="option-item" onclick="window.selectOpt(${idx}, ${i})">
+          <div class="option-item" data-optidx="${i}">
             <div class="option-letter">${String.fromCharCode(65+i)}</div>
             ${escapeHtml(opt)}
           </div>
@@ -328,16 +388,33 @@ function renderQuiz() {
     </div>
   `).join('');
   
-  window.perguntas = perguntas;
-  window.respostas = {};
+  // Adicionar eventos às opções
+  perguntas.forEach((_, idx) => {
+    const optsContainer = document.getElementById(`opts-${idx}`);
+    if (optsContainer) {
+      const options = optsContainer.querySelectorAll('.option-item');
+      options.forEach(opt => {
+        opt.onclick = () => window.selectOpt(idx, parseInt(opt.dataset.optidx));
+      });
+    }
+  });
+  
+  // Inicializar respostas
+  window.respostas = window.respostas || {};
   window.totalPerguntas = perguntas.length;
+  
+  // Adicionar evento ao botão submit
+  const submitBtn = document.getElementById('btn-submit');
+  if (submitBtn) {
+    submitBtn.onclick = () => window.submitQuiz();
+  }
 }
 
 // ============================================
-// FUNÇÕES DE INTERAÇÃO
+// FUNÇÕES GLOBAIS (definidas corretamente)
 // ============================================
 
-window.confirmModule = (moduleId) => {
+window.confirmModule = function(moduleId) {
   const btn = document.getElementById(`btn-confirm-${moduleId}`);
   if (!btn) return;
   
@@ -376,7 +453,7 @@ window.confirmModule = (moduleId) => {
       showToast('📝 Avaliação final desbloqueada!');
     }
   } 
-  else {
+  else if (idx >= 0 && idx < modules.length - 1) {
     const nextModuleId = String(modules[idx + 1].id);
     const nextBlock = document.getElementById(`block-${nextModuleId}`);
     if (nextBlock) {
@@ -393,21 +470,31 @@ window.confirmModule = (moduleId) => {
   }
 };
 
-window.selectOpt = (qIdx, optIdx) => {
-  document.querySelectorAll(`#opts-${qIdx} .option-item`).forEach(el => el.classList.remove('selected'));
-  document.querySelectorAll(`#opts-${qIdx} .option-item`)[optIdx].classList.add('selected');
+window.selectOpt = function(qIdx, optIdx) {
+  const optsContainer = document.getElementById(`opts-${qIdx}`);
+  if (!optsContainer) return;
+  
+  const options = optsContainer.querySelectorAll('.option-item');
+  options.forEach(opt => opt.classList.remove('selected'));
+  options[optIdx].classList.add('selected');
+  
+  if (!window.respostas) window.respostas = {};
   window.respostas[qIdx] = String.fromCharCode(65 + optIdx);
+  
   const answered = Object.keys(window.respostas).length;
   const answeredSpan = document.getElementById('quiz-answered');
   const submitBtn = document.getElementById('btn-submit');
+  
   if (answeredSpan) answeredSpan.textContent = `${answered} de ${window.totalPerguntas} respondidas`;
   if (submitBtn) submitBtn.disabled = answered < window.totalPerguntas;
 };
 
-window.submitQuiz = async () => {
+window.submitQuiz = async function() {
+  if (!window.respostas) window.respostas = {};
+  
   let score = 0;
   for (let i = 0; i < window.totalPerguntas; i++) {
-    if (window.respostas[i] === window.perguntas[i].correta) score++;
+    if (window.respostas[i] === perguntas[i].correta) score++;
   }
   const pct = Math.round((score / window.totalPerguntas) * 100);
   const passed = pct >= 70;
@@ -441,7 +528,7 @@ window.submitQuiz = async () => {
     const certBtn = document.createElement('button');
     certBtn.className = 'result-btn result-btn-cert';
     certBtn.innerHTML = '<i class="fas fa-certificate"></i> Ver Certificado';
-    certBtn.onclick = () => showCertificate();
+    certBtn.onclick = () => window.showCertificate();
     resultActions.appendChild(certBtn);
     
     updateProgress();
@@ -474,7 +561,7 @@ window.submitQuiz = async () => {
       
       showToast('✅ Certificado gerado!');
     } catch(e) { 
-      console.error(e); 
+      console.error('Erro ao salvar histórico:', e); 
     }
   } else {
     if (resultTitle) {
@@ -487,21 +574,26 @@ window.submitQuiz = async () => {
     const retryBtn = document.createElement('button');
     retryBtn.className = 'result-btn result-btn-retry';
     retryBtn.innerHTML = '<i class="fas fa-redo"></i> Tentar novamente';
-    retryBtn.onclick = () => retryQuiz();
+    retryBtn.onclick = () => window.retryQuiz();
     resultActions.appendChild(retryBtn);
     
     showToast('⚠️ Não atingiu a nota mínima. Tente novamente!');
   }
 };
 
-function retryQuiz() {
+window.retryQuiz = function() {
   window.respostas = {};
+  
   for (let i = 0; i < window.totalPerguntas; i++) {
-    document.querySelectorAll(`#opts-${i} .option-item`).forEach(el => {
-      el.classList.remove('selected', 'correct', 'wrong');
-      el.onclick = () => window.selectOpt(i, Array.from(el.parentNode.children).indexOf(el));
-    });
+    const optsContainer = document.getElementById(`opts-${i}`);
+    if (optsContainer) {
+      const options = optsContainer.querySelectorAll('.option-item');
+      options.forEach(opt => {
+        opt.classList.remove('selected', 'correct', 'wrong');
+      });
+    }
   }
+  
   const quizQuestions = document.getElementById('quiz-questions');
   const quizFooter = document.querySelector('.quiz-footer');
   const resultScreen = document.getElementById('result-screen');
@@ -515,10 +607,11 @@ function retryQuiz() {
   if (submitBtn) submitBtn.disabled = true;
   if (answeredSpan) answeredSpan.textContent = `0 de ${window.totalPerguntas} respondidas`;
   if (resultRing) resultRing.classList.remove('fail');
+  
   showToast('🔄 Quiz reiniciado. Boa sorte!');
-}
+};
 
-async function showCertificate() {
+window.showCertificate = async function() {
   const now = new Date();
   const certId = 'CERT-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
   const nota = document.getElementById('score-num')?.textContent || '100%';
@@ -572,10 +665,10 @@ async function showCertificate() {
         </div>
       </div>
       <div class="cert-actions">
-        <button class="action-btn action-btn-download" onclick="window.descarregarPDF()">
+        <button class="action-btn action-btn-download" id="btn-descarregar-pdf">
           <i class="fas fa-file-pdf"></i> Descarregar PDF
         </button>
-        <button class="action-btn" onclick="window.imprimirCertificado()">
+        <button class="action-btn" id="btn-imprimir-certificado">
           <i class="fas fa-print"></i> Imprimir Certificado
         </button>
         <button class="action-btn action-btn-secondary" onclick="window.location.href='dashboard.html'">
@@ -591,6 +684,13 @@ async function showCertificate() {
   const modulesContainer = document.getElementById('modules-container');
   if (modulesContainer) {
     modulesContainer.insertAdjacentHTML('beforeend', certHtml);
+    
+    // Adicionar eventos aos botões
+    const btnDownload = document.getElementById('btn-descarregar-pdf');
+    const btnImprimir = document.getElementById('btn-imprimir-certificado');
+    
+    if (btnDownload) btnDownload.onclick = () => window.descarregarPDF();
+    if (btnImprimir) btnImprimir.onclick = () => window.imprimirCertificado();
   }
   
   setTimeout(() => {
@@ -599,12 +699,23 @@ async function showCertificate() {
   }, 200);
   
   showToast('🏅 Certificado gerado!');
-}
+};
 
-window.descarregarPDF = async () => {
+window.descarregarPDF = async function() {
   const element = document.getElementById('certificado-para-pdf');
   if (!element) {
     showToast('❌ Erro: elemento do certificado não encontrado');
+    return;
+  }
+  
+  // Verificar se as bibliotecas estão carregadas
+  if (typeof html2canvas === 'undefined') {
+    showToast('❌ Erro: Biblioteca de PDF não carregada. Recarregue a página.');
+    return;
+  }
+  
+  if (typeof window.jspdf === 'undefined') {
+    showToast('❌ Erro: Biblioteca de PDF não carregada. Recarregue a página.');
     return;
   }
   
@@ -635,32 +746,33 @@ window.descarregarPDF = async () => {
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
     
     let finalHeight = imgHeight;
-    let finalWidth = imgWidth;
     let yOffset = 0;
     
     if (imgHeight > pdfHeight) {
       finalHeight = pdfHeight;
-      finalWidth = (canvas.width * finalHeight) / canvas.height;
       yOffset = 0;
     } else {
       yOffset = (pdfHeight - imgHeight) / 2;
     }
     
-    const xOffset = (pdfWidth - finalWidth) / 2;
-    
-    pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalWidth, finalHeight);
+    pdf.addImage(imgData, 'PNG', 0, yOffset, pdfWidth, finalHeight);
     pdf.save(`certificado_${nomeUser.replace(/\s/g, '_')}.pdf`);
     showToast('✅ PDF guardado!');
   } catch (err) {
-    console.error(err);
-    showToast('❌ Erro ao gerar PDF');
+    console.error('Erro ao gerar PDF:', err);
+    showToast('❌ Erro ao gerar PDF: ' + err.message);
   }
 };
 
-window.imprimirCertificado = async () => {
+window.imprimirCertificado = async function() {
   const element = document.getElementById('certificado-para-pdf');
   if (!element) {
     showToast('❌ Erro: certificado não encontrado');
+    return;
+  }
+  
+  if (typeof html2canvas === 'undefined') {
+    showToast('❌ Erro: Biblioteca de impressão não carregada. Recarregue a página.');
     return;
   }
   
@@ -706,12 +818,12 @@ window.imprimirCertificado = async () => {
     `);
     printWindow.document.close();
   } catch (err) {
-    console.error(err);
+    console.error('Erro ao preparar impressão:', err);
     showToast('❌ Erro ao preparar impressão');
   }
 };
 
-window.toggleSection = (id) => {
+window.toggleSection = function(id) {
   if (id === 'quiz') {
     const block = document.getElementById('block-quiz');
     if (block && block.classList.contains('locked')) {
@@ -731,7 +843,7 @@ window.toggleSection = (id) => {
   }
 };
 
-window.sair = () => {
+window.sair = function() {
   if (confirm('Tem a certeza que deseja sair? O seu progresso será guardado automaticamente.')) {
     window.location.href = 'dashboard.html';
   }
@@ -744,11 +856,3 @@ window.sair = () => {
 document.addEventListener('DOMContentLoaded', () => {
   initFormacao();
 });
-
-window.confirmModule = confirmModule;
-window.selectOpt = selectOpt;
-window.submitQuiz = submitQuiz;
-window.toggleSection = toggleSection;
-window.sair = sair;
-window.descarregarPDF = descarregarPDF;
-window.imprimirCertificado = imprimirCertificado;
