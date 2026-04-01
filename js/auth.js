@@ -33,6 +33,7 @@ export async function loginColaborador(user, pass) {
       localStorage.setItem('usuarioNome', userData.user);
       localStorage.setItem('usuarioEmail', userData.email || '');
       localStorage.setItem('usuarioMatricula', userData.matricula || '');
+      console.log("✅ Login bem sucedido para:", userData.user);
       return true;
     }
     
