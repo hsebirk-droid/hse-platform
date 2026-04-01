@@ -60,6 +60,9 @@ export function getCurrentUser() {
   const email = localStorage.getItem('usuarioEmail') || '';
   const matricula = localStorage.getItem('usuarioMatricula') || '';
   
+  console.log("getCurrentUser - colaborador:", colaborador);
+  console.log("getCurrentUser - admin:", admin);
+  
   if (admin) return { type: 'admin', name: 'Administrador', email: '', matricula: '' };
   if (colaborador) return { type: 'colaborador', name: nome, email: email, matricula: matricula };
   return null;
