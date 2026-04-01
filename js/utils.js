@@ -1,8 +1,3 @@
-// ============================================
-// FUNÇÕES UTILITÁRIAS
-// ============================================
-
-// Escape HTML
 export function escapeHtml(text) {
   if (!text) return '';
   return text.replace(/[&<>]/g, function(m) {
@@ -13,21 +8,18 @@ export function escapeHtml(text) {
   });
 }
 
-// Formatar data
 export function formatDate(date) {
   if (!date) return '';
   const d = new Date(date);
   return d.toLocaleDateString('pt-PT');
 }
 
-// Formatar data para Excel (YYYY-MM-DD)
 export function formatDateForExcel(date) {
   if (!date) return '';
   const d = new Date(date);
   return d.toISOString().split('T')[0];
 }
 
-// Mostrar toast
 let toastTimeout = null;
 export function showToast(message, duration = 3000) {
   let toast = document.getElementById('toast');
@@ -45,7 +37,6 @@ export function showToast(message, duration = 3000) {
   }, duration);
 }
 
-// Verificar autenticação
 export function checkAuth() {
   const usuario = localStorage.getItem('usuarioAtivo');
   const admin = localStorage.getItem('usuarioAdmin');
@@ -56,7 +47,6 @@ export function checkAuth() {
   return true;
 }
 
-// Converter link Google Drive
 export function converterLinkGoogleDrive(url) {
   if (!url) return url;
   if (!url.includes('drive.google.com')) return url;
@@ -79,14 +69,12 @@ export function converterLinkGoogleDrive(url) {
   return url.replace('/view', '/preview').replace('?usp=sharing', '');
 }
 
-// Exportar dados para Excel (com colunas)
 export function downloadExcel(data, filename, sheetName = 'Dados') {
   if (!data || data.length === 0) {
     showToast('❌ Sem dados para exportar');
     return;
   }
   
-  // Converte para array de objetos com todas as chaves
   const wsData = [Object.keys(data[0]), ...data.map(row => Object.values(row))];
   const ws = XLSX.utils.aoa_to_sheet(wsData);
   const wb = XLSX.utils.book_new();
