@@ -73,10 +73,10 @@
 <div id="toast" class="toast"></div>
 
 <script type="module">
-  import { loginColaborador, loginAdmin } from './js/auth.js';
+  import { db, collection, getDocs, query, where } from './js/firebase-config.js';
   import { showToast } from './js/utils.js';
 
-  console.log("📄 Página de login carregada");
+  console.log("🚀 Login carregado - Versão Simplificada");
 
   const errMsgDiv = document.getElementById('errmsg');
   const formColab = document.getElementById('form-colab');
@@ -92,7 +92,6 @@
   let isLoggingIn = false;
 
   function showError(message) {
-    console.log("❌ Erro:", message);
     errMsgDiv.textContent = message;
     errMsgDiv.style.display = 'block';
     setTimeout(() => {
@@ -116,8 +115,6 @@
     const user = inputUser.value.trim();
     const pass = inputPassColab.value;
     
-    console.log("🔐 Tentativa de login colaborador:", user);
-    
     if (!user || !pass) {
       showError('Preencha utilizador e palavra-passe.');
       return;
@@ -127,24 +124,47 @@
     setLoading(btnColab, true);
     
     try {
-      const success = await loginColaborador(user, pass);
-      console.log("📊 Resultado do login:", success);
+      console.log("🔍 Procurando colaborador:", user);
       
-      if (success) {
-        showToast('✅ Login efetuado com sucesso!');
-        console.log("🚀 Redirecionando para dashboard.html");
+      const q = query(collection(db, 'colaboradores'), where('user', '==', user.toLowerCase()));
+      const querySnapshot = await getDocs(q);
+      
+      console.log("📋 Encontrados:", querySnapshot.size);
+      
+      if (querySnapshot.empty) {
+        showError('Utilizador não encontrado.');
+        setLoading(btnColab, false);
+        isLoggingIn = false;
+        return;
+      }
+      
+      let loginSuccess = false;
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        console.log("👤 Comparando:", data.user, "| Pass:", data.pass);
+        
+        if (data.pass === pass) {
+          loginSuccess = true;
+          localStorage.setItem('usuarioAtivo', user.toLowerCase());
+          localStorage.setItem('usuarioNome', data.user);
+        }
+      });
+      
+      if (loginSuccess) {
+        showToast('✅ Login efetuado!');
         setTimeout(() => {
           window.location.href = 'dashboard.html';
         }, 500);
       } else {
-        showError('Utilizador ou palavra-passe incorretos.');
+        showError('Palavra-passe incorreta.');
         inputPassColab.value = '';
         setLoading(btnColab, false);
         isLoggingIn = false;
       }
+      
     } catch (error) {
-      console.error('❌ Erro no login:', error);
-      showError('Erro ao conectar à base de dados. Verifique a consola.');
+      console.error('❌ Erro:', error);
+      showError('Erro: ' + error.message);
       setLoading(btnColab, false);
       isLoggingIn = false;
     }
@@ -155,8 +175,6 @@
     
     const pass = inputPassAdmin.value;
     
-    console.log("🔐 Tentativa de login admin");
-    
     if (!pass) {
       showError('Preencha a palavra-passe.');
       return;
@@ -166,12 +184,11 @@
     setLoading(btnAdmin, true, 'Entrar como Gestor');
     
     setTimeout(() => {
-      const success = loginAdmin(pass);
-      console.log("📊 Resultado login admin:", success);
+      const ADMIN_PASS = 'SSA2024admin';
       
-      if (success) {
-        showToast('✅ Acesso administrativo concedido!');
-        console.log("🚀 Redirecionando para admin.html");
+      if (pass === ADMIN_PASS) {
+        localStorage.setItem('usuarioAdmin', 'admin');
+        showToast('✅ Acesso concedido!');
         setTimeout(() => {
           window.location.href = 'admin.html';
         }, 500);
@@ -185,7 +202,6 @@
   }
 
   function switchToColab() {
-    console.log("🔄 Switch para colaborador");
     tabColab.classList.add('active');
     tabAdmin.classList.remove('active');
     formColab.style.display = 'block';
@@ -195,7 +211,6 @@
   }
 
   function switchToAdmin() {
-    console.log("🔄 Switch para admin");
     tabAdmin.classList.add('active');
     tabColab.classList.remove('active');
     formAdmin.style.display = 'block';
@@ -223,10 +238,17 @@
 
   inputUser.focus();
   
-  // Verificar se já está logado (para debug)
-  const usuarioAtivo = localStorage.getItem('usuarioAtivo');
-  const usuarioAdmin = localStorage.getItem('usuarioAdmin');
-  console.log("💾 Estado atual da localStorage - usuarioAtivo:", usuarioAtivo, "usuarioAdmin:", usuarioAdmin);
+  // Teste inicial para ver se o Firebase está acessível
+  async function testarFirebase() {
+    try {
+      const testQuery = await getDocs(collection(db, 'colaboradores'));
+      console.log("✅ Firebase OK! Colaboradores encontrados:", testQuery.size);
+    } catch(e) {
+      console.error("❌ Firebase ERROR:", e);
+      showError('Erro de conexão com o servidor. Verifique a consola.');
+    }
+  }
+  testarFirebase();
 </script>
 </body>
 </html>
