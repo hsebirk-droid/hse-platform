@@ -40,11 +40,8 @@ export function showToast(message, duration = 3000) {
 export function checkAuth() {
   const usuario = localStorage.getItem('usuarioAtivo');
   const admin = localStorage.getItem('usuarioAdmin');
-  if (!usuario && !admin) {
-    window.location.href = 'login.html';
-    return false;
-  }
-  return true;
+  // Apenas retorna se está autenticado, NÃO redireciona automaticamente
+  return !!(usuario || admin);
 }
 
 export function converterLinkGoogleDrive(url) {
