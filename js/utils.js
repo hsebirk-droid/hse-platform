@@ -49,24 +49,57 @@ export function checkAuth() {
 
 export function converterLinkGoogleDrive(url) {
   if (!url) return url;
-  if (!url.includes('drive.google.com')) return url;
   
+  // Se já for um link de embed, retornar
+  if (url.includes('/preview') || url.includes('youtube.com/embed')) {
+    return url;
+  }
+  
+  // Extrair ID do Google Drive
   let fileId = null;
+  
+  // Formato: /file/d/ID/view
   let match = url.match(/\/file\/d\/([^\/]+)/);
   if (match) fileId = match[1];
+  
+  // Formato: /d/ID
+  if (!fileId) {
+    match = url.match(/\/d\/([^\/]+)/);
+    if (match) fileId = match[1];
+  }
+  
+  // Formato: ?id=ID
   if (!fileId) {
     match = url.match(/[?&]id=([^&]+)/);
     if (match) fileId = match[1];
   }
+  
+  // Formato: /open?id=ID
   if (!fileId) {
-    match = url.match(/\/d\/([^\/]+)/);
+    match = url.match(/open\?id=([^&]+)/);
     if (match) fileId = match[1];
   }
   
   if (fileId) {
     return `https://drive.google.com/file/d/${fileId}/preview`;
   }
-  return url.replace('/view', '/preview').replace('?usp=sharing', '');
+  
+  // Converter YouTube para embed
+  if (url.includes('youtube.com/watch')) {
+    let videoId = url.split('v=')[1]?.split('&')[0];
+    if (videoId) {
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+  }
+  
+  if (url.includes('youtu.be/')) {
+    let videoId = url.split('youtu.be/')[1]?.split('?')[0];
+    if (videoId) {
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+  }
+  
+  return url;
 }
 
 export function downloadExcel(data, filename, sheetName = 'Dados') {
@@ -75,10 +108,21 @@ export function downloadExcel(data, filename, sheetName = 'Dados') {
     return;
   }
   
-  const wsData = [Object.keys(data[0]), ...data.map(row => Object.values(row))];
-  const ws = XLSX.utils.aoa_to_sheet(wsData);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, sheetName);
-  XLSX.writeFile(wb, `${filename}.xlsx`);
-  showToast('✅ Ficheiro Excel exportado!');
+  // Verificar se XLSX está disponível
+  if (typeof XLSX === 'undefined') {
+    showToast('❌ Erro: Biblioteca Excel não carregada');
+    return;
+  }
+  
+  try {
+    const wsData = [Object.keys(data[0]), ...data.map(row => Object.values(row))];
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+    XLSX.writeFile(wb, `${filename}.xlsx`);
+    showToast('✅ Ficheiro Excel exportado!');
+  } catch(e) {
+    console.error('Erro ao exportar Excel:', e);
+    showToast('❌ Erro ao exportar Excel');
+  }
 }
